@@ -3,6 +3,7 @@
 % Imod coordinate should be in text file, clicking along the filament (no direction needed)
 % model2point -Contour imodModel.mod imodModel.txt
 % Write out the filament list/folder for further processing as well
+% NOTE: Important to have tomogram number 
 
 % Input
 docFilePath = 'catalogs/tomograms.doc';
