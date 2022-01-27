@@ -50,7 +50,9 @@ for idx = 1:nTomo
         
         % Testing this block
         t = m{i}.grepTable();
-        dtcrop(docFilePath, t, ['catalogs/' tomoName '_' num2str(contour(i))], 64, 'mw', 12)
+        dtcrop(docFilePath, t, ['particles/' tomoName '_' num2str(contour(i))], 64, 'mw', 12) % mw = number of workers to run
+        % Optional for visualization of table
+        %dtplot(['particles/' tomoName '_' num2str(contour(i)) '/crop.tbl'], 'pf', 'oriented_positions');
     end
     
     % Write the DynamoModel
