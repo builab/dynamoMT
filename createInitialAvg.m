@@ -10,4 +10,11 @@ particleDir = 'particles';
 
 filamentList = readcell(filamentListFile);
 
-% Generate initial average
+% Crop & generate initial average
+for idx = 1:length(filamentList)
+  tableName = [particleDir '/' filamentList{idx} '/crop.tbl'];
+  disp(['Reading ' filamentList{idx}])
+  
+  
+
+end
