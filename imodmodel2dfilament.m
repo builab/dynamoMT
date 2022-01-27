@@ -10,6 +10,8 @@ pixelsize = 8.48; % Angstrom per pixel
 periodicity = 84; % Periodicity of tubulin
 subunits_dphi = 0;  % for free microtubule but can be restricted in the cilia
 subunits_dz = periodicity/pixelsize; % in pixel repeating unit dz = 8.4 nm = 84 Angstrom/pixelSize
+boxSize = 96; % Extracted subvolume size
+mw = 12; % Number of parallel worker to run
 
 % Script
 % loop through all tomograms
@@ -50,7 +52,7 @@ for idx = 1:nTomo
         
         % Testing this block
         t = m{i}.grepTable();
-        dtcrop(docFilePath, t, ['particles/' tomoName '_' num2str(contour(i))], 64, 'mw', 12) % mw = number of workers to run
+        dtcrop(docFilePath, t, ['particles/' tomoName '_' num2str(contour(i))], boxSize, 'mw', mw) % mw = number of workers to run
         % Optional for visualization of table
         %dtplot(['particles/' tomoName '_' num2str(contour(i)) '/crop.tbl'], 'pf', 'oriented_positions');
     end
