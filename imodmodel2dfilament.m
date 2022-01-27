@@ -2,6 +2,7 @@
 % Using GUI https://wiki.dynamo.biozentrum.unibas.ch/w/index.php/Filament_model
 % Imod coordinate should be in text file, clicking along the filament (no direction needed)
 % model2point -Contour imodModel.mod imodModel.txt
+% Write out the filament list/folder for further processing as well
 
 % Input
 docFilePath = 'catalogs/tomograms.doc';
@@ -12,12 +13,15 @@ subunits_dphi = 0;  % for free microtubule but can be restricted in the cilia
 subunits_dz = periodicity/pixelsize; % in pixel repeating unit dz = 8.4 nm = 84 Angstrom/pixelSize
 boxSize = 96; % Extracted subvolume size
 mw = 12; % Number of parallel worker to run
+filamentListFile = 'filamentList.csv';
 
 % Script
 % loop through all tomograms
 fileID = fopen(docFilePath); D = textscan(fileID,'%d %s'); fclose(fileID);
 tomoID = D{1,1}'; % get tomogram ID
 nTomo = length(D{1,2}); % get total number of tomograms
+
+filamentList = {};
 
 % Loop through tomograms
 for idx = 1:nTomo
@@ -50,6 +54,9 @@ for idx = 1:nTomo
         m{i}.linkCatalogue('catalogs/c001', 'i', idx);
         m{i}.saveInCatalogue();
         
+        % Add to the list
+        filamentList{end + 1} = [tomoName '_' num2str(contour(i))];
+
         % Testing this block
         t = m{i}.grepTable();
         dtcrop(docFilePath, t, ['particles/' tomoName '_' num2str(contour(i))], boxSize, 'mw', mw) % mw = number of workers to run
@@ -61,3 +68,6 @@ for idx = 1:nTomo
     dwrite(m, modelout)
 
 end
+
+% Write out list file
+writecell(filamentList, filamentListFile);
