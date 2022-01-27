@@ -19,7 +19,7 @@ for idx = 1:length(filamentList)
   tImport = dread(tableName);
   
   % Cropping subtomogram outt
-  dtcrop(docFilePath, t, targetFolder, boxSize, 'mw', mw); % mw = number of workers to run
+  dtcrop(docFilePath, tImport, targetFolder, boxSize, 'mw', mw); % mw = number of workers to run
   
   % Generate average
 	oa = daverage(targetFolder, 't', tImport, 'fc', 1, 'mw', mw);
