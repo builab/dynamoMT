@@ -50,7 +50,7 @@ for idx = 1:nTomo
         
         % Testing this block
         t = m{i}.grepTable();
-        dtcrop(docFilePath, t, ['catalogs/' tomoName '_' num2str(contour(i)), 64, 'mw', 12)
+        dtcrop(docFilePath, t, ['catalogs/' tomoName '_' num2str(contour(i))], 64, 'mw', 12)
     end
     
     % Write the DynamoModel
