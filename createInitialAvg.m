@@ -9,8 +9,6 @@ boxSize = 96; % Extracted subvolume size
 mw = 12; % Number of parallel workers to run
 
 
-
-
 filamentList = readcell(filamentListFile);
 
 % Crop & generate initial average
@@ -25,5 +23,5 @@ for idx = 1:length(filamentList)
   
   % Generate average
 	oa = daverage(targetFolder, 't', tImport, 'fc', 1, 'mw', mw);
-	dwrite(oa.average, [targetFolder_1{idx} '/template.em']);
+	dwrite(oa.average, [targetFolder '/template.em']);
 end
