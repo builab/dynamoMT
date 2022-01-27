@@ -47,6 +47,10 @@ for idx = 1:nTomo
         % Link to catalog
         m{i}.linkCatalogue('catalogs/c001', 'i', idx);
         m{i}.saveInCatalogue();
+        
+        % Testing this block
+        t = m{i}.grepTable();
+        dtcrop(docFilePath, t, ['catalogs/' tomoName '_' num2str(contour(i)), 64, 'mw', 12)
     end
     
     % Write the DynamoModel
