@@ -19,7 +19,7 @@ for idx = 1:length(filamentList)
     tOri = dread(tableName);
     template = [particleDir '/' filamentList{idx} '/template.em'];
     prjDir = [particleDir '/' filamentList{idx} '_intra'];
-    prj_intra = [alnDir '/' filamentList{idx} '_intra'];    
+    prj_intra = [alnDir '/' filamentList{idx}];    
 
     % create alignment project
     dcp.new(prj_intra,'d',prjDir,'t',tableName, 'template', template, 'masks','default','show',0);
