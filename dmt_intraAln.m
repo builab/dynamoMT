@@ -22,7 +22,7 @@ for idx = 1:length(filamentList)
     
 
     % create alignment project
-    dcp.new(prjDir,'d',prjDir,'t',tableName, 'template', template, 'masks','default','show',0);
+    dcp.new(filamentList{idx},'d',prjDir,'t',tableName, 'template', template, 'masks','default','show',0);
 
     % set alignment parameters for 2 rounds
     dvput(pr_0,'ite', [2]); % n iterations
