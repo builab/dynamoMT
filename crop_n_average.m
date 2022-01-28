@@ -17,11 +17,14 @@ for idx = 1:length(filamentList)
   targetFolder = [particleDir '/' filamentList{idx}];
   disp(['Reading ' filamentList{idx}]);
   tImport = dread(tableName);
+
   
   % Cropping subtomogram outt
   dtcrop(docFilePath, tImport, targetFolder, boxSize, 'mw', mw); % mw = number of workers to run
   
-  % Generate average
-	oa = daverage(targetFolder, 't', tImport, 'fc', 1, 'mw', mw);
-	dwrite(oa.average, [targetFolder '/template.em']);
+  % Generate average from 10 particles for template generation
+  midIndex = floor(length(tImport)/2);
+  tImport = tImport(midIndex - 5: midIndex + 5, :);
+  oa = daverage(targetFolder, 't', tImport, 'fc', 1, 'mw', mw);
+  dwrite(oa.average, [targetFolder '/template.em']);
 end
