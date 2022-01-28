@@ -39,10 +39,10 @@ for idx = 1:length(filamentList)
     dvput(prj_intra,'sym', 'c1'); % symmetry
 
     % set computational parameters
-    dvput(pr_intra,'dst','matlab_gpu','cores',1,'mwa',mw);
-    dvput(pr_intra,'gpus',gpu);
+    dvput(prj_intra,'dst','matlab_gpu','cores',1,'mwa',mw);
+    dvput(prj_intra,'gpus',gpu);
 
     % check/unfold/run
-    dvrun(pr_intra,'check',true,'unfold',true);
+    dvrun(prj_intra,'check',true,'unfold',true);
 
 end
