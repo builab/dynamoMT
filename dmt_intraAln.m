@@ -18,11 +18,11 @@ for idx = 1:length(filamentList)
     tableName = [particleDir '/' filamentList{idx} '/crop.tbl'];
     tOri = dread(tableName);
     template = [particleDir '/' filamentList{idx} '/template.em'];
-    prjDir = [particleDir '/' filamentList{idx} '_intra'];
-    prj_intra = [alnDir '/' filamentList{idx}];    
+    prjPaticlesDir = [particleDir '/' filamentList{idx}];
+    prj_intra = [alnDir '/' filamentList{idx} '_intra'];    
 
     % create alignment project
-    dcp.new(prj_intra,'d',prjDir,'t',tableName, 'template', template, 'masks','default','show',0);
+    dcp.new(prj_intra,'d',prjPaticlesDir,'t',tableName, 'template', template, 'masks','default','show',0);
 
     % set alignment parameters for 2 rounds
     dvput(prj_intra,'ite', [2]); % n iterations
