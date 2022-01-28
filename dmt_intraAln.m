@@ -18,7 +18,7 @@ for idx = 1:length(filamentList)
     tableName = [particleDir '/' filamentList{idx} '/crop.tbl'];
     tOri = dread(tableName);
     template = [particleDir '/' filamentList{idx} '/template.em'];
-    prjDir = [particlesDir '/' filamentList{idx} '_intra'];
+    prjDir = [particleDir '/' filamentList{idx} '_intra'];
     prj_intra = [alnDir '/' filamentList{idx} '_intra'];    
 
     % create alignment project
