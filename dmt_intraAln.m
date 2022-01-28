@@ -22,7 +22,7 @@ for idx = 1:length(filamentList)
     prj_intra = [alnDir '/' filamentList{idx} '_intra'];    
 
     % create alignment project
-    dcp.new(,'d',prjDir,'t',tableName, 'template', template, 'masks','default','show',0);
+    dcp.new(prj_intra,'d',prjDir,'t',tableName, 'template', template, 'masks','default','show',0);
 
     % set alignment parameters for 2 rounds
     dvput(prj_intra,'ite', [2]); % n iterations
