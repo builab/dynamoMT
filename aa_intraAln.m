@@ -47,6 +47,11 @@ for idx = 1:length(filamentList)
 
     % check/unfold/run
     dvrun(prj_intra,'check',true,'unfold',true);
+    
+    % check resulting table with visualization in plot
+    %tPath = ddb([prj_intra ':rt']);
+    %t = dread(tPath);
+    %figure; dtplot(t,'pf','oriented_positions'); axis equal
 
 end
 
