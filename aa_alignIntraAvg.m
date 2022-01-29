@@ -42,7 +42,7 @@ dwrite(ta,[folderAllaverages '/crop.tbl'])
 
 % create the alignment project of averages to align all intra dmt particles (averages)
 dcp.new(pr_a,'d',folderAllaverages,'t',[folderAllaverages '/crop.tbl'], ...
-'template',[folderAllaverages '/template.em'],'masks','default','show',0);
+'template',[folderAllaverages '/template.em'],'masks','default','show',0, 'forceOverwrite', 1);
 
 % set alignment parameters for 2 rounds
 dvput(pr_a,'ite', [3 3]);
@@ -50,7 +50,7 @@ dvput(pr_a,'dim', [48 96]); % Half & then full size
 dvput(pr_a,'low', [23 23]);
 dvput(pr_a,'cr', [15 6]); % If required for polarity search, using coneflip option
 % Search both polarity
-dvput(pr_a, 'cone_flip_r1')
+dvput(pr_a, 'cone_flip_r1', 1)
 dvput(pr_a,'cs', [5 2]);
 dvput(pr_a,'ir', [360 30]);
 dvput(pr_a,'is', [10 5]);
