@@ -43,15 +43,15 @@ dcp.new(pr_a,'d',folderAllaverages,'t',[folderAllaverages '/crop.tbl'], ...
 
 % set alignment parameters for 2 rounds
 dvput(pr_a,'ite', [3 3]);
-dvput(pr_a,'dim', [64 128]);
+dvput(pr_a,'dim', [48 96]); % Half & then full size
 dvput(pr_a,'low', [23 23]);
-dvput(pr_a,'cr', [60 30]);
-dvput(pr_a,'cs', [10 5]);
-dvput(pr_a,'ir', [90 30]);
+dvput(pr_a,'cr', [15 6]); % If no polarity [180 30], with polarity defined [15 6]
+dvput(pr_a,'cs', [5 2]);
+dvput(pr_a,'ir', [360 30]);
 dvput(pr_a,'is', [10 5]);
 dvput(pr_a,'rf', [5 5]);
 dvput(pr_a,'rff', [2 2]);
-dvput(pr_a,'lim', [80 20]);
+dvput(pr_a,'lim', [80 20]); % Angstrom or pixel? Probably Angstrom
 dvput(pr_a,'limm',[1 2]);
 dvput(pr_a,'sym', 'c1');
 
