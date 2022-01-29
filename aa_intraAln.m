@@ -8,7 +8,7 @@ filamentListFile = 'filamentList.csv';
 modelDir = 'models';
 alnDir = 'intraAln';
 particleDir = 'particles';
-boxSize = 96; % Extracted subvolume size
+boxSize = 96; % Original extracted subvolume size
 mw = 12; % Number of parallel workers to run
 gpu = [0:1]; % Alignment using gpu
 
@@ -29,8 +29,8 @@ for idx = 1:length(filamentList)
 
     % set alignment parameters for 2 rounds
     dvput(prj_intra,'ite', [2]); % n iterations
-    dvput(prj_intra,'dim', [96]); % subvolume sidelength (binning)
-    dvput(prj_intra,'low', [23]); % lowpass filtere
+    dvput(prj_intra,'dim', [48]); % subvolume sidelength (binning). Use 1/2 box size for quicker
+    dvput(prj_intra,'low', [23]); % lowpass filter
     dvput(prj_intra,'cr', [15]); % cone range
     dvput(prj_intra,'cs', [5]); % cone search step
     dvput(prj_intra,'ir', [15]); % inplane rotation
