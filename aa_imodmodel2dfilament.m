@@ -9,9 +9,9 @@
 docFilePath = 'catalogs/tomograms.doc';
 modelDir = 'models';
 pixelsize = 8.48; % Angstrom per pixel
-periodicity = 84; % Periodicity of tubulin
+periodicity = 168; % Using 16-nm of doublet for DMT 
 subunits_dphi = 0;  % for free microtubule but can be restricted in the cilia
-subunits_dz = periodicity/pixelsize; % in pixel repeating unit dz = 8.4 nm = 84 Angstrom/pixelSize
+subunits_dz = periodicity/pixelsize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
 %boxSize = 96; % Extracted subvolume size
 %mw = 12; % Number of parallel worker to run
 filamentListFile = 'filamentList.csv';
