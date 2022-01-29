@@ -56,7 +56,7 @@ dvput(pr_a,'limm',[1 2]);
 dvput(pr_a,'sym', 'c6');
 
 % set computational parameters
-dvput(pr_a,'dst','matlab_gpu','cores',1,'mwa',mw);
+dvput(pr_a,'dst','matlab_gpu','cores',2,'mwa',mw);
 dvput(pr_a,'gpus',gpu);
 
 % check/unfold/run
