@@ -33,7 +33,7 @@ copyfile(['../' template], [folderAllaverages '/template.em'])
 ta = dynamo_table_blank(noFilament);
 ta(:,13) = 1; % no missing wedge compensation needed
 ta(:,20) = ta(:,1); % set particle tag number = filament number
-ta(:,24:26) = (ceiling(boxSize/2) + 1)*ones(nTomo,3); % set centers, depending on box size
+ta(:,24:26) = (ceiling(boxSize/2) + 1)*ones(nFilament,3); % set centers, depending on box size
 dwrite(ta,[folderAllaverages '/crop.tbl'])
 
 
@@ -53,7 +53,7 @@ dvput(pr_a,'rf', [5 5]);
 dvput(pr_a,'rff', [2 2]);
 dvput(pr_a,'lim', [80 20]);
 dvput(pr_a,'limm',[1 2]);
-dvput(pr_a,'sym', 'c6');
+dvput(pr_a,'sym', 'c1');
 
 % set computational parameters
 dvput(pr_a,'dst','matlab_gpu','cores',2,'mwa',mw);
