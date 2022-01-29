@@ -7,8 +7,8 @@ alnDir = 'intraAln';
 particleDir = 'particles';
 mw = 12; % Number of parallel workers to run
 gpu = [0:1]; % Alignment using gpu
-folderAllaverages = 'pr_avg_aln'; % Output alignment folder
-pr_a = folderAllaverages; % Project name
+folderAllaverages = 'avg_aln'; % Output alignment folder
+pr_a = 'pr_avg_aln'; % Project name
 boxSize = 96;
 template = 'dmt_init_avg_b96.em';
 
@@ -48,7 +48,9 @@ dcp.new(pr_a,'d',folderAllaverages,'t',[folderAllaverages '/crop.tbl'], ...
 dvput(pr_a,'ite', [3 3]);
 dvput(pr_a,'dim', [48 96]); % Half & then full size
 dvput(pr_a,'low', [23 23]);
-dvput(pr_a,'cr', [15 6]); % If no polarity [180 30], with polarity defined [15 6]
+dvput(pr_a,'cr', [15 6]); % If required for polarity search, using coneflip option
+% Search both polarity
+dvput(pr_a, 'cone_flip_r1')
 dvput(pr_a,'cs', [5 2]);
 dvput(pr_a,'ir', [360 30]);
 dvput(pr_a,'is', [10 5]);
@@ -57,6 +59,8 @@ dvput(pr_a,'rff', [2 2]);
 dvput(pr_a,'lim', [80 20]); % Angstrom or pixel? Probably Angstrom
 dvput(pr_a,'limm',[1 2]);
 dvput(pr_a,'sym', 'c1');
+
+
 
 % set computational parameters
 dvput(pr_a,'dst','matlab_gpu','cores',1,'mwa',mw);
