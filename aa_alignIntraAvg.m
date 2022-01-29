@@ -22,7 +22,7 @@ noFilament = length(filamentList)
 % Copy intra average into particles number
 for idx = 1:noFilament
   aPath = ddb([filamentList{idx} ':a']);
-  copyfile(aPath{1}, [folderAllaverages '/particle_' num2str(tomoID(idx),'%06.f') '.em';])
+  copyfile(aPath{1}, [folderAllaverages '/particle_' num2str(idx,'%06.f') '.em';])
 end
 
 % Copy template to alignment folder
