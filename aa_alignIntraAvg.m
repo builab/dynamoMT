@@ -18,7 +18,7 @@ filamentList = readcell(filamentListFile);
 cd(alnDir)
 mkdir(folderAllaverages)
 
-noFilament = length(filamentList)
+noFilament = length(filamentList);
 % Copy intra average into particles number
 for idx = 1:noFilament
   aPath = ddb([filamentList{idx} ':a']);
