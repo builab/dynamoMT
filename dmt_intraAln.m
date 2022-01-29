@@ -1,5 +1,6 @@
 % Script for alignment within the same doublet
 % Translation only?
+% The proj must be a direct folder
 
 % Input
 docFilePath = 'catalogs/tomograms.doc';
@@ -14,12 +15,14 @@ gpu = [0:1]; % Alignment using gpu
 
 % Generate an initial reference average for each filament
 filamentList = readcell(filamentListFile);
+cd(alnDir)
+
 for idx = 1:length(filamentList)
-    tableName = [particleDir '/' filamentList{idx} '/crop.tbl'];
+    tableName = ['../' particleDir '/' filamentList{idx} '/crop.tbl'];
     tOri = dread(tableName);
-    template = [particleDir '/' filamentList{idx} '/template.em'];
-    prjPaticlesDir = [particleDir '/' filamentList{idx}];
-    prj_intra = [alnDir '/' filamentList{idx} '_intra'];    
+    template = ['../' particleDir '/' filamentList{idx} '/template.em'];
+    prjPaticlesDir = ['../' particleDir '/' filamentList{idx}];
+    prj_intra = [filamentList{idx}];    
 
     % create alignment project
     dcp.new(prj_intra,'d',prjPaticlesDir,'t',tableName, 'template', template, 'masks','default','show',0);
@@ -46,3 +49,5 @@ for idx = 1:length(filamentList)
     dvrun(prj_intra,'check',true,'unfold',true);
 
 end
+
+cd ..
