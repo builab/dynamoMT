@@ -68,4 +68,4 @@ dvrun(pr_a,'check',true,'unfold',true);
 % prepare resulting average for chimera
 aPath = ddb([pr_a ':a']);
 a = dread(aPath);
-dwrite(dynamo_bandpass(a,[1 23])*(−1),['result_' pr_a '_INVERTED.em']);
+dwrite(dynamo_bandpass(a,[1 23])*(-1),['result_' pr_a '_INVERTED.em']);
