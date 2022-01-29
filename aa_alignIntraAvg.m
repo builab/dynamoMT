@@ -36,7 +36,7 @@ ta(:,13) = 0; % no missing wedge compensation needed for now
 % https://wiki.dynamo.biozentrum.unibas.ch/w/index.php/Indicating_the_missing_wedge
 
 ta(:,20) = ta(:,1); % set particle tag number = filament number
-ta(:,24:26) = (ceil(boxSize/2) + 1)*ones(nFilament,3); % set centers, depending on box size
+ta(:,24:26) = (ceil(boxSize/2) + 1)*ones(noFilament,3); % set centers, depending on box size
 dwrite(ta,[folderAllaverages '/crop.tbl'])
 
 
