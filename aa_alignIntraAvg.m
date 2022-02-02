@@ -73,3 +73,12 @@ dvrun(pr_a,'check',true,'unfold',true);
 aPath = ddb([pr_a ':a']);
 a = dread(aPath);
 dwrite(dynamo_bandpass(a,[1 23])*(-1),['result_' pr_a '_INVERTED.em']);
+
+% Need to apply transformation into original table
+for idx = 1:noFilament
+  % Read last table from alignment
+  t_ccFilt_Ex = dread(['t_ccFilt_Ex_' stackName{idx} '.tbl']);
+  % Read last transformation & applied to table
+  t_ccFilt_Ex_Ali = dynamo_table_rigid(t_ccFilt_Ex,sal.Tp);
+  % Write table
+ end
