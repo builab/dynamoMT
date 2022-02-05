@@ -22,6 +22,9 @@ for idx = 1:length(filamentList)
   % Cropping subtomogram outt
   dtcrop(docFilePath, tImport, targetFolder, boxSize, 'mw', mw); % mw = number of workers to run
   
+  % Plotting (might not be optimum since plotting everything here)
+  dtplot(tImport, 'pf', 'oriented_positions');
+  
   % Generate average from 10 particles for template generation
   midIndex = floor(length(tImport)/2);
   tImport = tImport(midIndex - 5: midIndex + 5, :);
