@@ -12,8 +12,3 @@ vllFilePath = 'catalogs/tomograms.vll';
 % Create new catalogue from vll file, delete old one
 dcm('c', catPath, 'fromvll', vllFilePath, 'delete_old', 1)
 
-% Import model
-run imodmodel2filament.m
-
-% Convert to table & crop
-
