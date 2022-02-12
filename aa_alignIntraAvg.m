@@ -24,8 +24,8 @@ for idx = 1:noFilament
   aPath = ddb([filamentList{idx} ':a']); % Read the path of the alignment project average
   tPath = ddb([filamentList{idx} ':rt']);
   filamentAvg = dread(aPath);
-  sal = dalign(dynamo_bandpass(template,[1 23]), dynamo_bandpass(filamentAvg,[1 23]),'cr',14,'cs',2,'ir',360,'is',2,'dim',96, 'limm',1,'lim',[20,20,20],'rf',5,'rff',2); % cone_flip
-  %sal = dalign(dynamo_bandpass(template,[1 23]), dynamo_bandpass(filamentAvg,[1 23]),'cr',14,'cs',2,'ir',360,'is',2,'dim',96, 'limm',1,'lim',[20,20,20],'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
+  %sal = dalign(dynamo_bandpass(template,[1 23]), dynamo_bandpass(filamentAvg,[1 23]),'cr',15,'cs',5,'ir',360,'is',10,'dim',96, 'limm',1,'lim',[20,20,20],'rf',5,'rff',2); % cone_flip
+  sal = dalign(dynamo_bandpass(template,[1 23]), dynamo_bandpass(filamentAvg,[1 23]),'cr',15,'cs',5,'ir',360,'is',10,'dim',96, 'limm',1,'lim',[20,20,20],'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
   dview(sal.aligned_particle);
   % Read last table from alignment
   tFilament = dread(tPath);
@@ -35,4 +35,14 @@ for idx = 1:noFilament
   dwrite(tFilament_ali, [outputDir '/' filamentList{idx} '.tbl'])
  end
  
- cd ..
+cd ..
+
+for idx = 1:noFilament
+  % G  
+  tFilament_ali = dread([alnDir '/' outputDir '/' filamentList{idx} '.tbl']); 
+  
+  targetFolder = [particleDir '/' filamentList{idx}];
+  disp(targetFolder)
+  oa = daverage(targetFolder, 't', tFilament_ali, 'fc', 1, 'mw', mw);
+  dwrite(oa.average, [targetFolder '/alnTemplate.em']);
+end
