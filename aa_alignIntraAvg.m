@@ -24,39 +24,39 @@ cd(alnDir)
 % Calculate the alignment of the filamentAverage to the initial reference
 % transform the corresponding table for all particles
 for idx = 1:noFilament
-  aPath = ddb([filamentList{idx} ':a']); % Read the path of the alignment project average
-  tPath = ddb([filamentList{idx} ':rt']);
-  filamentAvg = dread(aPath);
-  if coneFlip > 0
-  	sal = dalign(dynamo_bandpass(template,[1 23]), dynamo_bandpass(filamentAvg,[1 23]),'cr',15,'cs',5,'ir',360,'is',10,'dim',96, 'limm',1,'lim',[20,20,20],'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
-  else
-  	sal = dalign(dynamo_bandpass(template,[1 23]), dynamo_bandpass(filamentAvg,[1 23]),'cr',15,'cs',5,'ir',360,'is',10,'dim',96, 'limm',1,'lim',[20,20,20],'rf',5,'rff',2); % no cone_flip
-  end
-  dview(sal.aligned_particle);
-  % Read last table from alignment
-  tFilament = dread(tPath);
-  % Read last transformation & applied to table
-  tFilament_ali = dynamo_table_rigid(tFilament, sal.Tp);
-  % Write table
-  dwrite(tFilament_ali, ['../' particleDir '/' filamentList{idx} '/aligned.tbl'])
- end
+	aPath = ddb([filamentList{idx} ':a']); % Read the path of the alignment project average
+	tPath = ddb([filamentList{idx} ':rt']);
+	filamentAvg = dread(aPath);
+	if coneFlip > 0
+  		sal = dalign(dynamo_bandpass(template,[1 23]), dynamo_bandpass(filamentAvg,[1 23]),'cr',15,'cs',5,'ir',360,'is',10,'dim',96, 'limm',1,'lim',[20,20,20],'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
+	else
+  		sal = dalign(dynamo_bandpass(template,[1 23]), dynamo_bandpass(filamentAvg,[1 23]),'cr',15,'cs',5,'ir',360,'is',10,'dim',96, 'limm',1,'lim',[20,20,20],'rf',5,'rff',2); % no cone_flip
+	end
+	dview(sal.aligned_particle);
+	% Read last table from alignment
+	tFilament = dread(tPath);
+	% Read last transformation & applied to table
+	tFilament_ali = dynamo_table_rigid(tFilament, sal.Tp);
+	% Write table
+	dwrite(tFilament_ali, ['../' particleDir '/' filamentList{idx} '/aligned.tbl'])
+end
  
 cd ..
 
 % Generate updated reference
 for idx = 1:noFilament
-  % Read the updated table
-  tFilament_ali = dread([particleDir '/' filamentList{idx} '/aligned.tbl']); 
-  targetFolder = [particleDir '/' filamentList{idx}];
-  disp(targetFolder)
-  oa = daverage(targetFolder, 't', tFilament_ali, 'fc', 1, 'mw', mw);
-  dwrite(oa.average, [targetFolder '/alignedTemplate.em']);
+	% Read the updated table
+	tFilament_ali = dread([particleDir '/' filamentList{idx} '/aligned.tbl']); 
+	targetFolder = [particleDir '/' filamentList{idx}];
+	disp(targetFolder)
+	oa = daverage(targetFolder, 't', tFilament_ali, 'fc', 1, 'mw', mw);
+	dwrite(oa.average, [targetFolder '/alignedTemplate.em']);
 
-  if idx == 1
-  	newTemplate = oa.average;
-  else
-  	newTemplate = newTemplate + oa.average;
-  end
+	if idx == 1
+		newTemplate = oa.average;
+	else
+		newTemplate = newTemplate + oa.average;
+	end
 end
 
 % Calculate average
