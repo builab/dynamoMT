@@ -23,11 +23,14 @@ template = dread(refFile);
  
 % Combine all the particles into one table
 % create table array
+targetFolder = {};
+tableName ={};
 
 for idx = 1:noFilament
-	targetFolder = [particleDir '/' filamentList{idx}];
-    tableName{idx} = [particleDir '/' filamentList{idx} '/aligned.tbl'];
+	targetFolder{idx} = [particleDir '/' filamentList{idx}];
+	tableName{idx} = [particleDir '/' filamentList{idx} '/aligned.tbl'];
 end
+
 
 % create ParticleListFile object (this object only exists temporarily in matlab)
 plfClean = dpkdata.containers.ParticleListFile.mergeDataFolders(targetFolder,'tables',tableName);
