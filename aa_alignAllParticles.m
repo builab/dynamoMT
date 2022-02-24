@@ -75,6 +75,6 @@ dvrun(pAlnAll,'check',true,'unfold',true);
 
 aPath = ddb([pAlnAll ':a']);
 a = dread(aPath);
-dwrite(dynamo_bandpass(a,[1 23])*(-1),['result_' pr_0 '_INVERTED.em']);
+dwrite(dynamo_bandpass(a,[1 23])*(-1),['result_alnAllParticles_INVERTED.em']);
 
 cd ..
