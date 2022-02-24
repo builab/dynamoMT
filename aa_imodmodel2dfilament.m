@@ -4,6 +4,7 @@
 % model2point -Contour imodModel.mod imodModel.txt
 % Write out the filament list/folder for further processing as well
 % NOTE: Important to have tomogram number 
+% NOTE: If the filament twist (microtubule/CP), we can use a different model (filamentSubUnitInHelix)
 
 % Input
 docFilePath = 'catalogs/tomograms.doc';
