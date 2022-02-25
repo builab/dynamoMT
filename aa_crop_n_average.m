@@ -7,7 +7,7 @@ modelDir = 'models';
 particleDir = 'particles';
 boxSize = 96; % Extracted subvolume size
 mw = 12; % Number of parallel workers to run
-lowpass = 40; % Filter the initial average to 40 Angstrom
+lowpass = 16; % Filter the initial average to 60 Angstrom
 
 
 filamentList = readcell(filamentListFile);
