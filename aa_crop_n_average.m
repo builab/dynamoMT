@@ -30,5 +30,5 @@ for idx = 1:length(filamentList)
   midIndex = floor(length(tImport)/2);
   tImport = tImport(midIndex - 5: midIndex + 5, :);
   oa = daverage(targetFolder, 't', tImport, 'fc', 1, 'mw', mw);
-  dwrite(dynamo_bandpass(oa.average, [1 23]), [targetFolder '/template.em']);
+  dwrite(dynamo_bandpass(oa.average, [1 lowpass]), [targetFolder '/template.em']);
 end
