@@ -7,6 +7,7 @@ modelDir = 'models';
 particleDir = 'particles';
 boxSize = 96; % Extracted subvolume size
 mw = 12; % Number of parallel workers to run
+lowpass = 40; % Filter the initial average to 40 Angstrom
 
 
 filamentList = readcell(filamentListFile);
@@ -29,5 +30,5 @@ for idx = 1:length(filamentList)
   midIndex = floor(length(tImport)/2);
   tImport = tImport(midIndex - 5: midIndex + 5, :);
   oa = daverage(targetFolder, 't', tImport, 'fc', 1, 'mw', mw);
-  dwrite(oa.average, [targetFolder '/template.em']);
+  dwrite(dynamo_bandpass(oa.average, [1 23]), [targetFolder '/template.em']);
 end
