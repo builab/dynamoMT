@@ -1,21 +1,30 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Script to align intra average of each doublet with a reference
 % and transform all the alignment to an updated table.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% dynamoDMT v0.1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%% Before Running Script %%%%%%%%%%
+%%% Activate Dynamo
+run /london/data0/software/dynamo/dynamo_activate.m
+
+% Change path to the correct directory
+prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
+
+% Input
 filamentListFile = 'filamentList.csv';
-alnDir = 'intraAln';
-particleDir = 'particles';
+alnDir = sprintf('%sintraAln', prjPath);
+particleDir = sprintf('%sparticles', prjPath);
 mw = 12; % Number of parallel workers to run
-gpu = [0:1]; % Alignment using gpu
-boxSize = 96;
-initRefFile = 'dmt_init_avg_b96.em';
-coneFlip = 1; % Search for polarity
-newRefFile = 'updated_avg_b96.em';
-lowpass = 20; % pixel. Filter to 40 Angstrom equivalent
+gpu = [0:5]; % Alignment using gpu
+
+initRefFile = 'reference_all.em';
+coneFlip = 0; % Search for polarity. 1 is yes. Recommended to pick with polarity and set to 0
+newRefFile = 'reference_dPhi.em';
+lowpass = 27; % Fourier pixel. Filter the average to 30 Angstrom equivalent
 
 
-filamentList = readcell(filamentListFile);
+filamentList = readcell(filamentListFile, 'Delimiter', ',');
 noFilament = length(filamentList);
 template = dread(initRefFile);
 
@@ -31,7 +40,7 @@ for idx = 1:noFilament
 	if coneFlip > 0
   		sal = dalign(dynamo_bandpass(filamentAvg,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',15,'cs',5,'ir',360,'is',10,'dim',96, 'limm',1,'lim',[20,20,20],'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
 	else
-  		sal = dalign(dynamo_bandpass(filamentAvg,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',15,'cs',5,'ir',360,'is',10,'dim',96, 'limm',1,'lim',[20,20,20],'rf',5,'rff',2); % no cone_flip
+  		sal = dalign(dynamo_bandpass(filamentAvg,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',20,'cs',10,'ir',360,'is',10,'dim',96, 'limm',1,'lim',[20,20,20],'rf',5,'rff',2); % no cone_flip
 	end
 	dview(sal.aligned_particle);
 	% Read last table from alignment
@@ -39,7 +48,7 @@ for idx = 1:noFilament
 	% Read last transformation & applied to table
 	tFilament_ali = dynamo_table_rigid(tFilament, sal.Tp);
 	% Write table
-	dwrite(tFilament_ali, ['../' particleDir '/' filamentList{idx} '/aligned.tbl'])
+	dwrite(tFilament_ali, [particleDir '/' filamentList{idx} '/aligned.tbl'])
 end
  
 cd ..

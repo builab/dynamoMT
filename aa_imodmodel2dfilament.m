@@ -1,24 +1,34 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Script to convert IMOD model to filament torsion model
+% dynamoDMT v0.1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Using GUI https://wiki.dynamo.biozentrum.unibas.ch/w/index.php/Filament_model
 % Imod coordinate should be in text file, clicking along the filament (no direction needed)
 % model2point -Contour imodModel.mod imodModel.txt
 % Write out the filament list/folder for further processing as well
 % NOTE: Important to have tomogram number 
 % NOTE: If the filament twist (microtubule/CP), we need to define subunits_dphi to describe the torsion.
-% however, it might be related to the polarity of the filament.
+% however, it might be related to the polarity of the filament (- or + sign).
+
+%%%%%%%% Before Running Script %%%%%%%%%%
+%%% Activate Dynamo
+run /london/data0/software/dynamo/dynamo_activate.m
+
+% Change path to the correct directory
+prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
+
+%%%%%%%%
 
 % Input
-docFilePath = 'catalogs/tomograms.doc';
-modelDir = 'models';
+docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
+modelDir = sprintf('%smodels', prjPath);
+c001Dir = sprintf('%scatalogs/c001', prjPath);
 pixelsize = 8.48; % Angstrom per pixel
-periodicity = 168; % Using 16-nm of doublet for DMT 
-subunits_dphi = 0;  % for free microtubule but can be restricted in the cilia
+periodicity = 84; % Using 16-nm of doublet for DMT 
+subunits_dphi = 0.9;  % For the tip CP
 subunits_dz = periodicity/pixelsize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
-%boxSize = 96; % Extracted subvolume size
-%mw = 12; % Number of parallel worker to run
-filamentListFile = 'filamentList.csv';
+filamentListFile = sprintf('%sfilamentList.csv', prjPath);
 
-% Script
 % loop through all tomograms
 fileID = fopen(docFilePath); D = textscan(fileID,'%d %s'); fclose(fileID);
 tomoID = D{1,1}'; % get tomogram ID
@@ -31,7 +41,7 @@ for idx = 1:nTomo
     tomo = D{1,2}{idx,1};
     [tomoPath,tomoName,ext] = fileparts(tomo);
     % Modify specific to name
-    tomoName = strrep(tomoName, '_SIRT4_rec', '');
+    tomoName = strrep(tomoName, '_rec', ''); % Remove the rec part of the name
     imodModel = [modelDir '/' tomoName '.txt'];
     modelout = strrep(imodModel, '.txt', '.omd');
     
@@ -54,16 +64,15 @@ for idx = 1:nTomo
         % Update crop point (can change dz)
         m{i}.updateCrop();
         % Link to catalog
-        m{i}.linkCatalogue('catalogs/c001', 'i', idx);
+        m{i}.linkCatalogue(c001Dir, 'i', idx);
         m{i}.saveInCatalogue();
         
         % Add to the list
-        filamentList{end + 1} = [tomoName '_' num2str(contour(i))];
+        filamentList{end + 1, 1} = [tomoName '_' num2str(contour(i))];
 
         % Testing this block
         t = m{i}.grepTable();
         dwrite(t, [modelDir '/' tomoName '_' num2str(contour(i)) '.tbl']);
-        %dtcrop(docFilePath, t, ['particles/' tomoName '_' num2str(contour(i))], boxSize, 'mw', mw) % mw = number of workers to run
         % Optional for visualization of table
         %dtplot(['particles/' tomoName '_' num2str(contour(i)) '/crop.tbl'], 'pf', 'oriented_positions');
     end

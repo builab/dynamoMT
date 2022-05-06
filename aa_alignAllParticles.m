@@ -1,26 +1,35 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Script to combine all the filament tables together and align with a common ref
-% TODO: Add a real space mask option
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Script to align intra average of each doublet with a reference
+% and transform all the alignment to an updated table.
+% dynamoDMT v0.1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%% Before Running Script %%%%%%%%%%
+%%% Activate Dynamo
+run /london/data0/software/dynamo/dynamo_activate.m
+
+% Change path to the correct directory
+prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
+
+% Input
 filamentListFile = 'filamentList.csv';
-alnDir = 'intraAln';
-particleDir = 'particles';
+alnDir = sprintf('%sintraAln', prjPath);
+particleDir = sprintf('%sparticles', prjPath);
 mw = 12; % Number of parallel workers to run
-gpu = [0:1]; % Alignment using gpu
-boxSize = 96;
-template_name = 'dmt_init_avg_b96.em';
+gpu = [0:5]; % Alignment using gpu
+template_name = 'reference_dPhi.em';
 tableFileName = 'merged_particles.tbl'; % merged particles table all
 starFileName = 'merged_particles.star'; % star file name for merged particles
-pAlnAll = 'pAlnAllParticles'
+pAlnAll = 'pAlnAllParticles';
+refMask = 'masks/mask_cp_tip_24.em';
+lowpass = 27; % 30Angstrom filter in fourier pixel
 
 
-
-filamentList = readcell(filamentListFile);
+filamentList = readcell(filamentListFile, 'Delimiter', ',');
 noFilament = length(filamentList);
 
 
-template = dread(refFile);
+template = dread(template_name);
  
 % Combine all the particles into one table
 % create table array
@@ -47,16 +56,15 @@ dwrite(tMergedClean,tableFileName)
 % Perform alignment of all particles with the ref
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-cd(alnDir)
 
-% Might use mask later
 dcp.new(pAlnAll,'t', tableFileName, 'd', targetFolder{1}, 'template', template_name, 'masks','default','show',0, 'forceOverwrite',1);
 dvput(pAlnAll,'data',starFileName)
+dvput(pAlnAll,'file_mask',refMask)
 
 % set alignment parameters
-dvput(pAlnAll,'ite', [1 1]);
+dvput(pAlnAll,'ite', [2 2]);
 dvput(pAlnAll,'dim', [96 96]);
-dvput(pAlnAll,'low', [23 23]);
+dvput(pAlnAll,'low', [20 20]);
 dvput(pAlnAll,'cr', [15 6]);
 dvput(pAlnAll,'cs', [5 2]);
 dvput(pAlnAll,'ir', [15 6]);
@@ -76,6 +84,4 @@ dvrun(pAlnAll,'check',true,'unfold',true);
 
 aPath = ddb([pAlnAll ':a']);
 a = dread(aPath);
-dwrite(dynamo_bandpass(a,[1 23])*(-1),['result_alnAllParticles_INVERTED.em']);
-
-cd ..
+dwrite(dynamo_bandpass(a,[1 lowpass])*(-1),['result_alnAllParticles_INVERTED_all.em']);

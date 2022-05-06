@@ -1,27 +1,45 @@
-% Script for alignment within the same doublet
-% Translation only?
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Script to align subtomogram within the same filament
+% dynamoDMT v0.1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% If you have good dPhi & shift, you can limit a bit stricter
 % The proj must be a direct folder
 
+%%%%%%%% Before Running Script %%%%%%%%%%
+%%% Activate Dynamo
+run /london/data0/software/dynamo/dynamo_activate.m
+
+% Change path to the correct directory
+prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
+
+%%%%%%%%
+
 % Input
-docFilePath = 'catalogs/tomograms.doc';
-filamentListFile = 'filamentList.csv';
-modelDir = 'models';
-alnDir = 'intraAln';
-particleDir = 'particles';
+docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
+filamentListFile = sprintf('%sfilamentList.csv', prjPath);
+alnDir = sprintf('%sintraAln', prjPath);
+particleDir = sprintf('%sparticles', prjPath);
 boxSize = 96; % Original extracted subvolume size
 mw = 12; % Number of parallel workers to run
-gpu = [0:1]; % Alignment using gpu
+gpu = [0:5]; % Alignment using gpu for titann setting
+pixelsize = 8.48; % Angstrom per pixel
+lowpass = 20; % low pass filter the intraAvg to ~40 Angstrom in Fourier pixel
 
 
 % Generate an initial reference average for each filament
-filamentList = readcell(filamentListFile);
+filamentList = readcell(filamentListFile, 'Delimiter', ',');
+
+mkdir(alnDir);
+mkdir([alnDir '/avg']); %filter averages
+mkdir([alnDir '/preview']); % preview images
+
 cd(alnDir)
 
 for idx = 1:length(filamentList)
-    tableName = ['../' particleDir '/' filamentList{idx} '/crop.tbl'];
+    tableName = [particleDir '/' filamentList{idx} '/crop.tbl'];
     tOri = dread(tableName);
-    template = ['../' particleDir '/' filamentList{idx} '/template.em'];
-    prjPaticlesDir = ['../' particleDir '/' filamentList{idx}];
+    template = [particleDir '/' filamentList{idx} '/template.em'];
+    prjPaticlesDir = [particleDir '/' filamentList{idx}];
     prj_intra = [filamentList{idx}];    
 
     % create alignment project
@@ -44,15 +62,20 @@ for idx = 1:length(filamentList)
     % set computational parameters
     dvput(prj_intra,'dst','matlab_gpu','cores',1,'mwa',mw);
     dvput(prj_intra,'gpus',gpu);
+    
+    %CPU
+    %dvput(prj_intra,'dst', 'matlab_parfor','cores',12,'mwa',mw);
 
     % check/unfold/run
     dvrun(prj_intra,'check',true,'unfold',true);
     
-    % check resulting table with visualization in plot
-    %tPath = ddb([prj_intra ':rt']);
-    %t = dread(tPath);
-    %figure; dtplot(t,'pf','oriented_positions'); axis equal
-
+    % Generate the average & filter to 30 Angstrom & a png preview
+    aPath = ddb([filamentList{idx} ':a']); % Read the path of the alignment project average
+    filamentAvg = dread(aPath);
+    filamentAvg = dynamo_bandpass(filamentAvg,[1 lowpass]);
+    dwrite(filamentAvg, ['avg/' filamentList{idx} '.em']);
+    img = sum(filamentAvg(:,:,floor(boxSize/2) - 10: floor(boxSize/2) + 10), 3);
+    imwrite(mat2gray(img), ['preview/' filamentList{idx} '.png'])
 end
 
 cd ..
