@@ -65,7 +65,7 @@ dcm('c', catPath, 'fromvll', vllFilePath, 'delete_old', 1)
 % Imod coordinate should be in text file, clicking along the filament (no direction needed)
 % model2point -Contour imodModel.mod imodModel.txt
 
-pathToModelScript = fullfile(sprintf('%sdynamoDMT', path), 'model2pointscript.sh');
+pathToModelScript = fullfile(sprintf('%sdynamoDMT', prjPath), 'model2pointscript.sh');
 stringToBeRemoved = '/tip_CP.mod';
 
 cmdStr = [pathToModelScript ' ' modDir ' ' modelDir ' ' modelfile ' ' stringToBeRemoved];
