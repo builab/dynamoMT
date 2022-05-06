@@ -1,5 +1,7 @@
 #!/bin/bash
 
+module load imod
+
 args=("$@")
 
 cat $3 | while read line || [[ -n $line ]];
