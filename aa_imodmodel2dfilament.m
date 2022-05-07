@@ -15,7 +15,7 @@
 run /london/data0/software/dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
+prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_complex/';
 
 %%%%%%%%
 
@@ -24,8 +24,8 @@ docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 modelDir = sprintf('%smodels', prjPath);
 c001Dir = sprintf('%scatalogs/c001', prjPath);
 pixelsize = 8.48; % Angstrom per pixel
-periodicity = 84; % Using 16-nm of doublet for DMT 
-subunits_dphi = 0.9;  % For the tip CP
+periodicity = 168; % Using 16-nm of doublet for DMT 
+subunits_dphi = 0;  % For the tip CP
 subunits_dz = periodicity/pixelsize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
 filamentListFile = sprintf('%sfilamentList.csv', prjPath);
 
