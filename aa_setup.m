@@ -23,11 +23,11 @@ run /london/data0/software/dynamo/dynamo_activate.m
 %%%%%%% Variables subject to change %%%%%%%%
 
 modDir = '/london/data0/20220404_TetraCU428_Tip_TS/ts/';
-prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
-modFileDelimiter = 'CU428*/tip_CP.mod';
-stringToBeRemoved = '/tip_CP.mod';
+prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/base_CP/';
+modFileDelimiter = 'CU428*/base_CP.mod';
+stringToBeRemoved = '/base_CP.mod';
 recSuffix = '_rec.mrc';
-apixel = '8.48';
+apixel = '16.88';
 
 %%%%%%%%% Do not change anything under here %%%%%%%%%%
 
