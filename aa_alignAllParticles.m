@@ -9,7 +9,7 @@
 run /london/data0/software/dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
+prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_complex/';
 
 % Input
 filamentListFile = 'filamentList.csv';
@@ -17,12 +17,14 @@ alnDir = sprintf('%sintraAln', prjPath);
 particleDir = sprintf('%sparticles', prjPath);
 mw = 12; % Number of parallel workers to run
 gpu = [0:5]; % Alignment using gpu
-template_name = 'reference_dPhi.em';
+template_name = 'init_template.em';
 tableFileName = 'merged_particles.tbl'; % merged particles table all
 starFileName = 'merged_particles.star'; % star file name for merged particles
 pAlnAll = 'pAlnAllParticles';
-refMask = 'masks/mask_cp_tip_24.em';
-lowpass = 27; % 30Angstrom filter in fourier pixel
+% refMask = 'masks/mask_cp_tip_24.em';
+
+% Need also a good mask
+% TODO update this script using a real space mask
 
 
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
@@ -38,7 +40,7 @@ tableName ={};
 
 for idx = 1:noFilament
 	targetFolder{idx} = [particleDir '/' filamentList{idx}];
-	tableName{idx} = [particleDir '/' filamentList{idx} '/aligned.tbl'];
+	tableName{idx} = [particleDir '/' filamentList{idx} '/crop_one.tbl'];
 end
 
 
@@ -56,19 +58,21 @@ dwrite(tMergedClean,tableFileName)
 % Perform alignment of all particles with the ref
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%cd(alnDir)
 
+% Might use mask later
 dcp.new(pAlnAll,'t', tableFileName, 'd', targetFolder{1}, 'template', template_name, 'masks','default','show',0, 'forceOverwrite',1);
 dvput(pAlnAll,'data',starFileName)
-dvput(pAlnAll,'file_mask',refMask)
+% dvput(pAlnAll,'file_mask',refMask)
 
 % set alignment parameters
-dvput(pAlnAll,'ite', [2 2]);
-dvput(pAlnAll,'dim', [96 96]);
-dvput(pAlnAll,'low', [20 20]);
-dvput(pAlnAll,'cr', [15 6]);
-dvput(pAlnAll,'cs', [5 2]);
-dvput(pAlnAll,'ir', [15 6]);
-dvput(pAlnAll,'is', [5 2]);
+dvput(pAlnAll,'ite', [3 3]);
+dvput(pAlnAll,'dim', [84 84]);
+dvput(pAlnAll,'low', [16 23]);
+dvput(pAlnAll,'cr', [20 12]);
+dvput(pAlnAll,'cs', [10 3]);
+dvput(pAlnAll,'ir', [360 12]);
+dvput(pAlnAll,'is', [10 3]);
 dvput(pAlnAll,'rf', [5 5]);
 dvput(pAlnAll,'rff', [2 2]);
 dvput(pAlnAll,'lim', [10 10]);
@@ -84,4 +88,4 @@ dvrun(pAlnAll,'check',true,'unfold',true);
 
 aPath = ddb([pAlnAll ':a']);
 a = dread(aPath);
-dwrite(dynamo_bandpass(a,[1 lowpass])*(-1),['result_alnAllParticles_INVERTED_all.em']);
+dwrite(dynamo_bandpass(a,[1 23])*(-1),['result_alnAllParticles_INVERTED_all.em']);
