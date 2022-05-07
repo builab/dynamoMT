@@ -1,7 +1,7 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Script to convert IMOD model to filament torsion model
 % dynamoDMT v0.1
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Using GUI https://wiki.dynamo.biozentrum.unibas.ch/w/index.php/Filament_model
 % Imod coordinate should be in text file, clicking along the filament (no direction needed)
 % model2point -Contour imodModel.mod imodModel.txt
