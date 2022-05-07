@@ -22,12 +22,12 @@ run /london/data0/software/dynamo/dynamo_activate.m
 
 %%%%%%% Variables subject to change %%%%%%%%
 
-modDir = '/london/data0/20220404_TetraCU428_Tip_TS/ts/';
-prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
-modFileDelimiter = 'CU428*/tip_CP.mod';
-stringToBeRemoved = '/tip_CP.mod';
+modDir = '/london/data0/20220404_TetraCU428_Tip_TS/ts/'; %Path to the directory containing all the TS_??? directories containing the reconstructed tomograms
+prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_complex/'; %Path to the working/analyses/project directory
+modFileDelimiter = 'CU428*/TC.mod'; %Path to the model files from IMOD
+stringToBeRemoved = '/TC.mod';
 recSuffix = '_rec.mrc';
-apixel = '8.48';
+apixel = '8.48'; %Pixel size
 
 %%%%%%%%% Do not change anything under here %%%%%%%%%%
 
