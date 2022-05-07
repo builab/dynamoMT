@@ -46,7 +46,7 @@ for idx = 1:length(filamentList)
     dcp.new(prj_intra,'d',prjPaticlesDir,'t',tableName, 'template', template, 'masks','default','show',0);
 
     % set alignment parameters for 2 rounds
-    dvput(prj_intra,'ite', [2]); % n iterations
+    dvput(prj_intra,'ite', [3]); % n iterations
     dvput(prj_intra,'dim', [48]); % subvolume sidelength (binning). Use 1/2 box size for quicker
     dvput(prj_intra,'low', [16]); % lowpass filter
     dvput(prj_intra,'cr', [15]); % cone range
