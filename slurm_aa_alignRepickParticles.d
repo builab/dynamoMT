@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --ntasks=1                
 #SBATCH --partition=titan
-#SBATCH --job-name=alignRepickAvg # Job name
-#SBATCH --error=aa_alignRepickAvg.err
-#SBATCH --output=aa_alignRepickAvg.out
+#SBATCH --job-name=alignRepickParticles # Job name
+#SBATCH --error=aa_alignRepickParticles.err
+#SBATCH --output=aa_alignRepickParticles.out
 #SBATCH --cpus-per-task=12
 #SBATCH --gres=gpu:6
 #SBATCH --nodes=1
@@ -13,5 +13,5 @@ module load matlab
 module load cuda-8.0.61-gcc-4.9.4-rv3d2jh
 
 
-matlab -nodisplay < dynamoDMT/aa_alignRepickAvg.m
+matlab -nodisplay < dynamoDMT/aa_alignRepickParticles.m
 
