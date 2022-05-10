@@ -21,7 +21,7 @@ tableFileName = 'merged_particles_repick.tbl'; % merged particles table all
 starFileName = 'merged_particles_repick.star'; % star file name for merged particles
 pAlnAll = 'pAlnRepickParticles';
 refMask = 'masks/mask_cp_tip_24.em';
-lowpass = 27; % 30Angstrom filter in fourier pixel
+lowpass = 30; % 30Angstrom filter in fourier pixel
 
 
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
@@ -83,4 +83,4 @@ dvrun(pAlnAll,'check',true,'unfold',true);
 
 aPath = ddb([pAlnAll ':a']);
 a = dread(aPath);
-dwrite(dynamo_bandpass(a,[1 lowpass])*(-1),['result_alnAllParticles_INVERTED_all.em']);
+dwrite(dynamo_bandpass(a,[1 lowpass])*(-1),['result_alnRepickParticles_INVERTED_all.em']);
