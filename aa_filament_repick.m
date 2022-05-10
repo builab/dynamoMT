@@ -49,8 +49,8 @@ for idx = 1:nTomo
     % Modify specific to name
     tomoName = strrep(tomoName, '_rec', ''); % Remove the rec part of the name
     tableTomo = tblAll(tblAll(:,20) == tomono, :);
-    
-    modelout = strrep(imodModel, '.txt', '.omd');
+
+	modelout =   [modelDir '/' tomoName '.omd']  
     points = tableTomo(:, 24:26) + tableTomo(:, 4:6);
     
     contour = [1];
