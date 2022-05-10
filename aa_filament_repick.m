@@ -28,6 +28,7 @@ c001Dir = sprintf('%scatalogs/c001', prjPath);
 pixelsize = 8.48; % Angstrom per pixel
 periodicity = 82.8; % Using 16-nm of doublet for DMT 
 boxSize = 96;
+mw = 12;
 subunits_dphi = 0.72;  % For the tip CP
 subunits_dz = periodicity/pixelsize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
 filamentListFile = sprintf('%sfilamentList.csv', prjPath);
