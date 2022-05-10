@@ -19,6 +19,7 @@ gpu = [0:5]; % Alignment using gpu
 template_name = 'reference_dPhi.em';
 tableFileName = 'merged_particles_repick.tbl'; % merged particles table all
 starFileName = 'merged_particles_repick.star'; % star file name for merged particles
+tableOutFileName = 'merged_particles_repick_align.tbl'; % merged particles table all
 pAlnAll = 'pAlnRepickParticles';
 refMask = 'masks/mask_cp_tip_24.em';
 lowpass = 30; % 30Angstrom filter in fourier pixel
@@ -83,4 +84,6 @@ dvrun(pAlnAll,'check',true,'unfold',true);
 
 aPath = ddb([pAlnAll ':a']);
 a = dread(aPath);
+tPath = ddb([pAlnAll ':t']);
+dwrite(dread(tPath), tableOutFileName);
 dwrite(dynamo_bandpass(a,[1 lowpass])*(-1),['result_alnRepickParticles_INVERTED_all.em']);

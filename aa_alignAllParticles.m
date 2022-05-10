@@ -19,6 +19,7 @@ mw = 12; % Number of parallel workers to run
 gpu = [0:5]; % Alignment using gpu
 template_name = 'reference_dPhi.em';
 tableFileName = 'merged_particles.tbl'; % merged particles table all
+tableOutFileName = 'merged_particles_align.tbl'; % merged particles table all
 starFileName = 'merged_particles.star'; % star file name for merged particles
 pAlnAll = 'pAlnAllParticles';
 refMask = 'masks/mask_cp_tip_24.em';
@@ -84,4 +85,6 @@ dvrun(pAlnAll,'check',true,'unfold',true);
 
 aPath = ddb([pAlnAll ':a']);
 a = dread(aPath);
+tPath = ddb([pAlnAll ':t']);
+dwrite(dread(tPath), tableOutFileName);
 dwrite(dynamo_bandpass(a,[1 lowpass])*(-1),['result_alnAllParticles_INVERTED_all.em']);
