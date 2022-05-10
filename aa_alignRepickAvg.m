@@ -50,7 +50,6 @@ for idx = 1:noFilament
 	dwrite(tFilament_ali, [particleDir '/' filamentList{idx} '/aligned.tbl'])
 end
  
-cd ..
 
 % Generate updated reference
 for idx = 1:noFilament
