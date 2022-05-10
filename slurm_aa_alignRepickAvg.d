@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --ntasks=1                
 #SBATCH --partition=titan
-#SBATCH --job-name=alignIntraAvg # Job name
-#SBATCH --error=aa_alignIntraAvg_all.err
+#SBATCH --job-name=alignRepickAvg # Job name
+#SBATCH --error=aa_alignRepickAvg_all.err
 #SBATCH --output=aa_alignIntraAvg_all.out
 #SBATCH --cpus-per-task=12
 #SBATCH --gres=gpu:6
