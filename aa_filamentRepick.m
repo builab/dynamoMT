@@ -32,7 +32,7 @@ mw = 12;
 subunits_dphi = 0.72;  % For the tip CP
 subunits_dz = periodicity/pixelsize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
 filamentListFile = sprintf('%sfilamentList.csv', prjPath);
-tableAlnFileName = 'merged_particles_aln.tbl'; % merge particles after alignment
+tableAlnFileName = 'merged_particles_align.tbl'; % merge particles after alignment
 lowpass = 27; % Filter to 30A
 
 
