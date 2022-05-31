@@ -12,7 +12,7 @@ run /london/data0/software/dynamo/dynamo_activate.m
 prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_complex/';
 
 % Input
-filamentListFile = 'filamentList.csv';
+filamentListOneFile = 'filamentListOne.csv';
 alnDir = sprintf('%sintraAln', prjPath);
 particleDir = sprintf('%sparticles', prjPath);
 mw = 12; % Number of parallel workers to run
@@ -27,7 +27,7 @@ pAlnAll = 'pAlnAllParticles';
 % TODO update this script using a real space mask
 
 
-filamentList = readcell(filamentListFile, 'Delimiter', ',');
+filamentList = readcell(filamentListOneFile, 'Delimiter', ',');
 noFilament = length(filamentList);
 
 
