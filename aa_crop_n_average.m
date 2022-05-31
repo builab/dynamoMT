@@ -13,10 +13,10 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_complex/';
 %%%%%%%%
 
 % Input
-docFilePath = sprintf('%scatalogs/tomograms.doc', prjDir);
-filamentListFile = sprintf('%sfilamentList.csv', prjDir);
-modelDir = sprintf('%smodels', prjDir);
-particleDir = sprintf('%sparticles', prjDir);
+docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
+filamentListFile = sprintf('%sfilamentList.csv', prjPath);
+modelDir = sprintf('%smodels', prjPath);
+particleDir = sprintf('%sparticles', prjPath);
 boxSize = 168; % Extracted subvolume size
 mw = 12; % Number of parallel workers to run
 lowpass = 24; % Filter the initial average to 60 (50?) Angstrom
