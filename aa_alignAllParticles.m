@@ -85,6 +85,6 @@ dvrun(pAlnAll,'check',true,'unfold',true);
 
 aPath = ddb([pAlnAll ':a']);
 a = dread(aPath);
-tPath = ddb([pAlnAll ':t']);
+tPath = ddb([pAlnAll ':t:ite=last']); % This is correct but might not be prone to more error!!!
 dwrite(dread(tPath), tableOutFileName);
 dwrite(dynamo_bandpass(a,[1 lowpass])*(-1),['result_alnAllParticles_INVERTED_all.em']);
