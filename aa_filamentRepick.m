@@ -1,15 +1,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Script to convert IMOD model to filament torsion model
+% Script to apply alignment parameters to repick filament with torsion model
+% Should have same parameters as imodModel2Filament
 % dynamoDMT v0.1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Using GUI https://wiki.dynamo.biozentrum.unibas.ch/w/index.php/Filament_model
-% Imod coordinate should be in text file, clicking along the filament (no direction needed)
-% model2point -Contour imodModel.mod imodModel.txt
-% Write out the filament list/folder for further processing as well
-% NOTE: Important to have tomogram number 
-% NOTE: If the filament twist (microtubule/CP), we need to define subunits_dphi to describe the torsion.
-% however, it might be related to the polarity of the filament (- or + sign).
-% Perhaps, should use a nearest neighbour guessing of angle
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
