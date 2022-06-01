@@ -15,7 +15,7 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_complex/';
 % Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 particleDir = sprintf('%sparticles_repick', prjPath);
-newBoxSize = 200;
+newBoxSize = 220;
 mw = 12;
 tableAlnFileName = 'merged_particles_align.tbl'; % merge particles after alignment
 
