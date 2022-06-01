@@ -15,7 +15,7 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_complex/';
 % Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 particleDir = sprintf('%sparticles_repick', prjPath);
-newBoxSize = 220;
+newBoxSize = 240;
 pixelSize = 8.48;
 lowpass = 40; % 40 Angstrom for the tip complex
 mw = 12;
