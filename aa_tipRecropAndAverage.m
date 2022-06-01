@@ -34,6 +34,12 @@ nTomo = length(D{1,2}); % get total number of tomograms
 tblAll = dread(tableAlnFileName);
 
 % Loop through tomograms
+dtcrop(docFilePath, tblAll, particleDir, newBoxSize);
+oa = daverage(particleDir, 't', tblAll, 'fc', 1, 'mw', mw);
+dwrite(dynamo_bandpass(oa.average, [1 lowpass]), 'tip_complex_recrop.em');
+
+exit
+%
 for idx = 1:nTomo
     tomo = D{1,2}{idx,1};
     [tomoPath,tomoName,ext] = fileparts(tomo);
