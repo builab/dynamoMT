@@ -29,4 +29,4 @@ dtcrop(docFilePath, tblAll, particleDir, newBoxSize);
 % Average using the new table to avoid missing particles
 tRecrop = dread([particleDir '/crop.tbl']);
 oa = daverage(particleDir, 't', tRecrop, 'fc', 1, 'mw', mw);
-dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/lowpass*newBoxSize)]), ['tip_complex_b' num2str(newBoxSize) '.em']);
+dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/lowpass*newBoxSize)])*(-1), ['tip_complex_b' num2str(newBoxSize) '.em']);
