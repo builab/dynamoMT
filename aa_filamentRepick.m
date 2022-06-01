@@ -4,6 +4,7 @@
 % dynamoDMT v0.1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Using GUI https://wiki.dynamo.biozentrum.unibas.ch/w/index.php/Filament_model
+% Now also printing output
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
@@ -70,10 +71,17 @@ for idx = 1:nTomo
     	t = m{i}.grepTable();
     	dwrite(t, [modelDir '/' tomoName '_' num2str(contour(i)) '.tbl']);
     	targetFolder = [particleDir '/'  tomoName '_' num2str(contour(i))];
-  		% Cropping subtomogram out
-  		dtcrop(docFilePath, t, targetFolder, boxSize, 'mw', mw);
-  		oa = daverage(targetFolder, 't', t, 'fc', 1, 'mw', mw);
-  		dwrite(dynamo_bandpass(oa.average, [1 lowpass]), [targetFolder '/template.em']);
+	
+  	% Cropping subtomogram out
+  	dtcrop(docFilePath, t, targetFolder, boxSize, 'mw', mw);
+  	oa = daverage(targetFolder, 't', t, 'fc', 1, 'mw', mw);
+  	dwrite(dynamo_bandpass(oa.average, [1 lowpass]), [targetFolder '/template.em']);
+	
+	% Plotting save & close
+	dtplot([targetFolder '/crop.tbl'], 'pf', 'oriented_positions');
+	print([targetFolder '/repick_' tomoName] , '-dpng');
+	close all
+	
     end 
     % Write the DynamoModel
     dwrite(m, modelout);
