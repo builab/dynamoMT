@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Script to align intra average of each doublet with a reference
+% Script to align repick particles
 % and transform all the alignment to an updated table.
-% dynamoDMT v0.1
+% dynamoDMT v0.11
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%% Before Running Script %%%%%%%%%%
@@ -13,17 +13,16 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 
 % Input
 filamentListFile = 'filamentList.csv';
-alnDir = sprintf('%sintraAln', prjPath);
-particleDir = sprintf('%sparticles', prjPath);
+particleDir = sprintf('%sparticles_repick', prjPath);
 mw = 12; % Number of parallel workers to run
 gpu = [0:5]; % Alignment using gpu
-template_name = 'reference_dPhi.em';
-tableFileName = 'merged_particles.tbl'; % merged particles table all
-tableOutFileName = 'merged_particles_align.tbl'; % merged particles table all
-starFileName = 'merged_particles.star'; % star file name for merged particles
-pAlnAll = 'pAlnAllParticles';
+template_name = 'reference_all.em';
+tableFileName = 'merged_particles_repick.tbl'; % merged particles table all
+starFileName = 'merged_particles_repick.star'; % star file name for merged particles
+tableOutFileName = 'merged_particles_repick_align.tbl'; % merged particles table all
+pAlnAll = 'pAlnRepickParticles';
 refMask = 'masks/mask_cp_tip_24.em';
-lowpass = 27; % 30Angstrom filter in fourier pixel
+lowpass = 30; % 30Angstrom filter in fourier pixel
 
 
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
@@ -72,7 +71,7 @@ dvput(pAlnAll,'ir', [15 6]);
 dvput(pAlnAll,'is', [5 2]);
 dvput(pAlnAll,'rf', [5 5]);
 dvput(pAlnAll,'rff', [2 2]);
-dvput(pAlnAll,'lim', [10 10]);
+dvput(pAlnAll,'lim', [5 5]);
 dvput(pAlnAll,'limm',[1 2]);
 dvput(pAlnAll,'sym', 'c1'); % 
     
@@ -85,6 +84,6 @@ dvrun(pAlnAll,'check',true,'unfold',true);
 
 aPath = ddb([pAlnAll ':a']);
 a = dread(aPath);
-tPath = ddb([pAlnAll ':t:ite=last']); % This is correct but might not be prone to more error!!!
+tPath = ddb([pAlnAll ':t:ite=last']); % This makes convertion to Relion better
 dwrite(dread(tPath), tableOutFileName);
-dwrite(dynamo_bandpass(a,[1 lowpass])*(-1),['result_alnAllParticles_INVERTED_all.em']);
+dwrite(dynamo_bandpass(a,[1 lowpass])*(-1),['result_alnRepickParticles_INVERTED_all.em']);
