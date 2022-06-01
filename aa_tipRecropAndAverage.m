@@ -47,5 +47,5 @@ for idx = 1:nTomo
     dwrite(tableTomo, [particleDir '/' tomoName '_1.tbl']);
     targetFolder = [particleDir '/'  tomoName '_1'];
   	% Cropping subtomogram out
-  	dtcrop(docFilePath, tableTomo, targetFolder, newboxSize, 'mw', mw);
+  	dtcrop(docFilePath, tableTomo, targetFolder, newBoxSize, 'mw', mw);
 end
