@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Script to apply alignment parameters to repick filament with torsion model
+% Script to apply alignment parameters to repick filament with torsion model with 32 nm repeat
 % Should have same parameters as imodModel2Filament
 % dynamoDMT v0.1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -17,15 +17,15 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/base_CP/';
 
 % Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
-modelDir = sprintf('%smodels_repick', prjPath);
-particleDir = sprintf('%sparticles_repick', prjPath);
+modelDir = sprintf('%smodels_repick_32nm', prjPath);
+particleDir = sprintf('%sparticles_repick_32nm', prjPath);
 c001Dir = sprintf('%scatalogs/c001', prjPath);
 pixelsize = 8.48; % Angstrom per pixel
-periodicity = 158; % Using 16-nm of doublet for DMT 
+periodicity = 158*2; % Using 32-nm of doublet for base CP 
 boxSize = 144;
 mw = 12;
-subunits_dphi = 0.5;  % For the tip CP
-subunits_dz = periodicity/pixelsize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
+subunits_dphi = 1;  % For the tip CP
+subunits_dz = periodicity/pixelsize; % in pixel repeating unit dz = 8.4 nm = 158 Angstrom/pixelSize
 filamentListFile = sprintf('%sfilamentList.csv', prjPath);
 tableAlnFileName = 'merged_particles_align.tbl'; % merge particles after alignment
 lowpass = 40; % Filter to 30A
@@ -53,16 +53,16 @@ for idx = 1:nTomo
     contour = [1];
     % Compatible with doublet microtubule
     m = {}; % Cell array contains all filament
-	for i = 1:length(contour)
-   	 	m{i} = dmodels.filamentWithTorsion();
+    for i = 1:length(contour)
+   	m{i} = dmodels.filamentWithTorsion();
     	m{i}.subunits_dphi = subunits_dphi;
     	m{i}.subunits_dz = subunits_dz;
     	m{i}.name = [tomoName '_' num2str(contour(i))];
     	% Import coordinate
     	m{i}.points = points;
     	% Create backbone
-   	 	m{i}.backboneUpdate();
-   	 	% Update crop point (can change dz)
+   	m{i}.backboneUpdate();
+   	% Update crop point (can change dz)
     	m{i}.updateCrop();
     	% Link to catalog
     	m{i}.linkCatalogue(c001Dir, 'i', idx);
