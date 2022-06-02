@@ -19,7 +19,7 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/base_CP/';
 % Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 modelDir = sprintf('%smodels_repick', prjPath);
-orgParticleDir = sprintf('%sparticles', prjPath);
+origParticleDir = sprintf('%sparticles', prjPath);
 particleDir = sprintf('%sparticles_repick', prjPath);
 c001Dir = sprintf('%scatalogs/c001', prjPath);
 pixelsize = 8.48; % Angstrom per pixel
