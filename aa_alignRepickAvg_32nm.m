@@ -41,7 +41,7 @@ mkdir(alnDir)
 % transform the corresponding table for all particles
 for idx = 1:noFilament
 	aPath = ([particleDir '/' filamentList{idx} '/template32nm.em']); % Read the path of the alignment project average
-	tPath = ([particleDir '/' filamentList{idx} '/crop.tbl']); 
+	tPath = ([particleDir '/' filamentList{idx} '/crop_32nm.tbl']); 
 	filamentAvg = dread(aPath);
 	
 	% First round alignment
