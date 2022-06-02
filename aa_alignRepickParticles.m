@@ -23,6 +23,7 @@ tableOutFileName = 'merged_particles_repick_align.tbl'; % merged particles table
 pAlnAll = 'pAlnRepickParticles';
 refMask = 'masks/mask_cp_tip_24.em';
 lowpass = 30; % 30Angstrom filter in fourier pixel
+zshift_limit = 5; % 4-nm limit
 
 
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
@@ -71,7 +72,7 @@ dvput(pAlnAll,'ir', [15 6]);
 dvput(pAlnAll,'is', [5 2]);
 dvput(pAlnAll,'rf', [5 5]);
 dvput(pAlnAll,'rff', [2 2]);
-dvput(pAlnAll,'lim', [5 5]);
+dvput(pAlnAll,'lim', [zshift_limit zshift_limit]);
 dvput(pAlnAll,'limm',[1 2]);
 dvput(pAlnAll,'sym', 'c1'); % 
     
