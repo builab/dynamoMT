@@ -11,7 +11,7 @@
 run /london/data0/software/dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
+prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/base_CP/';
 
 %%%%%%%%
 
@@ -21,14 +21,14 @@ modelDir = sprintf('%smodels_repick', prjPath);
 particleDir = sprintf('%sparticles_repick', prjPath);
 c001Dir = sprintf('%scatalogs/c001', prjPath);
 pixelsize = 8.48; % Angstrom per pixel
-periodicity = 82.8; % Using 16-nm of doublet for DMT 
-boxSize = 96;
+periodicity = 158; % Using 16-nm of doublet for DMT 
+boxSize = 144;
 mw = 12;
-subunits_dphi = 0.72;  % For the tip CP
+subunits_dphi = 0.5;  % For the tip CP
 subunits_dz = periodicity/pixelsize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
 filamentListFile = sprintf('%sfilamentList.csv', prjPath);
 tableAlnFileName = 'merged_particles_align.tbl'; % merge particles after alignment
-lowpass = 27; % Filter to 30A
+lowpass = 40; % Filter to 30A
 
 
 % loop through all tomograms
@@ -47,7 +47,7 @@ for idx = 1:nTomo
     tomoName = strrep(tomoName, '_rec', ''); % Remove the rec part of the name
     tableTomo = tblAll(tblAll(:,20) == tomono, :);
 
-	modelout =   [modelDir '/' tomoName '.omd']  
+    modelout =   [modelDir '/' tomoName '.omd']  
     points = tableTomo(:, 24:26) + tableTomo(:, 4:6);
     
     contour = [1];
