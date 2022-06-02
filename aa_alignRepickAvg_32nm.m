@@ -20,7 +20,7 @@ particleDir = sprintf('%sparticles_repick_32nm', prjPath);
 alnDir = sprintf('%srepick_aln_32nm', prjPath);
 
 mw = 12; % Number of parallel workers to run
-gpu = [0:2]; % Alignment using gpu
+gpu = [0:5]; % Alignment using gpu
 
 initRefFile = 'ref_base_32nm.em'; % 32-nm ref file
 coneFlip = 0; % Search for polarity. 1 is yes. Recommended to pick with polarity and set to 0
