@@ -48,6 +48,7 @@ for idx = 1:length(filamentList)
   dwrite(dynamo_bandpass(oa.average, [1 lowpass]), [targetFolder '/template.em']);
   dtplot([targetFolder '/crop.tbl'], 'pf', 'oriented_positions');
 	view(-230, 30);axis equal;
-	close all
 	print([targetFolder '/pick_' tomoName] , '-dpng');
+	close all
+
 end
