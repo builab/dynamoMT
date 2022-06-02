@@ -21,6 +21,7 @@ initRefFile = 'reference_all.em';
 coneFlip = 0; % Search for polarity. 1 is yes. Recommended to pick with polarity and set to 0
 newRefFile = 'reference_repick.em';
 lowpass = 27; % Fourier pixel. Filter the average to 30 Angstrom equivalent
+zshift_limit = 6; % ~4nm shift limit
 
 
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
@@ -36,9 +37,9 @@ for idx = 1:noFilament
 	tPath = ([particleDir '/' filamentList{idx} '/crop.tbl']); 
 	filamentAvg = dread(aPath);
 	if coneFlip > 0
-  		sal = dalign(dynamo_bandpass(filamentAvg,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',10,'cs',5,'ir',360,'is',5,'dim',96, 'limm',1,'lim',[5,5,6],'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
+  		sal = dalign(dynamo_bandpass(filamentAvg,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',10,'cs',5,'ir',360,'is',5,'dim',96, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
 	else
-  		sal = dalign(dynamo_bandpass(filamentAvg,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',10,'cs',5,'ir',360,'is',5,'dim',96, 'limm',1,'lim',[5, 5, 6],'rf',5,'rff',2); % no cone_flip
+  		sal = dalign(dynamo_bandpass(filamentAvg,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',10,'cs',5,'ir',360,'is',5,'dim',96, 'limm',1,'lim',[5, 5, zshift_limit],'rf',5,'rff',2); % no cone_flip
 	end
 	dview(sal.aligned_particle);
 	% Read last table from alignment
