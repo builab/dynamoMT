@@ -56,9 +56,9 @@ for idx = 1:noFilament
 	
 	% 2nd round alignment, shift alignment only
 	if coneFlip > 0
-  		sal2 = dalign(dynamo_bandpass(sal.aligned_particle,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',0,'cs',5,'ir',0,'is',5,'dim',144, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2, 'cone_flip', 1, 'file_mask', mask_32nm); % cone_flip
+  		sal2 = dalign(dynamo_bandpass(sal.aligned_particle,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',0,'cs',5,'ir',0,'is',5,'dim',144, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2, 'cone_flip', 1, 'mask', mask_32nm); % cone_flip
 	else
-  		sal2 = dalign(dynamo_bandpass(sal.aligned_particle,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',0,'cs',5,'ir',0,'is',5,'dim',144, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2, 'file_mask', mask_32nm); % no cone_flip
+  		sal2 = dalign(dynamo_bandpass(sal.aligned_particle,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',0,'cs',5,'ir',0,'is',5,'dim',144, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2, 'mask', mask_32nm); % no cone_flip
 	end
 	
 	% Read last table from alignment
