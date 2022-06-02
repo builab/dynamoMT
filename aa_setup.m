@@ -66,7 +66,6 @@ dcm('c', catPath, 'fromvll', vllFilePath, 'delete_old', 1)
 % model2point -Contour imodModel.mod imodModel.txt
 
 pathToModelScript = fullfile(sprintf('%sdynamoDMT', prjPath), 'model2pointscript.sh');
-stringToBeRemoved = '/tip_CP.mod';
 
 cmdStr = [pathToModelScript ' ' modDir ' ' modelDir ' ' modelfile ' ' stringToBeRemoved];
 system(cmdStr);
