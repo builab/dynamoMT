@@ -18,14 +18,14 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/base_CP/';
 
 % Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
-modelDir = sprintf('%smodels_repick_32nm', prjPath);
-particleDir = sprintf('%sparticles_repick_32nm', prjPath);
+modelDir = sprintf('%smodels_repick', prjPath);
+particleDir = sprintf('%sparticles_repick', prjPath);
 c001Dir = sprintf('%scatalogs/c001', prjPath);
 pixelsize = 8.48; % Angstrom per pixel
-periodicity = 158*2; % Using 32-nm of doublet for base CP 
+periodicity = 158; % Still pick 16-nm particles
 boxSize = 144;
 mw = 12;
-subunits_dphi = 1;  % For the tip CP
+subunits_dphi = .5;  % For the tip CP
 subunits_dz = periodicity/pixelsize; % in pixel repeating unit dz = 8.4 nm = 158 Angstrom/pixelSize
 filamentListFile = sprintf('%sfilamentList.csv', prjPath);
 tableAlnFileName = 'merged_particles_align.tbl'; % merge particles after alignment
@@ -77,6 +77,12 @@ for idx = 1:nTomo
   	dtcrop(docFilePath, t, targetFolder, boxSize, 'mw', mw);
   	oa = daverage(targetFolder, 't', t, 'fc', 1, 'mw', mw);
   	dwrite(dynamo_bandpass(oa.average, [1 lowpass]), [targetFolder '/template.em']);
+	% Doing 32-nm average (it might fail if particle < 2)
+	t32 = t(1:2:end, :);
+	oa32 = daverage(targetFolder, 't', t32, 'fc', 1, 'mw', mw);
+	dwrite(dynamo_bandpass(oa32.average, [1 lowpass]), [targetFolder '/template32nm.em']);
+	dwrite(t32, [targetFolder '/crop_32nm.tbl']);
+	
 	
 	% Plotting save & close
 	dtplot([targetFolder '/crop.tbl'], 'pf', 'oriented_positions');
