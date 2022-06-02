@@ -17,6 +17,8 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/base_CP/';
 % Input
 filamentListFile = 'filamentList.csv';
 particleDir = sprintf('%sparticles_repick_32nm', prjPath);
+alnDir = sprintf('%srepick_aln_32nm', prjPath);
+
 mw = 12; % Number of parallel workers to run
 gpu = [0:2]; % Alignment using gpu
 
@@ -25,6 +27,8 @@ coneFlip = 0; % Search for polarity. 1 is yes. Recommended to pick with polarity
 newRefFile = 'reference_repick_32nm.em';
 lowpass = 40; % Fourier pixel. Filter the average to 30 Angstrom equivalent
 zshift_limit = 20; % ~16nm
+
+mask_32nm = 'masks/mask_base_cp_32nm_features.em'; % Mask for 32-nm alignment
 
 
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
@@ -39,12 +43,24 @@ for idx = 1:noFilament
 	aPath = ([particleDir '/' filamentList{idx} '/template.em']); % Read the path of the alignment project average
 	tPath = ([particleDir '/' filamentList{idx} '/crop.tbl']); 
 	filamentAvg = dread(aPath);
+	
+	% First round alignment
 	if coneFlip > 0
   		sal = dalign(dynamo_bandpass(filamentAvg,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',10,'cs',5,'ir',360,'is',5,'dim',144, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
 	else
   		sal = dalign(dynamo_bandpass(filamentAvg,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',10,'cs',5,'ir',360,'is',5,'dim',144, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2); % no cone_flip
 	end
-	dview(sal.aligned_particle);
+	%dview(sal.aligned_particle);
+	% Preparation for the 2nd alignment round, can turn off
+	dwrite(sal.aligned_particles, [alnDir '/' filamentList{idx} '_aln.em']);
+	
+	% 2nd round alignment, shift alignment only
+	if coneFlip > 0
+  		sal2 = dalign(dynamo_bandpass(sal.aligned_particles,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',10,'cs',5,'ir',360,'is',5,'dim',144, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
+	else
+  		sal2 = dalign(dynamo_bandpass(sal.aligned_particles,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',10,'cs',5,'ir',360,'is',5,'dim',144, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2); % no cone_flip
+	end
+	
 	% Read last table from alignment
 	tFilament = dread(tPath);
 	% Read last transformation & applied to table
