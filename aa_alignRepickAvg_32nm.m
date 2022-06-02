@@ -52,13 +52,13 @@ for idx = 1:noFilament
 	end
 	%dview(sal.aligned_particle);
 	% Preparation for the 2nd alignment round, can turn off
-	dwrite(sal.aligned_particles, [alnDir '/' filamentList{idx} '_aln.em']);
+	dwrite(sal.aligned_particles, [alnDir '/' filamentList{idx} '_aln_r1.em']);
 	
 	% 2nd round alignment, shift alignment only
 	if coneFlip > 0
-  		sal2 = dalign(dynamo_bandpass(sal.aligned_particles,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',10,'cs',5,'ir',360,'is',5,'dim',144, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
+  		sal2 = dalign(dynamo_bandpass(sal.aligned_particles,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',0,'cs',5,'ir',0,'is',5,'dim',144, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2, 'cone_flip', 1, 'file_mask', mask_32nm); % cone_flip
 	else
-  		sal2 = dalign(dynamo_bandpass(sal.aligned_particles,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',10,'cs',5,'ir',360,'is',5,'dim',144, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2); % no cone_flip
+  		sal2 = dalign(dynamo_bandpass(sal.aligned_particles,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',0,'cs',5,'ir',0,'is',5,'dim',144, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2, 'file_mask', mask_32nm); % no cone_flip
 	end
 	
 	% Read last table from alignment
@@ -66,14 +66,23 @@ for idx = 1:noFilament
 	% Read last transformation & applied to table
 	tFilament_ali = dynamo_table_rigid(tFilament, sal.Tp);
 	% Write table
-	dwrite(tFilament_ali, [particleDir '/' filamentList{idx} '/aligned.tbl'])
+	dwrite(tFilament_ali, [particleDir '/' filamentList{idx} '/aligned_r1.tbl'])
+	
+	% Apple 2nd round alignment
+	tFilament_ali_r2 = dynamo_table_rigid(tFilament_ali, sal2.Tp);
+	% Write table
+	dwrite(tFilament_ali_r2, [particleDir '/' filamentList{idx} '/aligned.tbl'])
+	
+	% For Checking
+	dwrite(sal2.aligned_particles, [alnDir '/' filamentList{idx} '_aln_r2.em']);
+
 end
  
 
 % Generate updated reference
 for idx = 1:noFilament
 	% Read the updated table
-	tFilament_ali = dread([particleDir '/' filamentList{idx} '/aligned.tbl']); 
+	tFilament_ali = dread([particleDir '/' filamentList{idx} '/aligned.tbl']); % Deviate from 16-nm repick
 	targetFolder = [particleDir '/' filamentList{idx}];
 	disp(targetFolder)
 	oa = daverage(targetFolder, 't', tFilament_ali, 'fc', 1, 'mw', mw);
