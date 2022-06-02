@@ -10,7 +10,7 @@
 run /london/data0/software/dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
+prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/base_CP/';
 
 %%%%%%%%
 
@@ -19,11 +19,11 @@ docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 filamentListFile = sprintf('%sfilamentList.csv', prjPath);
 alnDir = sprintf('%sintraAln', prjPath);
 particleDir = sprintf('%sparticles', prjPath);
-boxSize = 96; % Original extracted subvolume size
+boxSize = 144; % Original extracted subvolume size
 mw = 12; % Number of parallel workers to run
-gpu = [0:5]; % Alignment using gpu for titann setting
+gpu = [0:2]; % Alignment using gpu for titann setting
 pixelsize = 8.48; % Angstrom per pixel
-lowpass = 20; % low pass filter the intraAvg to ~40 Angstrom in Fourier pixel
+lowpass = 35; % low pass filter the intraAvg to ~40 Angstrom in Fourier pixel
 
 
 % Generate an initial reference average for each filament
@@ -47,8 +47,8 @@ for idx = 1:length(filamentList)
 
     % set alignment parameters for 2 rounds
     dvput(prj_intra,'ite', [3]); % n iterations
-    dvput(prj_intra,'dim', [48]); % subvolume sidelength (binning). Use 1/2 box size for quicker
-    dvput(prj_intra,'low', [16]); % lowpass filter
+    dvput(prj_intra,'dim', [72]); % subvolume sidelength (binning). Use 1/2 box size for quicker
+    dvput(prj_intra,'low', [30]); % lowpass filter
     dvput(prj_intra,'cr', [15]); % cone range
     dvput(prj_intra,'cs', [5]); % cone search step
     dvput(prj_intra,'ir', [15]); % inplane rotation
