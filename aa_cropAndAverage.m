@@ -8,7 +8,7 @@
 run /london/data0/software/dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
+prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/base_CP/';
 
 %%%%%%%%
 
@@ -17,9 +17,9 @@ docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 filamentListFile = sprintf('%sfilamentList.csv', prjPath);
 modelDir = sprintf('%smodels', prjPath);
 particleDir = sprintf('%sparticles', prjPath);
-boxSize = 96; % Extracted subvolume size
+boxSize = 144; % Extracted subvolume size
 mw = 12; % Number of parallel workers to run
-lowpass = 16; % Filter the initial average to 60
+lowpass = 23; % Filter the initial average to 60
 
 % Read the list of filament to work with
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
