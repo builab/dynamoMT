@@ -24,7 +24,7 @@ mw = 12; % Number of parallel workers to run
 gpu = [0:5]; % Alignment using gpu for titann setting
 pixelsize = 8.48; % Angstrom per pixel
 lowpass = 20; % low pass filter the intraAvg to ~40 Angstrom in Fourier pixel
-zshift_limit = 6; % ~8nm 
+zshift_limit = 10; % ~8nm 
 
 
 % Generate an initial reference average for each filament
