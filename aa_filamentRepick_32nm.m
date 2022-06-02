@@ -29,7 +29,7 @@ mw = 12;
 subunits_dphi = .5;  % For the tip CP
 subunits_dz = periodicity/pixelsize; % in pixel repeating unit dz = 8.4 nm = 158 Angstrom/pixelSize
 filamentListFile = sprintf('%sfilamentList.csv', prjPath);
-tableAlnFileName = 'merged_particles_align.tbl'; % merge particles after alignment
+tableAlnFileName = 'merged_particles.tbl'; % merge particles before alignment for robust fitting
 lowpass = 40; % Filter to 30A
 
 
@@ -87,7 +87,7 @@ for idx = 1:nTomo
 	
 	% Plotting save & close
 	% Old Curve
-	dtplot([origParticleDir '/' tomoName '_' num2str(contour(i)) '/crop.tbl'], 'pf', 'oriented_positions');
+	%dtplot([origParticleDir '/' tomoName '_' num2str(contour(i)) '/crop.tbl'], 'pf', 'oriented_positions');
 	% New Curve
 	dtplot([targetFolder '/crop.tbl'], 'pf', 'oriented_positions');
 	view(-230,30);axis equal;
