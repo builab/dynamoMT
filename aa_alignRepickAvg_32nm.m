@@ -1,9 +1,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Script to align 32nm repick average of each doublet with a reference
 % and transform all the alignment to an updated table.
-  The alignment should be done in 2 steps.
-  (1) Align the entire RepickAvg to the 32-nm ref
-  (2) Align the transformed Repick Avg to 32-nm with a mask highlighting the 32-nm feature and Z-translate only
+%  The alignment should be done in 2 steps.
+%  (1) Align the entire RepickAvg to the 32-nm ref
+%  (2) Align the transformed Repick Avg to 32-nm with a mask highlighting the 32-nm feature and Z-translate only
 % dynamoDMT v0.11
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
