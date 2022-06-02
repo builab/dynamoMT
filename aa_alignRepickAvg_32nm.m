@@ -35,7 +35,7 @@ filamentList = readcell(filamentListFile, 'Delimiter', ',');
 noFilament = length(filamentList);
 template = dread(initRefFile);
 
-
+mkdir(alnDir)
 
 % Calculate the alignment of the filamentAverage to the initial reference
 % transform the corresponding table for all particles
