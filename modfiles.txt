@@ -1,6 +1,0 @@
-CU428_TS001/tip_CP.mod
-CU428_TS002/tip_CP.mod
-CU428_TS003/tip_CP.mod
-CU428_TS013/tip_CP.mod
-CU428_TS014/tip_CP.mod
-CU428_TS017/tip_CP.mod
