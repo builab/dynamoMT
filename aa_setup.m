@@ -27,7 +27,7 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/base_CP/';
 modFileDelimiter = 'CU428*/base_CP.mod';
 stringToBeRemoved = '/base_CP.mod';
 recSuffix = '_rec.mrc';
-apixel = '16.88';
+apixel = '8.48';
 
 %%%%%%%%% Do not change anything under here %%%%%%%%%%
 
@@ -66,7 +66,5 @@ dcm('c', catPath, 'fromvll', vllFilePath, 'delete_old', 1)
 % model2point -Contour imodModel.mod imodModel.txt
 
 pathToModelScript = fullfile(sprintf('%sdynamoDMT', prjPath), 'model2pointscript.sh');
-stringToBeRemoved = '/tip_CP.mod';
 
 cmdStr = [pathToModelScript ' ' modDir ' ' modelDir ' ' modelfile ' ' stringToBeRemoved];
-system(cmdStr);
