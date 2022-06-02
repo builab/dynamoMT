@@ -89,7 +89,8 @@ for idx = 1:nTomo
 	% Old Curve
 	dtplot([origParticleDir '/' tomoName '_' num2str(contour(i)) '/crop.tbl'], 'pf', 'oriented_positions');
 	% New Curve
-	dtplot([targetFolder '/crop.tbl'], 'pf', 'oriented_positions', 'color', 'r');
+	dtplot([targetFolder '/crop.tbl'], 'pf', 'oriented_positions');
+	view(-230,30);axis equal;
 	print([targetFolder '/repick_' tomoName] , '-dpng');
 	close all
 	
