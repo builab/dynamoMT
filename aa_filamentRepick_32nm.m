@@ -5,6 +5,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Using GUI https://wiki.dynamo.biozentrum.unibas.ch/w/index.php/Filament_model
 % Now also printing output
+% Update to skip the one without repick point
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
