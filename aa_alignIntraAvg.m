@@ -15,6 +15,7 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 filamentListFile = 'filamentList.csv';
 alnDir = sprintf('%sintraAln', prjPath);
 particleDir = sprintf('%sparticles', prjPath);
+previewDir =[alnDir '/preview']; % created from previously
 mw = 12; % Number of parallel workers to run
 gpu = [0:5]; % Alignment using gpu
 
@@ -37,12 +38,17 @@ for idx = 1:noFilament
 	aPath = ddb([filamentList{idx} ':a']); % Read the path of the alignment project average
 	tPath = ddb([filamentList{idx} ':rt']);
 	filamentAvg = dread(aPath);
+	boxSize = length(filamentAvg);
 	if coneFlip > 0
   		sal = dalign(dynamo_bandpass(filamentAvg,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',15,'cs',5,'ir',360,'is',10,'dim',96, 'limm',1,'lim',[20,20,20],'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
 	else
   		sal = dalign(dynamo_bandpass(filamentAvg,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',20,'cs',10,'ir',360,'is',10,'dim',96, 'limm',1,'lim',[20,20,20],'rf',5,'rff',2); % no cone_flip
 	end
-	dview(sal.aligned_particle);
+	%dview(sal.aligned_particle);
+	% Write out preview
+	filt_aligned_particle = dynamo_bandpass(sal.aligned_particle, [1 lowpass]);
+	img = sum(filt_aligned_particle(:,:,floor(boxSize/2) - 10: floor(boxSize/2) + 10), 3);
+	imwrite(mat2gray(img), [previewDir '/' filamentList{idx} '_aln.png'])
 	% Read last table from alignment
 	tFilament = dread(tPath);
 	% Read last transformation & applied to table
