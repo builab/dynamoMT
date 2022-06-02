@@ -19,6 +19,7 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/base_CP/';
 % Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 modelDir = sprintf('%smodels_repick', prjPath);
+orgParticleDir = sprintf('%sparticles', prjPath);
 particleDir = sprintf('%sparticles_repick', prjPath);
 c001Dir = sprintf('%scatalogs/c001', prjPath);
 pixelsize = 8.48; % Angstrom per pixel
@@ -85,7 +86,10 @@ for idx = 1:nTomo
 	
 	
 	% Plotting save & close
-	dtplot([targetFolder '/crop.tbl'], 'pf', 'oriented_positions');
+	% Old Curve
+	dtplot([origParticleDir '/' tomoName '_' num2str(contour(i)) '/crop.tbl'], 'pf', 'oriented_positions');
+	% New Curve
+	dtplot([targetFolder '/crop.tbl'], 'pf', 'oriented_positions', 'color', 'r');
 	print([targetFolder '/repick_' tomoName] , '-dpng');
 	close all
 	
