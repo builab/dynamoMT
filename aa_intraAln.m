@@ -24,6 +24,7 @@ mw = 12; % Number of parallel workers to run
 gpu = [0:5]; % Alignment using gpu for titann setting
 pixelsize = 8.48; % Angstrom per pixel
 lowpass = 20; % low pass filter the intraAvg to ~40 Angstrom in Fourier pixel
+zshift_limit = 6; % ~8nm 
 
 
 % Generate an initial reference average for each filament
@@ -55,7 +56,7 @@ for idx = 1:length(filamentList)
     dvput(prj_intra,'is', [5]); % inplane search step
     dvput(prj_intra,'rf', [5]); % refinement
     dvput(prj_intra,'rff', [2]); % refinement factor
-    dvput(prj_intra,'lim', [10]); % shift limit
+    dvput(prj_intra,'lim', [zshift_limit]); % shift limit
     dvput(prj_intra,'limm',[1]); % limit mode
     dvput(prj_intra,'sym', 'c1'); % symmetry
 
