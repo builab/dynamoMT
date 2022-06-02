@@ -13,7 +13,6 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 
 % Input
 filamentListFile = 'filamentList.csv';
-alnDir = sprintf('%sintraAln', prjPath);
 particleDir = sprintf('%sparticles_repick', prjPath);
 mw = 12; % Number of parallel workers to run
 gpu = [0:5]; % Alignment using gpu
