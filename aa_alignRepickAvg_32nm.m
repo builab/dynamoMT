@@ -16,7 +16,7 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/base_CP/';
 
 % Input
 filamentListFile = 'filamentList.csv';
-particleDir = sprintf('%sparticles_repick_32nm', prjPath);
+particleDir = sprintf('%sparticles_repick', prjPath);
 alnDir = sprintf('%srepick_aln_32nm', prjPath);
 
 mw = 12; % Number of parallel workers to run
@@ -40,7 +40,7 @@ mkdir(alnDir)
 % Calculate the alignment of the filamentAverage to the initial reference
 % transform the corresponding table for all particles
 for idx = 1:noFilament
-	aPath = ([particleDir '/' filamentList{idx} '/template.em']); % Read the path of the alignment project average
+	aPath = ([particleDir '/' filamentList{idx} '/template32nm.em']); % Read the path of the alignment project average
 	tPath = ([particleDir '/' filamentList{idx} '/crop.tbl']); 
 	filamentAvg = dread(aPath);
 	
