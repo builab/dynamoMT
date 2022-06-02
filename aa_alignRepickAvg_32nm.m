@@ -71,7 +71,7 @@ for idx = 1:noFilament
 	% Apple 2nd round alignment
 	tFilament_ali_r2 = dynamo_table_rigid(tFilament_ali, sal2.Tp);
 	% Write table
-	dwrite(tFilament_ali_r2, [particleDir '/' filamentList{idx} '/aligned.tbl'])
+	dwrite(tFilament_ali_r2, [particleDir '/' filamentList{idx} '/aligned_32nm.tbl'])
 	
 	% For Checking
 	dwrite(sal2.aligned_particles, [alnDir '/' filamentList{idx} '_aln_r2.em']);
@@ -82,7 +82,7 @@ end
 % Generate updated reference
 for idx = 1:noFilament
 	% Read the updated table
-	tFilament_ali = dread([particleDir '/' filamentList{idx} '/aligned.tbl']); % Deviate from 16-nm repick
+	tFilament_ali = dread([particleDir '/' filamentList{idx} '/aligned_32nm.tbl']); % Deviate from 16-nm repick
 	targetFolder = [particleDir '/' filamentList{idx}];
 	disp(targetFolder)
 	oa = daverage(targetFolder, 't', tFilament_ali, 'fc', 1, 'mw', mw);
