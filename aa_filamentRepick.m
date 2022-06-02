@@ -79,6 +79,7 @@ for idx = 1:nTomo
 	
 	% Plotting save & close
 	dtplot([targetFolder '/crop.tbl'], 'pf', 'oriented_positions');
+	axis equal
 	print([targetFolder '/repick_' tomoName] , '-dpng');
 	close all
 	
