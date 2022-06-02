@@ -9,21 +9,21 @@
 run /london/data0/software/dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
+prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/base_CP/';
 
 % Input
 filamentListFile = 'filamentList.csv';
 alnDir = sprintf('%sintraAln', prjPath);
 particleDir = sprintf('%sparticles', prjPath);
 mw = 12; % Number of parallel workers to run
-gpu = [0:5]; % Alignment using gpu
-template_name = 'reference_dPhi.em';
+gpu = [0:2]; % Alignment using gpu
+template_name = 'ref_base.em';
 tableFileName = 'merged_particles.tbl'; % merged particles table all
 tableOutFileName = 'merged_particles_align.tbl'; % merged particles table all
 starFileName = 'merged_particles.star'; % star file name for merged particles
 pAlnAll = 'pAlnAllParticles';
-refMask = 'masks/mask_cp_tip_24.em';
-lowpass = 27; % 30Angstrom filter in fourier pixel
+refMask = 'masks/mask_cp_base_bin4.em';
+lowpass = 40; % 30Angstrom filter in fourier pixel
 
 
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
@@ -64,8 +64,8 @@ dvput(pAlnAll,'file_mask',refMask)
 
 % set alignment parameters
 dvput(pAlnAll,'ite', [2 2]);
-dvput(pAlnAll,'dim', [96 96]);
-dvput(pAlnAll,'low', [20 20]);
+dvput(pAlnAll,'dim', [144 144]);
+dvput(pAlnAll,'low', [40 40]);
 dvput(pAlnAll,'cr', [15 6]);
 dvput(pAlnAll,'cs', [5 2]);
 dvput(pAlnAll,'ir', [15 6]);
