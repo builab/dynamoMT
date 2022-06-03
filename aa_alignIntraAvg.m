@@ -4,6 +4,9 @@
 % dynamoDMT v0.1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% TODO
+% Incoporate the subunit initial rot angle (tdrot)
+
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
 run /london/data0/software/dynamo/dynamo_activate.m
@@ -45,6 +48,9 @@ for idx = 1:noFilament
   		sal = dalign(dynamo_bandpass(filamentAvg,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',20,'cs',10,'ir',360,'is',10,'dim',96, 'limm',1,'lim',[20,20,20],'rf',5,'rff',2); % no cone_flip
 	end
 	%dview(sal.aligned_particle);
+	% 0.2b Write out the transform
+	dwrite(sal.Tp, [particleDir '/' filamentList{idx} '/transform.tbl']);
+	
 	% Write out preview
 	filt_aligned_particle = dynamo_bandpass(sal.aligned_particle, [1 lowpass]);
 	img = sum(filt_aligned_particle(:,:,floor(boxSize/2) - 10: floor(boxSize/2) + 10), 3);
