@@ -7,6 +7,9 @@
 % dynamoDMT v0.11
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+TODO: Eliminate by CCC
+TODO: Eliminate Overlapping
+
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
 run /london/data0/software/dynamo/dynamo_activate.m
