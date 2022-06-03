@@ -49,7 +49,7 @@ for idx = 1:noFilament
 	end
 	%dview(sal.aligned_particle);
 	% 0.2b Write out the transform
-	dwrite(sal.Tp, [particleDir '/' filamentList{idx} '/transform.tbl']);
+	writematrix([shifts sal.p_euler], [particleDir '/' filamentList{idx} '/transform.tbl'], 'Delimiter', ' ');
 	
 	% Write out preview
 	filt_aligned_particle = dynamo_bandpass(sal.aligned_particle, [1 lowpass]);
