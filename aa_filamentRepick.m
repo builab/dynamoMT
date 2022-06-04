@@ -36,7 +36,7 @@ fileID = fopen(docFilePath); D = textscan(fileID,'%d %s'); fclose(fileID);
 tomoID = D{1,1}'; % get tomogram ID
 nTomo = length(D{1,2}); % get total number of tomograms
 
-tblAll = dread(tableAlnFileName);
+tAll = dread(tableAlnFileName);
 
 % Loop through tomograms
 for idx = 1:nTomo
@@ -45,15 +45,20 @@ for idx = 1:nTomo
     tomono = D{1,1}(idx);
     % Modify specific to name
     tomoName = strrep(tomoName, '_rec', ''); % Remove the rec part of the name
-    tableTomo = tblAll(tblAll(:,20) == tomono, :);
+    tTomo = tAll(tAll(:,20) == tomono, :);
 
-	modelout =   [modelDir '/' tomoName '.omd']  
-    points = tableTomo(:, 24:26) + tableTomo(:, 4:6);
+    modelout =   [modelDir '/' tomoName '.omd'];
+    contour = unique(tTomo(:, 23));
+
     
-    contour = [1];
-    % Compatible with doublet microtubule
+    
+    % 0.2b Now use col 23 as filament number
     m = {}; % Cell array contains all filament
+    
 	for i = 1:length(contour)
+		tContour = tTomo(tTomo(:, 23) == contour(i), :);
+		points = tContour(:, 24:26) + tContour(:, 4:6);
+
    	 	m{i} = dmodels.filamentWithTorsion();
     	m{i}.subunits_dphi = subunits_dphi;
     	m{i}.subunits_dz = subunits_dz;
