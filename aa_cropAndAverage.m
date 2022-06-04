@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Script to generate initial average
-% dynamoDMT v0.1
+% dynamoDMT v0.2b
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%% Before Running Script %%%%%%%%%%
@@ -46,9 +46,9 @@ for idx = 1:length(filamentList)
   end 
  
   oa = daverage(targetFolder, 't', tImport, 'fc', 1, 'mw', mw);
-  dwrite(dynamo_bandpass(oa.average, [1 lowpass]), [targetFolder '/template.em']);
+  dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/lowpass*boxSize)]), [targetFolder '/template.em']);
   dtplot([targetFolder '/crop.tbl'], 'pf', 'oriented_positions');
-  view(-230, 30);axis equal;
+  view(-230, 30); axis equal;
   print([targetFolder '/pick_' filamentList{idx}] , '-dpng');
   close all
 
