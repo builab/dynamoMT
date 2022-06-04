@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Script to align intra average of each doublet with a reference
 % and transform all the alignment to an updated table.
-% dynamoDMT v0.1
+% dynamoDMT v0.2b
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% TODO
@@ -15,6 +15,8 @@ run /london/data0/software/dynamo/dynamo_activate.m
 prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 
 % Input
+pixelSize = 8.48;
+boxSize = 96;
 filamentListFile = 'filamentList.csv';
 alnDir = sprintf('%sintraAln', prjPath);
 particleDir = sprintf('%sparticles', prjPath);
@@ -25,12 +27,16 @@ gpu = [0:5]; % Alignment using gpu
 initRefFile = 'reference_all.em';
 coneFlip = 0; % Search for polarity. 1 is yes. Recommended to pick with polarity and set to 0
 newRefFile = 'reference_dPhi.em';
-lowpass = 27; % Fourier pixel. Filter the average to 30 Angstrom equivalent
+avgLowpass = 30; % Angstrom
+alnLowpass = 30; % Angstrom
+shiftLimit = [20 20 20];
+
 
 
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
 noFilament = length(filamentList);
 template = dread(initRefFile);
+alnLowpassPix = round(pixelSize/alnLowpass*boxSize);
 
 % Need to go into alnDir to read the intraAln project
 cd(alnDir)
@@ -43,16 +49,16 @@ for idx = 1:noFilament
 	filamentAvg = dread(aPath);
 	boxSize = length(filamentAvg);
 	if coneFlip > 0
-  		sal = dalign(dynamo_bandpass(filamentAvg,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',15,'cs',5,'ir',360,'is',10,'dim',96, 'limm',1,'lim',[20,20,20],'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
+  		sal = dalign(dynamo_bandpass(filamentAvg,[1 alnLowpassPix]), dynamo_bandpass(template,[1 alnLowpassPix]),'cr',15,'cs',5,'ir',360,'is',10,'dim',boxSize, 'limm',1,'lim',shiftLimit,'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
 	else
-  		sal = dalign(dynamo_bandpass(filamentAvg,[1 lowpass]), dynamo_bandpass(template,[1 lowpass]),'cr',20,'cs',10,'ir',360,'is',10,'dim',96, 'limm',1,'lim',[20,20,20],'rf',5,'rff',2); % no cone_flip
+  		sal = dalign(dynamo_bandpass(filamentAvg,[1 alnLowpassPix]), dynamo_bandpass(template,[1 alnLowpassPix]),'cr',20,'cs',10,'ir',360,'is',10,'dim',boxSize, 'limm',1,'lim',shiftLimit,'rf',5,'rff',2); % no cone_flip
 	end
 	%dview(sal.aligned_particle);
 	% 0.2b Write out the transform
-	writematrix([shifts sal.p_euler], [particleDir '/' filamentList{idx} '/transform.tbl'], 'Delimiter', ' ');
+	writematrix([sal.p_shifts sal.p_euler], [particleDir '/' filamentList{idx} '/xform.tbl'], 'Delimiter', 'tab');
 	
 	% Write out preview
-	filt_aligned_particle = dynamo_bandpass(sal.aligned_particle, [1 lowpass]);
+	filt_aligned_particle = dynamo_bandpass(sal.aligned_particle, [1 round(pixelSize/avgLowpass*boxSize)]);
 	img = sum(filt_aligned_particle(:,:,floor(boxSize/2) - 10: floor(boxSize/2) + 10), 3);
 	imwrite(mat2gray(img), [previewDir '/' filamentList{idx} '_aln.png'])
 	% Read last table from alignment
@@ -72,7 +78,7 @@ for idx = 1:noFilament
 	targetFolder = [particleDir '/' filamentList{idx}];
 	disp(targetFolder)
 	oa = daverage(targetFolder, 't', tFilament_ali, 'fc', 1, 'mw', mw);
-	dwrite(dynamo_bandpass(oa.average, [1 lowpass]), [targetFolder '/alignedTemplate.em']);
+	dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/avgLowpass*boxSize)]), [targetFolder '/alignedTemplate.em']);
 
 	if idx == 1
 		newTemplate = oa.average;
