@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Script to convert IMOD model to filament torsion model
-% dynamoDMT v0.1
+% dynamoDMT v0.2b
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Using GUI https://wiki.dynamo.biozentrum.unibas.ch/w/index.php/Filament_model
 % Imod coordinate should be in text file, clicking along the filament (no direction needed)
@@ -9,6 +9,7 @@
 % NOTE: Important to have tomogram number 
 % NOTE: If the filament twist (microtubule/CP), we need to define subunits_dphi to describe the torsion.
 % however, it might be related to the polarity of the filament (- or + sign).
+% NOTE: Add filament number to Column 23
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
@@ -72,6 +73,9 @@ for idx = 1:nTomo
 
         % Testing this block
         t = m{i}.grepTable();
+        
+        % 0.2b addition
+        t(:,23) = contour(i);
         dwrite(t, [modelDir '/' tomoName '_' num2str(contour(i)) '.tbl']);
         % Optional for visualization of table
         %dtplot(['particles/' tomoName '_' num2str(contour(i)) '/crop.tbl'], 'pf', 'oriented_positions');
