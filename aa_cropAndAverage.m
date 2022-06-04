@@ -17,9 +17,10 @@ docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 filamentListFile = sprintf('%sfilamentList.csv', prjPath);
 modelDir = sprintf('%smodels', prjPath);
 particleDir = sprintf('%sparticles', prjPath);
+pixelSize = 8.48; % Use to calculate lowpass
 boxSize = 96; % Extracted subvolume size
 mw = 12; % Number of parallel workers to run
-lowpass = 16; % Filter the initial average to 60
+lowpass = 60; % In Angstrom Filter the initial average to 60
 
 % Read the list of filament to work with
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
@@ -47,8 +48,8 @@ for idx = 1:length(filamentList)
   oa = daverage(targetFolder, 't', tImport, 'fc', 1, 'mw', mw);
   dwrite(dynamo_bandpass(oa.average, [1 lowpass]), [targetFolder '/template.em']);
   dtplot([targetFolder '/crop.tbl'], 'pf', 'oriented_positions');
-	view(-230, 30);axis equal;
-	print([targetFolder '/pick_' tomoName] , '-dpng');
-	close all
+  view(-230, 30);axis equal;
+  print([targetFolder '/pick_' filamentList{idx}] , '-dpng');
+  close all
 
 end
