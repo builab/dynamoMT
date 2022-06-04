@@ -1,10 +1,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Script to apply alignment parameters to repick filament with torsion model
 % Should have same parameters as imodModel2Filament
-% dynamoDMT v0.1
+% dynamoDMT v0.2b
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Using GUI https://wiki.dynamo.biozentrum.unibas.ch/w/index.php/Filament_model
 % Now also printing output
+% NOTE: v0.2b add CC filter using median(cc) - 3*mad(cc) or using same way as gmdist
+% NOTE: v0.2b add different contour
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
