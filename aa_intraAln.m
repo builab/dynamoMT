@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Script to align subtomogram within the same filament
-% dynamoDMT v0.1
+% dynamoDMT v0.2b
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % If you have good dPhi & shift, you can limit a bit stricter
 % The proj must be a direct folder
@@ -22,8 +22,9 @@ particleDir = sprintf('%sparticles', prjPath);
 boxSize = 96; % Original extracted subvolume size
 mw = 12; % Number of parallel workers to run
 gpu = [0:5]; % Alignment using gpu for titann setting
-pixelsize = 8.48; % Angstrom per pixel
-lowpass = 20; % low pass filter the intraAvg to ~40 Angstrom in Fourier pixel
+pixelSize = 8.48; % Angstrom per pixel
+avgLowpass = 30; % In Angstrom to convert to Fourier Pixel
+alnLowpass = 50; % In Angstrom to convert to Fourier Pixel
 zshift_limit = 10; % ~8nm 
 
 
@@ -47,9 +48,9 @@ for idx = 1:length(filamentList)
     dcp.new(prj_intra,'d',prjPaticlesDir,'t',tableName, 'template', template, 'masks','default','show',0);
 
     % set alignment parameters for 2 rounds
-    dvput(prj_intra,'ite', [3]); % n iterations
-    dvput(prj_intra,'dim', [48]); % subvolume sidelength (binning). Use 1/2 box size for quicker
-    dvput(prj_intra,'low', [16]); % lowpass filter
+    dvput(prj_intra,'ite', [3]); % no iterations 3 is reasonable
+    dvput(prj_intra,'dim', [boxSize/2]); % Use 1/2 box size for quicker but full size for good res
+    dvput(prj_intra,'low', [round(pixelSize/alnLowpass*boxSize)]); % lowpass filter
     dvput(prj_intra,'cr', [15]); % cone range
     dvput(prj_intra,'cs', [5]); % cone search step
     dvput(prj_intra,'ir', [15]); % inplane rotation
@@ -73,8 +74,10 @@ for idx = 1:length(filamentList)
     % Generate the average & filter to 30 Angstrom & a png preview
     aPath = ddb([filamentList{idx} ':a']); % Read the path of the alignment project average
     filamentAvg = dread(aPath);
-    filamentAvg = dynamo_bandpass(filamentAvg,[1 lowpass]);
+    filamentAvg = dynamo_bandpass(filamentAvg,[1 round(pixelSize/*avgLowpass*boxSize)]);
     dwrite(filamentAvg, ['avg/' filamentList{idx} '.em']);
+    
+    % Preview
     img = sum(filamentAvg(:,:,floor(boxSize/2) - 10: floor(boxSize/2) + 10), 3);
     imwrite(mat2gray(img), ['preview/' filamentList{idx} '.png'])
 end
