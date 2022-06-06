@@ -59,7 +59,7 @@ for idx = 1:nTomo
     if doExclude > 0
         tTomoEx = dpktbl.exclusionPerVolume(tTomo, dTh/pixelSize);
         tTomo = tTomoEx;
-        print(['Exclude ' num2str(length(tTomo) - length(tTomoEx)) ' particles due to proximity']);
+        display(['Exclude ' num2str(length(tTomo) - length(tTomoEx)) ' particles due to proximity']);
 
     end
     modelout =   [modelDir '/' tomoName '.omd'];
