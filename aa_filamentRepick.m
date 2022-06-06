@@ -5,9 +5,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Using GUI https://wiki.dynamo.biozentrum.unibas.ch/w/index.php/Filament_model
 % Now also printing output
-% NOTE: v0.2b add CC filter using median(cc) - 3*mad(cc) or using same way as gmdist (Not yet working)
-% NOTE: v0.2b add different contour
-% NOTE: v0.2b eliminate duplicate by proximity
+% NOTE: v0.2b add CC filter using median(cc) - 3*mad(cc) 
+% NOTE: v0.2b add different contour (Done)
+% NOTE: v0.2b eliminate duplicate less than dTh (Done)
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
@@ -21,17 +21,21 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 % Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 modelDir = sprintf('%smodels_repick', prjPath);
+origParticleDir = sprintf('%sparticles', prjPath);
 particleDir = sprintf('%sparticles_repick', prjPath);
 c001Dir = sprintf('%scatalogs/c001', prjPath);
-pixelsize = 8.48; % Angstrom per pixel
-periodicity = 82.8; % Using 16-nm of doublet for DMT 
+pixelSize = 8.48; % Angstrom per pixel
+periodicity = 82.8; % Using 16-nm of doublet for DMT
 boxSize = 96;
 mw = 12;
 subunits_dphi = 0.72;  % For the tip CP
 subunits_dz = periodicity/pixelsize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
 filamentListFile = sprintf('%sfilamentList.csv', prjPath);
 tableAlnFileName = 'merged_particles.tbl'; % merge particles before particle alignment for robust
-lowpass = 27; % Filter to 30A
+avgLowpass = 40; % Angstrom
+dTh = 40; % Distance Threshold in Angstrom
+doExclude = 1; % Exclude particles too close
+doOutlier = 0; % Exclude outlier using CC using MAD
 
 
 % loop through all tomograms
@@ -49,49 +53,73 @@ for idx = 1:nTomo
     % Modify specific to name
     tomoName = strrep(tomoName, '_rec', ''); % Remove the rec part of the name
     tTomo = tAll(tAll(:,20) == tomono, :);
+    if isempty(tTomo) == 1
+        continue;
+    end
+    if doExclude > 0
+        tTomoEx = dpktbl.exclusionPerVolume(tTomo, dTh/pixelSize);
+        tTomo = tTomoEx;
+        print(['Exclude ' num2str(len(tTomo) - len(tTomoEx)') ' particles due to proximity']);
 
+    end
     modelout =   [modelDir '/' tomoName '.omd'];
     contour = unique(tTomo(:, 23));
-
-    
     
     % 0.2b Now use col 23 as filament number
     m = {}; % Cell array contains all filament
     
-	for i = 1:length(contour)
-		tContour = tTomo(tTomo(:, 23) == contour(i), :);
-		points = tContour(:, 24:26) + tContour(:, 4:6);
-
-   	 	m{i} = dmodels.filamentWithTorsion();
-    	m{i}.subunits_dphi = subunits_dphi;
-    	m{i}.subunits_dz = subunits_dz;
-    	m{i}.name = [tomoName '_' num2str(contour(i))];
-    	% Import coordinate
-    	m{i}.points = points;
-    	% Create backbone
-   	 	m{i}.backboneUpdate();
-   	 	% Update crop point (can change dz)
-    	m{i}.updateCrop();
-    	% Link to catalog
-    	m{i}.linkCatalogue(c001Dir, 'i', idx);
-    	m{i}.saveInCatalogue();
+    for i = 1:length(contour)        
+        tContour = tTomo(tTomo(:, 23) == contour(i), :);
+       
+        if doOutlier > 0
+            cc = tContour(:, 10);
+            x = median(cc);
+            y = mad(cc);
+            tContour = tContour(cc > x - 3*y, :);
+            print(['Contour ' num2str(contour(i)) ': Exclude ' num2str(sum(cc <= x - 3*y)) ' particles']);
+        end
         
-    	t = m{i}.grepTable();
-    	dwrite(t, [modelDir '/' tomoName '_' num2str(contour(i)) '.tbl']);
-    	targetFolder = [particleDir '/'  tomoName '_' num2str(contour(i))];
-	
-  	% Cropping subtomogram out
-  	dtcrop(docFilePath, t, targetFolder, boxSize, 'mw', mw);
-  	oa = daverage(targetFolder, 't', t, 'fc', 1, 'mw', mw);
-  	dwrite(dynamo_bandpass(oa.average, [1 lowpass]), [targetFolder '/template.em']);
-	
-	% Plotting save & close
-	dtplot([targetFolder '/crop.tbl'], 'pf', 'oriented_positions');
-	axis equal
-	print([targetFolder '/repick_' tomoName] , '-dpng');
-	close all
-	
-    end 
+        
+        if isempty(tContour) == 1
+            continue;
+        end
+        points = tContour(:, 24:26) + tContour(:, 4:6);
+        
+        m{i} = dmodels.filamentWithTorsion();
+        m{i}.subunits_dphi = subunits_dphi;
+        m{i}.subunits_dz = subunits_dz;
+        m{i}.name = [tomoName '_' num2str(contour(i))];
+        % Import coordinate
+        m{i}.points = points;
+        % Create backbone
+        m{i}.backboneUpdate();
+        % Update crop point (can change dz)
+        m{i}.updateCrop();
+        % Link to catalog
+        m{i}.linkCatalogue(c001Dir, 'i', idx);
+        m{i}.saveInCatalogue();
+        t = m{i}.grepTable();
+
+        %v0.2b addition
+        t(:,23) = contour(i); % Additing contour number (filament)
+        
+        
+        
+        dwrite(t, [modelDir '/' tomoName '_' num2str(contour(i)) '.tbl']);
+        targetFolder = [particleDir '/'  tomoName '_' num2str(contour(i))];
+        
+        % Cropping subtomogram out
+        dtcrop(docFilePath, t, targetFolder, boxSize, 'mw', mw);
+        oa = daverage(targetFolder, 't', t, 'fc', 1, 'mw', mw);
+        dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/avgLowpass*boxSize)]), [targetFolder '/template.em']);
+        
+        % Plotting save & close
+        dtplot([targetFolder '/crop.tbl'], 'pf', 'oriented_positions');
+        view(-230, 30); axis equal;
+        print([targetFolder '/repick_' tomoName] , '-dpng');
+        close all
+        
+    end
     % Write the DynamoModel
     dwrite(m, modelout);
 end
