@@ -6,6 +6,7 @@
 
 %% TODO
 % Incoporate the subunit initial rot angle (tdrot)
+% TODO Incorporate random rotation for microtubule alignment?
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
