@@ -8,6 +8,7 @@
 % NOTE: v0.2b add CC filter using median(cc) - 3*mad(cc) 
 % NOTE: v0.2b add different contour (Done)
 % NOTE: v0.2b eliminate duplicate less than dTh (Done)
+% This doesn't run well yet.
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
