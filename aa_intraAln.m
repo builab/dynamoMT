@@ -74,7 +74,7 @@ for idx = 1:length(filamentList)
     % Generate the average & filter to 30 Angstrom & a png preview
     aPath = ddb([filamentList{idx} ':a']); % Read the path of the alignment project average
     filamentAvg = dread(aPath);
-    filamentAvg = dynamo_bandpass(filamentAvg,[1 round(pixelSize/*avgLowpass*boxSize)]);
+    filamentAvg = dynamo_bandpass(filamentAvg,[1 round(pixelSize/avgLowpass*boxSize)]);
     dwrite(filamentAvg, ['avg/' filamentList{idx} '.em']);
     
     % Preview
