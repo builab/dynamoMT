@@ -47,7 +47,7 @@ for idx = 1:noFilament
 	end
 	
 	%dview(sal.aligned_particle);
-	=% Write out preview
+	% Write out preview
 	filt_aligned_particle = dynamo_bandpass(sal.aligned_particle, [1 round(pixelSize/avgLowpass*boxSize)]);
 	img = sum(filt_aligned_particle(:,:,floor(boxSize/2) - 10: floor(boxSize/2) + 10), 3);
 	imwrite(mat2gray(img), [previewDir '/' filamentList{idx} '_aln.png'])
