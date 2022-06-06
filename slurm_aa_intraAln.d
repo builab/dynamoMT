@@ -5,7 +5,7 @@
 #SBATCH --error=aa_intraAln.err
 #SBATCH --output=aa_intraAln.out
 #SBATCH --cpus-per-task=12
-#SBATCH --gres=gpu:2
+#SBATCH --gres=gpu:6
 #SBATCH --nodes=1
 #SBATCH --mem-per-cpu=15GB
 
