@@ -76,7 +76,7 @@ for idx = 1:nTomo
             x = median(cc);
             y = mad(cc);
             tContour = tContour(cc > x - 3*y, :);
-            print(['Contour ' num2str(contour(i)) ': Exclude ' num2str(sum(cc <= x - 3*y)) ' particles']);
+            display(['Contour ' num2str(contour(i)) ': Exclude ' num2str(sum(cc <= x - 3*y)) ' particles']);
         end
         
         
