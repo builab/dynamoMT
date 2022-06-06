@@ -16,6 +16,7 @@ pixelSize = 8.48;
 boxSize = 96;
 filamentListFile = 'filamentList.csv';
 particleDir = sprintf('%sparticles_repick', prjPath);
+previewDir =[particleDir '/preview']; % created from previously
 mw = 12; % Number of parallel workers to run
 gpu = [0:5]; % Alignment using gpu
 
@@ -32,6 +33,7 @@ template = dread(initRefFile);
 
 
 alnLowpassPix = round(pixelSize/alnLowpass*boxSize);
+mkdir(previewDir)
 % Calculate the alignment of the filamentAverage to the initial reference
 % transform the corresponding table for all particles
 for idx = 1:noFilament
@@ -45,12 +47,19 @@ for idx = 1:noFilament
 	end
 	
 	%dview(sal.aligned_particle);
+	=% Write out preview
+	filt_aligned_particle = dynamo_bandpass(sal.aligned_particle, [1 round(pixelSize/avgLowpass*boxSize)]);
+	img = sum(filt_aligned_particle(:,:,floor(boxSize/2) - 10: floor(boxSize/2) + 10), 3);
+	imwrite(mat2gray(img), [previewDir '/' filamentList{idx} '_aln.png'])
+	
 	% Read last table from alignment
 	tFilament = dread(tPath);
 	% Read last transformation & applied to table
 	tFilament_ali = dynamo_table_rigid(tFilament, sal.Tp);
 	% Write table
 	dwrite(tFilament_ali, [particleDir '/' filamentList{idx} '/aligned.tbl'])
+	
+
 end
  
 
