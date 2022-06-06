@@ -5,8 +5,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Using GUI https://wiki.dynamo.biozentrum.unibas.ch/w/index.php/Filament_model
 % Now also printing output
-% NOTE: v0.2b add CC filter using median(cc) - 3*mad(cc) or using same way as gmdist
+% NOTE: v0.2b add CC filter using median(cc) - 3*mad(cc) or using same way as gmdist (Not yet working)
 % NOTE: v0.2b add different contour
+% NOTE: v0.2b eliminate duplicate by proximity
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
