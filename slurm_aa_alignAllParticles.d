@@ -2,8 +2,8 @@
 #SBATCH --ntasks=1                
 #SBATCH --partition=titan
 #SBATCH --job-name=alignAll # Job name
-#SBATCH --error=aa_alinAll_all.err
-#SBATCH --output=aa_alignAll_all.out
+#SBATCH --error=aa_alignAll.err
+#SBATCH --output=aa_alignAll.out
 #SBATCH --cpus-per-task=12
 #SBATCH --gres=gpu:6
 #SBATCH --nodes=1
