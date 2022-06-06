@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Script to align repick average of each doublet with a reference
 % and transform all the alignment to an updated table.
-% dynamoDMT v0.11
+% dynamoDMT v0.2b
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%% Before Running Script %%%%%%%%%%
@@ -23,7 +23,8 @@ gpu = [0:5]; % Alignment using gpu
 initRefFile = 'reference_all.em';
 coneFlip = 0; % Search for polarity. 1 is yes. Recommended to pick with polarity and set to 0
 newRefFile = 'reference_repick.em';
-alnLowpass = 27; % Angstrom
+alnLowpass = 40; % Angstrom
+avgLowpass = 30; % Angstrom
 zshift_limit = 6; % ~4nm shift limit in pixel
 
 
@@ -40,6 +41,7 @@ for idx = 1:noFilament
 	aPath = ([particleDir '/' filamentList{idx} '/template.em']); % Read the path of the alignment project average
 	tPath = ([particleDir '/' filamentList{idx} '/crop.tbl']); 
 	filamentAvg = dread(aPath);
+    disp(filamentList{idx})
 	if coneFlip > 0
   		sal = dalign(dynamo_bandpass(filamentAvg,[1 alnLowpassPix]), dynamo_bandpass(template,[1 alnLowpassPix]),'cr',10,'cs',5,'ir',360,'is',5,'dim',boxSize, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
 	else
@@ -56,7 +58,7 @@ for idx = 1:noFilament
 	tFilament = dread(tPath);
 	% Read last transformation & applied to table
 	tFilament_ali = dynamo_table_rigid(tFilament, sal.Tp);
-	% Write table
+	% Write tablev
 	dwrite(tFilament_ali, [particleDir '/' filamentList{idx} '/aligned.tbl'])
 	
 
@@ -70,7 +72,7 @@ for idx = 1:noFilament
 	targetFolder = [particleDir '/' filamentList{idx}];
 	disp(targetFolder)
 	oa = daverage(targetFolder, 't', tFilament_ali, 'fc', 1, 'mw', mw);
-	dwrite(dynamo_bandpass(oa.average, [1 alnLowpassPix]), [targetFolder '/alignedTemplate.em']);
+	dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/avgLowpass*boxSize)]), [targetFolder '/alignedTemplate.em']);
 
 	if idx == 1
 		newTemplate = oa.average;
