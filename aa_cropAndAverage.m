@@ -47,8 +47,8 @@ for idx = 1:length(filamentList)
   oa = daverage(targetFolder, 't', tImport, 'fc', 1, 'mw', mw);
   dwrite(dynamo_bandpass(oa.average, [1 lowpass]), [targetFolder '/template.em']);
   dtplot([targetFolder '/crop.tbl'], 'pf', 'oriented_positions');
-	view(-230, 30);axis equal;
-	print([targetFolder '/pick_' tomoName] , '-dpng');
-	close all
+  view(-230, 30);axis equal;
+  print([targetFolder '/pick_' filamentList{idx}] , '-dpng');
+  close all
 
 end
