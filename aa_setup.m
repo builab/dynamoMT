@@ -26,7 +26,7 @@ modDir = '/london/data0/20220404_TetraCU428_Tip_TS/ts/';
 prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 modFileDelimiter = 'CU428*/tip_CP.mod';
 stringToBeRemoved = '/tip_CP.mod';
-recSuffix = '_rec.mrc';
+recSuffix = '_rec';
 apixel = '8.48';
 
 %%%%%%%%% Do not change anything under here %%%%%%%%%%
@@ -55,7 +55,8 @@ vllFilePath = sprintf('%scatalogs/tomograms.vll', prjPath);
 
 pathToModelScript = fullfile(sprintf('%sdynamoDMT', prjPath), 'vllAndDocScript.sh');
 
-cmdStr = [pathToModelScript ' ' modDir ' ' listOfTomograms ' ' modelfile ' ' stringToBeRemoved ' ' docFilePath ' ' vllFilePath ' ' recSuffix ' ' apixel];
+% v0.2b change
+cmdStr = [pathToModelScript ' ' modDir ' ' listOfTomograms ' ' modelfile ' ' stringToBeRemoved ' ' docFilePath ' ' vllFilePath ' ' recSuffix '.mrc ' apixel];
 system(cmdStr);
 
 % Create new catalogue from vll file, delete old one
