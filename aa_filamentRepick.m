@@ -30,7 +30,7 @@ periodicity = 82.8; % Using 16-nm of doublet for DMT
 boxSize = 96;
 mw = 12;
 subunits_dphi = 0.72;  % For the tip CP
-subunits_dz = periodicity/pixelsize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
+subunits_dz = periodicity/pixelSize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
 filamentListFile = sprintf('%sfilamentList.csv', prjPath);
 tableAlnFileName = 'merged_particles.tbl'; % merge particles before particle alignment for robust
 avgLowpass = 40; % Angstrom
