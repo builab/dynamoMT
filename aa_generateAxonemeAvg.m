@@ -34,20 +34,20 @@ for idx = 1:noFilament
 	% Read the updated table
  	% Check the same tomo
 	targetFolder = [particleDir '/' filamentList{idx}];
-	display(['Processing ' filamentList{idx}]);
 	tomoName = regexprep(filamentList{idx}, '_\d+$', '');
 	if strcmp(tomoName, prevTomoName)
 		avg = avg + dread([targetFolder '/alignedTemplate.em']);
 	else
 		if ~strcmp(prevTomoName, '')
-			disp(['Write out ' alnDir '/avg/' tomoName '.em']);
-			dwrite(dynamo_bandpass(avg, [1 avgLowpassPix]), [alnDir '/avg/' tomoName '.em']);
+			disp(['Write out ' alnDir '/avg/' prevTomoName '.em']);
+			dwrite(dynamo_bandpass(avg, [1 avgLowpassPix]), [alnDir '/avg/' prevTomoName '.em']);
 		end
 		avg = zeros(boxSize, boxSize, boxSize);
 		prevTomoName = tomoName;
 	end
+	display(['Processing ' filamentList{idx}]);
 end
 
 % For last axoneme
-disp(['Write out ' alnDir '/avg/' tomoName '.em']);
-dwrite(dynamo_bandpass(avg, [1 avgLowpassPix]), [alnDir '/avg/' tomoName '.em']);
+disp(['Write out ' alnDir '/avg/' prevTomoName '.em']);
+dwrite(dynamo_bandpass(avg, [1 avgLowpassPix]), [alnDir '/avg/' prevTomoName '.em']);
