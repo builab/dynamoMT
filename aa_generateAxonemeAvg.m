@@ -4,8 +4,6 @@
 % dynamoDMT v0.2b
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-NOT DONE!!!!
-
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
 run /london/data0/software/dynamo/dynamo_activate.m
@@ -26,26 +24,29 @@ avgLowpass = 30; % Angstrom
 
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
 noFilament = length(filamentList);
-alnLowpassPix = round(pixelSize/alnLowpass*boxSize);
+avgLowpassPix = round(pixelSize/avgLowpass*boxSize);
 
+prevTomoName ='';
+avg = zeros(boxSize, boxSize, boxSize);
 
 % Generate axoneme average
 for idx = 1:noFilament
 	% Read the updated table
-  % Check the same tomo
-	tFilament_ali = dread([particleDir '/' filamentList{idx} '/aligned.tbl']); 
+ 	% Check the same tomo
 	targetFolder = [particleDir '/' filamentList{idx}];
-	disp(targetFolder)
-	oa = daverage(targetFolder, 't', tFilament_ali, 'fc', 1, 'mw', mw);
-	dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/avgLowpass*boxSize)]), [targetFolder '/alignedTemplate.em']);
-
-	if idx == 1
-		newTemplate = oa.average;
+	tomoName = regexprep(filamentList{idx}, '_\d+$', '');
+	if strcmp(tomoName, prevTomoName)
+		avg = avg + dread([targetFolder '/alignedTemplate.em']);
 	else
-		newTemplate = newTemplate + oa.average;
+		if ~strcmp(prevTomoName, '')
+			disp(['Write out ' alnDir '/avg/' tomoName '.em']);
+			dwrite(dynamo_bandpass(avg, [1 avgLowpassPix]), [alnDir '/avg/' tomoName '.em']);
+		end
+		avg = zeros(boxSize, boxSize, boxSize);
+		prevTomoName = tomoName;
 	end
 end
 
-% Calculate average
-newTemplate = newTemplate/noFilament;
-dwrite(newTemplate, newRefFile);
+% For last axoneme
+disp(['Write out ' alnDir '/avg/' tomoName '.em']);
+dwrite(dynamo_bandpass(avg, [1 avgLowpassPix]), [alnDir '/avg/' tomoName '.em']);
