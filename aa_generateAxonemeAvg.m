@@ -34,6 +34,7 @@ for idx = 1:noFilament
 	% Read the updated table
  	% Check the same tomo
 	targetFolder = [particleDir '/' filamentList{idx}];
+	display(['Processing ' filamentList{idx}]);
 	tomoName = regexprep(filamentList{idx}, '_\d+$', '');
 	if strcmp(tomoName, prevTomoName)
 		avg = avg + dread([targetFolder '/alignedTemplate.em']);
