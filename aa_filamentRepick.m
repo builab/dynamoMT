@@ -26,10 +26,10 @@ origParticleDir = sprintf('%sparticles', prjPath);
 particleDir = sprintf('%sparticles_repick', prjPath);
 c001Dir = sprintf('%scatalogs/c001', prjPath);
 pixelSize = 8.48; % Angstrom per pixel
-periodicity = 82.8; % Using 16-nm of doublet for DMT
+periodicity = 82.8; % 82.8 for tipCP, xx for baseCP, 169 doublet
 boxSize = 96;
 mw = 12;
-subunits_dphi = 0.72;  % For the tip CP
+subunits_dphi = 0.72;  % For the tip CP 0.72, baseCP 0.5, doublet 0
 subunits_dz = periodicity/pixelSize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
 filamentListFile = sprintf('%sfilamentList.csv', prjPath);
 tableAlnFileName = 'merged_particles.tbl'; % merge particles before particle alignment for robust
