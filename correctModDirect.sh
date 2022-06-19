@@ -19,4 +19,4 @@ else
   sort -k1,1n -k 3nr ${basename}.txt > ${basename}_fix.txt
 fi
 
-point2model ${basename}.txt $3
+point2model ${basename}_fix.txt $3
