@@ -24,6 +24,7 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 modelDir = sprintf('%smodels', prjPath);
 c001Dir = sprintf('%scatalogs/c001', prjPath);
+rec_suffix = '_rec'; % The suffix path without .mrc
 pixelSize = 8.48; % Angstrom per pixel
 periodicity = 82.8; % Using 16-nm of doublet for DMT 
 subunits_dphi = 0.72;  % For the tip CP
@@ -42,7 +43,7 @@ for idx = 1:nTomo
     tomo = D{1,2}{idx,1};
     [tomoPath,tomoName,ext] = fileparts(tomo);
     % Modify specific to name
-    tomoName = strrep(tomoName, '_rec', ''); % Remove the rec part of the name
+    tomoName = strrep(tomoName, rec_suffix, ''); % Remove the rec part of the name from IMOD
     imodModel = [modelDir '/' tomoName '.txt'];
     modelout = strrep(imodModel, '.txt', '.omd');
     
