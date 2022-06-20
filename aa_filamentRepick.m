@@ -9,6 +9,8 @@
 % NOTE: v0.2b add different contour (Done)
 % NOTE: v0.2b eliminate duplicate less than dTh (Done)
 % This doesn't run well yet.
+% Seems to work better running on merged_particles.tbl instead of merged_particles_aln.tbl
+% Implement a nearest neighbour for angle assignnment
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
