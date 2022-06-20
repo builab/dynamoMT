@@ -88,7 +88,7 @@ for idx = 1:nTomo
             continue;
         end
         points = tContour(:, 24:26) + tContour(:, 4:6);
-        
+       
         m{i} = dmodels.filamentWithTorsion();
         m{i}.subunits_dphi = subunits_dphi;
         m{i}.subunits_dz = subunits_dz;
