@@ -24,7 +24,7 @@ mw = 12; % Number of parallel workers to run
 gpu = [0:5]; % Alignment using gpu for titann setting
 pixelSize = 8.48; % Angstrom per pixel
 avgLowpass = 30; % In Angstrom to convert to Fourier Pixel
-alnLowpass = 50; % In Angstrom to convert to Fourier Pixel
+alnLowpass = 50; % In Angstrom to convert to Fourier Pixel, 50 if you only need to align the filament well, 35-40Angstrom for clear tubulin MT
 zshift_limit = 10; % ~8nm 
 
 
