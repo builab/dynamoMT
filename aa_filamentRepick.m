@@ -39,6 +39,7 @@ avgLowpass = 40; % Angstrom
 dTh = 40; % Distance Threshold in Angstrom
 doExclude = 1; % Exclude particles too close
 doOutlier = 0; % Exclude outlier using CC using MAD
+doInitialAngle = 0; % Only turn on for axoneme case now
 
 
 % loop through all tomograms
@@ -82,7 +83,6 @@ for idx = 1:nTomo
             display(['Contour ' num2str(contour(i)) ': Exclude ' num2str(sum(cc <= x - 3*y)) ' particles']);
         end
         
-        phi = median(tContour(:, 9));
         
         if isempty(tContour) == 1
             continue;
@@ -92,7 +92,10 @@ for idx = 1:nTomo
         m{i} = dmodels.filamentWithTorsion();
         m{i}.subunits_dphi = subunits_dphi;
         m{i}.subunits_dz = subunits_dz;
-        m{i}.subunits_initial_angle = phi;
+        if doInitialAngle > 0
+            phi = median(tContour(:, 9));
+            m{i}.subunits_initial_angle = phi;
+        end
         
         m{i}.name = [tomoName '_' num2str(contour(i))];
         % Import coordinate
