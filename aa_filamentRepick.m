@@ -113,7 +113,14 @@ for idx = 1:nTomo
         
         % Cropping subtomogram out
         dtcrop(docFilePath, t, targetFolder, boxSize, 'mw', mw);
-        oa = daverage(targetFolder, 't', t, 'fc', 1, 'mw', mw);
+        % Average the middle region again
+        midIndex = floor(size(t, 1)/2);
+        if size(t, 1) > 15
+            tMiddle = t(midIndex - 3: midIndex + 4, :);
+        else
+            tMiddle = t;
+        end 
+        oa = daverage(targetFolder, 't', tMiddle, 'fc', 1, 'mw', mw);
         dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/avgLowpass*boxSize)]), [targetFolder '/template.em']);
         
         % Plotting save & close
