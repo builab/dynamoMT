@@ -109,8 +109,10 @@ for idx = 1:nTomo
         t(:,23) = contour(i); % Additing contour number (filament)
         
         if doInitialAngle > 0
-            phi = median(tContour(:, 9)); % Same as AA
-            t(:, 9) = phi;
+            phi = median(tContour(:, 9)); % Same as AA         
+            %midIndex = floor(size(t, 1)/2);
+            %t(:, 9 = t(:, 9) - t(midIndex, 9) + phi; 
+            t(:, 9) = phi; % This works will in case of doublet, in case of tip/base cp, make the middle value to this and then same shift
         end
         
         dwrite(t, [modelDir '/' tomoName '_' num2str(contour(i)) '.tbl']);
