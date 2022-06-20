@@ -8,7 +8,7 @@
 % NOTE: v0.2b add CC filter using median(cc) - 3*mad(cc) 
 % NOTE: v0.2b add different contour (Done)
 % NOTE: v0.2b eliminate duplicate less than dTh (Done)
-% This doesn't run well yet.
+% NOTE: v0.2b find nearest neighbour for angle
 % Seems to work better running on merged_particles.tbl instead of merged_particles_aln.tbl
 % Implement a nearest neighbour for angle assignnment
 
@@ -82,6 +82,7 @@ for idx = 1:nTomo
             display(['Contour ' num2str(contour(i)) ': Exclude ' num2str(sum(cc <= x - 3*y)) ' particles']);
         end
         
+        phi = median(tContour(:, 9));
         
         if isempty(tContour) == 1
             continue;
@@ -91,6 +92,8 @@ for idx = 1:nTomo
         m{i} = dmodels.filamentWithTorsion();
         m{i}.subunits_dphi = subunits_dphi;
         m{i}.subunits_dz = subunits_dz;
+        m{i}.subunits_initial_angle = phi;
+        
         m{i}.name = [tomoName '_' num2str(contour(i))];
         % Import coordinate
         m{i}.points = points;
