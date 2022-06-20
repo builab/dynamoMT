@@ -92,10 +92,6 @@ for idx = 1:nTomo
         m{i} = dmodels.filamentWithTorsion();
         m{i}.subunits_dphi = subunits_dphi;
         m{i}.subunits_dz = subunits_dz;
-        if doInitialAngle > 0
-            phi = median(tContour(:, 9));
-            m{i}.subunits_initial_angle = phi;
-        end
         
         m{i}.name = [tomoName '_' num2str(contour(i))];
         % Import coordinate
@@ -112,7 +108,10 @@ for idx = 1:nTomo
         %v0.2b addition
         t(:,23) = contour(i); % Additing contour number (filament)
         
-        
+        if doInitialAngle > 0
+            phi = median(tContour(:, 9)); % Same as AA
+            t(:, 9) = phi;
+        end
         
         dwrite(t, [modelDir '/' tomoName '_' num2str(contour(i)) '.tbl']);
         targetFolder = [particleDir '/'  tomoName '_' num2str(contour(i))];
