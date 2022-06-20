@@ -61,12 +61,9 @@ for idx = 1:nTomo
     if isempty(tTomo) == 1
         continue;
     end
-    if doExclude > 0
-        tTomoEx = dpktbl.exclusionPerVolume(tTomo, dTh/pixelSize);
-        tTomo = tTomoEx;
-        display(['Exclude ' num2str(length(tTomo) - length(tTomoEx)) ' particles due to proximity']);
+    
 
-    end
+    
     modelout =   [modelDir '/' tomoName '.omd'];
     contour = unique(tTomo(:, 23));
     
@@ -75,6 +72,14 @@ for idx = 1:nTomo
     
     for i = 1:length(contour)        
         tContour = tTomo(tTomo(:, 23) == contour(i), :);
+        
+        % v0.2b Important: this step invert the Y axis, doing for each contour might help to check for polarity
+        if doExclude > 0
+            tContourEx = dpktbl.exclusionPerVolume(tContour, dTh/pixelSize);
+            % Make sure to sort as before by particles number for not inverting angle
+            tContour = sortrows(tContourEx, 1);
+            display(['Exclude ' num2str(length(tContour) - length(tContourEx)) ' particles due to proximity']);
+        end
        
         if doOutlier > 0
             cc = tContour(:, 10);
@@ -83,6 +88,7 @@ for idx = 1:nTomo
             tContour = tContour(cc > x - 3*y, :);
             display(['Contour ' num2str(contour(i)) ': Exclude ' num2str(sum(cc <= x - 3*y)) ' particles']);
         end
+        
         
         
         if isempty(tContour) == 1
