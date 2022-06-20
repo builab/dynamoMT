@@ -49,12 +49,12 @@ for idx = 1:length(filamentList)
 
     % set alignment parameters for 2 rounds
     dvput(prj_intra,'ite', [3]); % no iterations 3 is reasonable
-    dvput(prj_intra,'dim', [boxSize/2]); % Use 1/2 box size for quicker but full size for good res
+    dvput(prj_intra,'dim', [boxSize]); % Use 1/2 box size for quicker but full size for good res
     dvput(prj_intra,'low', [round(pixelSize/alnLowpass*boxSize)]); % lowpass filter
-    dvput(prj_intra,'cr', [15]); % cone range
-    dvput(prj_intra,'cs', [5]); % cone search step
-    dvput(prj_intra,'ir', [15]); % inplane rotation
-    dvput(prj_intra,'is', [5]); % inplane search step
+    dvput(prj_intra,'cr', [9]); % cone range
+    dvput(prj_intra,'cs', [3]); % cone search step
+    dvput(prj_intra,'ir', [9]); % inplane rotation
+    dvput(prj_intra,'is', [3]); % inplane search step
     dvput(prj_intra,'rf', [5]); % refinement
     dvput(prj_intra,'rff', [2]); % refinement factor
     dvput(prj_intra,'lim', [zshift_limit]); % shift limit
