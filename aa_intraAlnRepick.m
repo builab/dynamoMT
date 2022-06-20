@@ -25,7 +25,7 @@ gpu = [0:5]; % Alignment using gpu for titann setting
 pixelSize = 8.48; % Angstrom per pixel
 avgLowpass = 30; % In Angstrom to convert to Fourier Pixel
 alnLowpass = 40; % In Angstrom to convert to Fourier Pixel, better higher than 40 Angstrom for tubulin
-zshift_limit = 10; % ~8nm 
+zshift_limit = 8; % pixel equivalent to 60Angstrom is good 
 useMask = 1; % Use mask if the filament is well aligned/centered, put to 0 if not needed
 refMask = 'masks/mask_cp_tip_24.em'; % You can use mask if the filamentRepick is great already use for doublet
 
