@@ -40,7 +40,7 @@ avgLowpass = 40; % Angstrom
 dTh = 40; % Distance Threshold in Angstrom
 doExclude = 1; % Exclude particles too close
 doOutlier = 0; % Exclude outlier using CC using MAD
-doInitialAngle = 0; % Only turn on for axoneme case now
+doInitialAngle = 0; % Only turn on for axoneme case now, absolutely not for microtubule
 
 
 % loop through all tomograms
@@ -89,6 +89,8 @@ for idx = 1:nTomo
             continue;
         end
         points = tContour(:, 24:26) + tContour(:, 4:6);
+        
+        % v0.2b Check for polarity in the original crop file
        
         m{i} = dmodels.filamentWithTorsion();
         m{i}.subunits_dphi = subunits_dphi;
