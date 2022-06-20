@@ -10,7 +10,7 @@
 % NOTE: v0.2b eliminate duplicate less than dTh (Done)
 % NOTE: v0.2b find nearest neighbour for angle
 % Seems to work better running on merged_particles.tbl instead of merged_particles_aln.tbl
-% Implement a nearest neighbour for angle assignnment
+% Implement a nearest neighbour for angle assignnment, still doesn't work yet due to Dynamo careless angle interpolation.
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
