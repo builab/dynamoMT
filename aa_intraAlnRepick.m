@@ -26,7 +26,8 @@ pixelSize = 8.48; % Angstrom per pixel
 avgLowpass = 30; % In Angstrom to convert to Fourier Pixel
 alnLowpass = 50; % In Angstrom to convert to Fourier Pixel
 zshift_limit = 10; % ~8nm 
-
+useMask = 1; % Use mask if the filament is well aligned/centered, put to 0 if not needed
+refMask = 'masks/mask_cp_tip_24.em'; % You can use mask if the filamentRepick is great already use for doublet
 
 % Generate an initial reference average for each filament
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
@@ -64,6 +65,10 @@ for idx = 1:length(filamentList)
     % set computational parameters
     dvput(prj_intra,'dst','matlab_gpu','cores',1,'mwa',mw);
     dvput(prj_intra,'gpus',gpu);
+    
+    if useMask > 0
+        dvput(pAlnAll,'file_mask',refMask)
+    end
     
     %CPU
     %dvput(prj_intra,'dst', 'matlab_parfor','cores',12,'mwa',mw);
