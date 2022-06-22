@@ -35,7 +35,7 @@ mw = 12;
 subunits_dphi = 0.72;  % For the tip CP 0.72, baseCP 0.5, doublet 0
 subunits_dz = periodicity/pixelSize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
 filamentListFile = sprintf('%sfilamentList.csv', prjPath);
-tableAlnFileName = 'merged_particles.tbl'; % merge particles before particle alignment for robust
+tableAlnFileName = 'merged_particles_align.tbl'; % merge particles before particle alignment for robust but must be merged_particles_align to use doInitialAngle
 avgLowpass = 40; % Angstrom
 dTh = 40; % Distance Threshold in Angstrom
 doExclude = 1; % Exclude particles too close
@@ -118,7 +118,7 @@ for idx = 1:nTomo
         t(:,23) = contour(i); % Additing contour number (filament)
         
         if doInitialAngle > 0
-            phi = median(tContour(:, 9)); % Same as AA         
+            phi = median(tContour(:, 9)) % Same as AA         
             %midIndex = floor(size(t, 1)/2);
             %t(:, 9 = t(:, 9) - t(midIndex, 9) + phi; 
             t(:, 9) = phi; % This works will in case of doublet, in case of tip/base cp, make the middle value to this and then same shift
