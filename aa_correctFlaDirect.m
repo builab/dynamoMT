@@ -39,19 +39,19 @@ tomoID = D{1,1}'; % get tomogram ID
 nTomo = length(D{1,2}); % get total number of tomograms
 
 for idx = 1:nTomo
-	tomo = D{1,2}{idx,1};
+    tomo = D{1,2}{idx,1};
     [tomoPath,tomoName,ext] = fileparts(tomo);
     % Modify specific to name
     tomoName = strrep(tomoName, recSuffix, ''); % Remove the rec part of the name
     if isKey(flaDirect, tomoName) > 0
     	disp(flaDirect(tomoName))
-		cmdStr = [pathToModelScript ' ' modDir tomoName '/' modFileName ' ' num2str(flaDirect(tomoName)) ' ' modDir tomoName '/' modFixFileName];
-		disp(cmdStr)
-		system(cmdStr);
-		% Model2Point
-		cmdStr2 = ['model2point ' -Contour ' modDir tomoName '/' modFixFileName ' ' modelDir tomoName '.txt'];
-		disp(cmdStr2)
-		system(cmdStr2)
+	cmdStr = [pathToModelScript ' ' modDir tomoName '/' modFileName ' ' num2str(flaDirect(tomoName)) ' ' modDir tomoName '/' modFixFileName];
+	disp(cmdStr)
+	system(cmdStr);
+	% Model2Point
+	cmdStr2 = ['model2point -Contour ' modDir tomoName '/' modFixFileName ' ' modelDir tomoName '.txt'];
+	disp(cmdStr2)
+	system(cmdStr2)
     else
     	disp([tomoName ' does not have a flaDirect value'])
     end
