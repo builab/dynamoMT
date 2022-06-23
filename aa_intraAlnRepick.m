@@ -67,7 +67,7 @@ for idx = 1:length(filamentList)
     dvput(prj_intra,'gpus',gpu);
     
     if useMask > 0
-        dvput(pAlnAll,'file_mask',refMask)
+        dvput(prj_intra,'file_mask',refMask)
     end
     
     %CPU
