@@ -27,7 +27,7 @@ coneFlip = 0; % Search for polarity. 1 is yes. Recommended to pick with polarity
 newRefFile = 'reference_repick.em';
 alnLowpass = 40; % Angstrom
 avgLowpass = 30; % Angstrom
-zshift_limit = 6; % ~4nm shift limit in pixel
+zshift_limit = 6; % ~4nm shift limit in pixel for 8 nm repeat, 8nm shift for 16-nm repeat
 
 
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
@@ -52,7 +52,10 @@ for idx = 1:noFilament
 	filamentAvg = dread(aPath);
     	disp(filamentList{idx})
 	if coneFlip > 0
-  		sal = dalign(dynamo_bandpass(filamentAvg,[1 alnLowpassPix]), dynamo_bandpass(template,[1 alnLowpassPix]),'cr',10,'cs',5,'ir',360,'is',5,'dim',boxSize, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
+		% For normal repick without set initial angle
+  		sal = dalign(dynamo_bandpass(filamentAvg,[1 alnLowpassPix]), dynamo_bandpass(template,[1 alnLowpassPix]),'cr',10,'cs',5,'ir',360,'is',5,'dim', boxSize, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
+		% For repick with initial angle, restrict ir search
+		%sal = dalign(dynamo_bandpass(filamentAvg,[1 alnLowpassPix]), dynamo_bandpass(template,[1 alnLowpassPix]),'cr',9,'cs',3,'ir',15,'is',3,'dim', boxSize, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
 	else
   		sal = dalign(dynamo_bandpass(filamentAvg,[1 alnLowpassPix]), dynamo_bandpass(template,[1 alnLowpassPix]),'cr',10,'cs',5,'ir',360,'is',5,'dim',boxSize, 'limm',1,'lim',[5, 5, zshift_limit],'rf',5,'rff',2); % no cone_flip
 	end
@@ -69,8 +72,6 @@ for idx = 1:noFilament
 	tFilament_ali = dynamo_table_rigid(tFilament, sal.Tp);
 	% Write table
 	dwrite(tFilament_ali, [particleDir '/' filamentList{idx} '/aligned.tbl'])
-	
-
 end
  
 
