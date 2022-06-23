@@ -27,7 +27,7 @@ avgLowpass = 30; % In Angstrom to convert to Fourier Pixel
 alnLowpass = 40; % In Angstrom to convert to Fourier Pixel, better higher than 40 Angstrom for tubulin
 zshift_limit = 8; % pixel equivalent to 60Angstrom is good 
 useMask = 1; % Use mask if the filament is well aligned/centered, put to 0 if not needed
-refMask = [prjPath 'masks/mask_cp_tip_24.em']; % You can use mask if the filamentRepick is great already use for doublet
+refMask = sprintf('%smasks/mask_cp_tip_24.em', prjPath); % You can use mask if the filamentRepick is great already use for doublet
 
 % Generate an initial reference average for each filament
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
