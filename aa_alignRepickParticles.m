@@ -90,4 +90,4 @@ aPath = ddb([pAlnAll ':a']);
 a = dread(aPath);
 tPath = ddb([pAlnAll ':t:ite=last']); % This makes convertion to Relion better
 dwrite(dread(tPath), tableOutFileName);
-dwrite(dynamo_bandpass(a,[1 round(pixelSize/finalLowpass*boxSize)])*(-1),['result_alnRepickParticles_INVERTED_all.em']);
+dwrite(dynamo_bandpass(a,[1 round(pixelSize/finalLowpass*boxSize)])*(-1),['result_alnRepickParticles_filt' num2str(finalLowpass) '_INVERTED_all.em']);
