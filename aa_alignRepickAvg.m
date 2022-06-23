@@ -22,7 +22,7 @@ previewDir =[particleDir '/preview']; % created from previously
 mw = 12; % Number of parallel workers to run
 gpu = [0:5]; % Alignment using gpu
 
-initRefFile = 'reference_all.em';
+initRefFile = 'reference_all.em'; % Use the best reference that you have. If not, the updated ref from previous step
 coneFlip = 0; % Search for polarity. 1 is yes. Recommended to pick with polarity and set to 0
 newRefFile = 'reference_repick.em';
 alnLowpass = 40; % Angstrom
