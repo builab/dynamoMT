@@ -5,11 +5,10 @@
 % Using GUI https://wiki.dynamo.biozentrum.unibas.ch/w/index.php/Filament_model
 % Imod coordinate should be in text file, clicking along the filament (no direction needed)
 % model2point -Contour imodModel.mod imodModel.txt
-% Write out the filament list/folder for further processing as well
-% NOTE: Important to have tomogram number 
 % NOTE: If the filament twist (microtubule/CP), we need to define subunits_dphi to describe the torsion.
 % however, it might be related to the polarity of the filament (- or + sign).
-% NOTE: Add filament number to Column 23
+% NOTE: filament number to Column 23
+
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
@@ -30,6 +29,7 @@ periodicity = 82.8; % Using 84.5 of doublet, 82.8 for CP tip, 86 for CP base
 subunits_dphi = 0.72;  % For the tip CP 0.72, base CP 0.5, doublet 0
 subunits_dz = periodicity/pixelSize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
 filamentListFile = sprintf('%sfilamentList.csv', prjPath);
+minPartNo = 4; % Minimum particles number per Filament
 
 % loop through all tomograms
 fileID = fopen(docFilePath); D = textscan(fileID,'%d %s'); fclose(fileID);
@@ -69,18 +69,26 @@ for idx = 1:nTomo
         m{i}.linkCatalogue(c001Dir, 'i', idx);
         m{i}.saveInCatalogue();
         
-        % Add to the list
-        filamentList{end + 1, 1} = [tomoName '_' num2str(contour(i))];
-
         % Testing this block
         t = m{i}.grepTable();
         
         % 0.2b addition
         t(:,23) = contour(i);
-        dwrite(t, [modelDir '/' tomoName '_' num2str(contour(i)) '.tbl']);
+        if (size(t, 1) < minPartNo)
+        	disp(['Skip ' tomoName ' Contour ' num2str(contour(i)) ' with less than ' num2str(minPartNo) ' particles'])
+        	continue
+        end
+        % Add the good to the list
+        filamentList{end + 1, 1} = [tomoName '_' num2str(contour(i))];
+		dwrite(t, [modelDir '/' tomoName '_' num2str(contour(i)) '.tbl']);
+        
         % Optional for visualization of table
-        %dtplot(['particles/' tomoName '_' num2str(contour(i)) '/crop.tbl'], 'pf', 'oriented_positions');
+        dtplot(t, 'pf', 'oriented_positions');
+        view(-230,30);axis equal;
+        hold on;
     end
+    print([modelDir '/' tomoName] , '-dpng');
+    close all;
     
     % Write the DynamoModel
     dwrite(m, modelout)

@@ -25,6 +25,8 @@ lowpass = 60; % In Angstrom Filter the initial average to 60
 % Read the list of filament to work with
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
 
+filamentListNew = {}
+
 % Crop & generate initial average
 for idx = 1:length(filamentList)
   tableName = [modelDir '/' filamentList{idx} '.tbl'];
@@ -33,7 +35,17 @@ for idx = 1:length(filamentList)
   tImport = dread(tableName);
   
   % Cropping subtomogram out
-  dtcrop(docFilePath, tImport, targetFolder, boxSize, 'mw', mw);
+  % v0.2b catching exception
+  try
+  	dtcrop(docFilePath, tImport, targetFolder, boxSize, 'mw', mw);
+  catch
+  	warning(['Skip: Contour ' filamentList{idx} 'does not have any particles!'])
+  	continue;
+  end
+  
+  % If cropping working well
+  filamentListNew{end + 1, 1} = filamentList{idx}
+  
   
   % Plotting (might not be optimum since plotting everything here)
   dtplot(tImport, 'pf', 'oriented_positions');
@@ -52,4 +64,11 @@ for idx = 1:length(filamentList)
   print([targetFolder '/pick_' filamentList{idx}] , '-dpng');
   close all
 
+end
+
+% 0.2b Writing new list
+if length(filamentListNew) != length(filamentList)
+	% Backup old filamentList & write new one
+	copyfile(filamentListFile, [filamentListFile '.bak']);
+	writecell(filamentListNew, filamentListFile);
 end
