@@ -16,7 +16,7 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 
 % Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
-filamentListFile = sprintf('%sfilamentList.csv', prjPath);
+filamentRepickListFile = sprintf('%sfilamentRepickList.csv', prjPath);
 alnDir = sprintf('%sintraAln_repick', prjPath);
 particleDir = sprintf('%sparticles_repick', prjPath);
 boxSize = 96; % Original extracted subvolume size
@@ -30,7 +30,7 @@ useMask = 1; % Use mask if the filament is well aligned/centered, put to 0 if no
 refMask = sprintf('%smasks/mask_cp_tip_24.em', prjPath); % You can use mask if the filamentRepick is great already use for doublet
 
 % Generate an initial reference average for each filament
-filamentList = readcell(filamentListFile, 'Delimiter', ',');
+filamentList = readcell(filamentRepickListFile, 'Delimiter', ',');
 
 mkdir(alnDir);
 mkdir([alnDir '/avg']); %filter averages

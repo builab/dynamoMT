@@ -14,7 +14,7 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 % Input
 boxSize = 96;
 pixelSize = 8.48;
-filamentListFile = 'filamentList.csv';
+filamentRepickListFile = 'filamentRepickList.csv';
 particleDir = sprintf('%sparticles_repick', prjPath);
 mw = 12; % Number of parallel workers to run
 gpu = [0:5]; % Alignment using gpu
@@ -29,7 +29,7 @@ alnLowpass = 40; % Now implemented using Angstrom
 zshift_limit = 5; % 4-nm limit
 
 
-filamentList = readcell(filamentListFile, 'Delimiter', ',');
+filamentList = readcell(filamentRepickListFile, 'Delimiter', ',');
 noFilament = length(filamentList);
 
 

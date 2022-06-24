@@ -34,7 +34,7 @@ boxSize = 96;
 mw = 12;
 subunits_dphi = 0.72;  % For the tip CP 0.72, baseCP 0.5, doublet 0
 subunits_dz = periodicity/pixelSize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
-filamentListFile = sprintf('%sfilamentList.csv', prjPath);
+filamentRepickListFile = sprintf('%sfilamentRepickList.csv', prjPath);
 tableAlnFileName = 'merged_particles_align.tbl'; % merge particles before particle alignment for robust but must be merged_particles_align to use doInitialAngle
 avgLowpass = 40; % Angstrom
 dTh = 40; % Distance Threshold in Angstrom
@@ -49,6 +49,8 @@ tomoID = D{1,1}'; % get tomogram ID
 nTomo = length(D{1,2}); % get total number of tomograms
 
 tAll = dread(tableAlnFileName);
+
+filamentList = {};
 
 % Loop through tomograms
 for idx = 1:nTomo
@@ -115,6 +117,11 @@ for idx = 1:nTomo
         t = m{i}.grepTable();
 
         %v0.2b addition
+        if isempty(t) == 1
+          	warning(['Skip: ' tomoName  '_' num2str(contour(i)) 'does not have any particles!'])
+        	continue;
+        end
+
         t(:,23) = contour(i); % Additing contour number (filament)
         
         if doInitialAngle > 0
@@ -124,11 +131,21 @@ for idx = 1:nTomo
             t(:, 9) = phi; % This works will in case of doublet, in case of tip/base cp, make the middle value to this and then same shift
         end
         
+        % Check point
         dwrite(t, [modelDir '/' tomoName '_' num2str(contour(i)) '.tbl']);
         targetFolder = [particleDir '/'  tomoName '_' num2str(contour(i))];
         
         % Cropping subtomogram out
-        dtcrop(docFilePath, t, targetFolder, boxSize, 'mw', mw);
+        % 0.2b
+        try
+       		dtcrop(docFilePath, t, targetFolder, boxSize, 'mw', mw);
+       	catch
+  			warning(['Skip: ' tomoName  '_' num2str(contour(i)) 'does not have any particles!'])
+  			continue;
+  		end
+  		% If it is cropping out
+  		filamentRepickList{end + 1, 1} = [tomoName  '_' num2str(contour(i)];
+
         % Average the middle region again
         midIndex = floor(size(t, 1)/2);
         if size(t, 1) > 15
@@ -149,3 +166,8 @@ for idx = 1:nTomo
     % Write the DynamoModel
     dwrite(m, modelout);
 end
+
+% Write filament list out
+writecell(filamentListRepick, filamentRepickListFile);
+
+

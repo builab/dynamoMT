@@ -15,7 +15,7 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 % Input
 pixelSize = 8.48;
 boxSize = 96;
-filamentListFile = 'filamentList.csv';
+filamentRepickListFile = 'filamentRepickList.csv';
 particleDir = sprintf('%sparticles_repick', prjPath);
 alnDir = sprintf('%sintraAln_repick', prjPath);
 previewDir =[particleDir '/preview']; % created from previously
@@ -30,7 +30,7 @@ avgLowpass = 30; % Angstrom
 zshift_limit = 6; % ~4nm shift limit in pixel for 8 nm repeat, 8nm shift for 16-nm repeat
 
 
-filamentList = readcell(filamentListFile, 'Delimiter', ',');
+filamentList = readcell(filamentRepickListFile, 'Delimiter', ',');
 noFilament = length(filamentList);
 template = dread(initRefFile);
 
