@@ -44,7 +44,7 @@ for idx = 1:length(filamentList)
   end
   
   % If cropping working well
-  filamentListNew{end + 1, 1} = filamentList{idx}
+  filamentListNew{end + 1, 1} = filamentList{idx};
   
   
   % Plotting (might not be optimum since plotting everything here)
@@ -67,7 +67,7 @@ for idx = 1:length(filamentList)
 end
 
 % 0.2b Writing new list
-if length(filamentListNew) != length(filamentList)
+if length(filamentListNew) < length(filamentList)
 	% Backup old filamentList & write new one
 	copyfile(filamentListFile, [filamentListFile '.bak']);
 	writecell(filamentListNew, filamentListFile);
