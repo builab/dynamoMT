@@ -51,13 +51,14 @@ for idx = 1:length(filamentList)
   dtplot(tImport, 'pf', 'oriented_positions');
   
   % Generate average from ~10 middle particles for template generation
-  % Error might be generated here
-  midIndex = floor(size(tImport, 1)/2);
-  if size(tImport, 1) > 15
-      tImport = tImport(midIndex - 3: midIndex + 4, :);
+  % Error might be generated here, using tCrop instead of tImport will be a lot safer
+  tCrop = dread([targetFolder '/crop.tbl'])
+  midIndex = floor(size(tCrop, 1)/2);
+  if size(tCrop, 1) > 15
+      tCrop = tCrop(midIndex - 3: midIndex + 4, :);
   end 
  
-  oa = daverage(targetFolder, 't', tImport, 'fc', 1, 'mw', mw);
+  oa = daverage(targetFolder, 't', tCrop, 'fc', 1, 'mw', mw);
   dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/lowpass*boxSize)]), [targetFolder '/template.em']);
   dtplot([targetFolder '/crop.tbl'], 'pf', 'oriented_positions');
   view(-230, 30); axis equal;

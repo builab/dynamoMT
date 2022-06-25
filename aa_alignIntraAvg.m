@@ -30,7 +30,7 @@ coneFlip = 0; % Search for polarity. 1 is yes. Recommended to pick with polarity
 newRefFile = 'reference_dPhi.em';
 avgLowpass = 30; % Angstrom
 alnLowpass = 30; % Angstrom
-shiftLimit = [20 20 20];
+shiftLimit = [20 20 10]; % Limit Z in pixel half of periodicity
 
 
 
@@ -52,7 +52,7 @@ for idx = 1:noFilament
 	if coneFlip > 0
   		sal = dalign(dynamo_bandpass(filamentAvg,[1 alnLowpassPix]), dynamo_bandpass(template,[1 alnLowpassPix]),'cr',15,'cs',5,'ir',360,'is',10,'dim',boxSize, 'limm',1,'lim',shiftLimit,'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
 	else
-  		sal = dalign(dynamo_bandpass(filamentAvg,[1 alnLowpassPix]), dynamo_bandpass(template,[1 alnLowpassPix]),'cr',20,'cs',10,'ir',360,'is',10,'dim',boxSize, 'limm',1,'lim',shiftLimit,'rf',5,'rff',2); % no cone_flip
+  		sal = dalign(dynamo_bandpass(filamentAvg,[1 alnLowpassPix]), dynamo_bandpass(template,[1 alnLowpassPix]),'cr',10,'cs',5,'ir',360,'is',10,'dim',boxSize, 'limm',1,'lim',shiftLimit,'rf',5,'rff',2); % no cone_flip
 	end
 	%dview(sal.aligned_particle);
 	% 0.2b Write out the transform
