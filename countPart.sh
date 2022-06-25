@@ -1,8 +1,16 @@
 #!/bin/bash
-# Script to count particles in particles folder for quick checking
+# Script to count particles in particles folder
+
+# Threshold for display
+maxno=15
+
+echo "Display folder with less than $maxno particles"
 
 for folder in particles/*
 do
 	count=`ls $folder/particle* | wc -l`
-	echo $folder $count
+	if [ $count -lt $maxno ]
+	then
+		echo $folder $count 
+	fi
 done
