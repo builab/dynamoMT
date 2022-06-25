@@ -52,7 +52,7 @@ for idx = 1:length(filamentList)
   
   % Generate average from ~10 middle particles for template generation
   % Error might be generated here, using tCrop instead of tImport will be a lot safer
-  tCrop = dread([targetFolder '/crop.tbl'])
+  tCrop = dread([targetFolder '/crop.tbl']);
   midIndex = floor(size(tCrop, 1)/2);
   if size(tCrop, 1) > 15
       tCrop = tCrop(midIndex - 3: midIndex + 4, :);
