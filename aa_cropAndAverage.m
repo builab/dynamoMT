@@ -21,6 +21,8 @@ pixelSize = 8.48; % Use to calculate lowpass
 boxSize = 96; % Extracted subvolume size
 mw = 12; % Number of parallel workers to run
 lowpass = 60; % In Angstrom Filter the initial average to 60
+minPartNo = 4; % Minimum particles number per Filament 4 is reasonable
+
 
 % Read the list of filament to work with
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
@@ -38,37 +40,37 @@ for idx = 1:length(filamentList)
   % v0.2b catching exception
   try
   	dtcrop(docFilePath, tImport, targetFolder, boxSize, 'mw', mw);
+  
+  	% Generate average from ~10 middle particles for template generation
+  	% Error might be generated here, using tCrop instead of tImport will be a lot safer
+  	tCrop = dread([targetFolder '/crop.tbl']);
+  	if size(tCrop, 1) > 15
+    	midIndex = floor(size(tCrop, 1)/2);
+      	tCrop = tCrop(midIndex - 3: midIndex + 4, :);
+  	end 
+ 
+  	oa = daverage(targetFolder, 't', tCrop, 'fc', 1, 'mw', mw);
+  	dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/lowpass*boxSize)]), [targetFolder '/template.em']);
+  	if size(tCrop, 1) > 1 % dtplot error with one particle
+  		dtplot([targetFolder '/crop.tbl'], 'pf', 'oriented_positions');
+  		view(-230, 30); axis equal;
+  		print([targetFolder '/pick_' filamentList{idx}] , '-dpng');
+  		close all
+  	end
   catch
-  	warning(['Skip: Contour ' filamentList{idx} 'does not have any particles!'])
+  	warning(['Skip: Contour ' filamentList{idx} 'does not have enough particles!'])
   	continue;
   end
-  
-  % If cropping working well
+  if size(t, 1) < minPartNo
+    disp(['Skip ' tomoName ' Contour ' num2str(contour(i)) ' with less than ' num2str(minPartNo) ' particles'])
+    continue
+  end
+  % If cropping working well and more than minimum particles
   filamentListNew{end + 1, 1} = filamentList{idx};
-  
-  
-  % Plotting (might not be optimum since plotting everything here)
-  dtplot(tImport, 'pf', 'oriented_positions');
-  
-  % Generate average from ~10 middle particles for template generation
-  % Error might be generated here, using tCrop instead of tImport will be a lot safer
-  tCrop = dread([targetFolder '/crop.tbl']);
-  midIndex = floor(size(tCrop, 1)/2);
-  if size(tCrop, 1) > 15
-      tCrop = tCrop(midIndex - 3: midIndex + 4, :);
-  end 
- 
-  oa = daverage(targetFolder, 't', tCrop, 'fc', 1, 'mw', mw);
-  dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/lowpass*boxSize)]), [targetFolder '/template.em']);
-  dtplot([targetFolder '/crop.tbl'], 'pf', 'oriented_positions');
-  view(-230, 30); axis equal;
-  print([targetFolder '/pick_' filamentList{idx}] , '-dpng');
-  close all
-
 end
 
 % 0.2b Writing new list
-if length(filamentListNew) < length(filamentList)
+if size(filamentListNew, 1) < size(filamentList, 1)
 	% Backup old filamentList & write new one
 	copyfile(filamentListFile, [filamentListFile '.bak']);
 	writecell(filamentListNew, filamentListFile);

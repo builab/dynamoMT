@@ -14,15 +14,14 @@
 % Implement a nearest neighbour for angle assignnment, still doesn't work yet due to Dynamo careless angle interpolation.
 
 %%%%%%%% Before Running Script %%%%%%%%%%
-%%% Activate Dynamo
+%% Activate Dynamo
 run /london/data0/software/dynamo/dynamo_activate.m
 
 % Change path to the correct directory
 prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 
-%%%%%%%%
 
-% Input
+%% Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 modelDir = sprintf('%smodels_repick', prjPath);
 origParticleDir = sprintf('%sparticles', prjPath);
@@ -42,8 +41,7 @@ doExclude = 1; % Exclude particles too close
 doOutlier = 0; % Exclude outlier using CC using MAD
 doInitialAngle = 0; % Only turn on for axoneme case now, absolutely not for microtubule
 
-
-% loop through all tomograms
+%% loop through all tomograms
 fileID = fopen(docFilePath); D = textscan(fileID,'%d %s'); fclose(fileID);
 tomoID = D{1,1}'; % get tomogram ID
 nTomo = length(D{1,2}); % get total number of tomograms
@@ -52,7 +50,7 @@ tAll = dread(tableAlnFileName);
 
 filamentRepickList = {};
 
-% Loop through tomograms
+%% Loop through tomograms
 for idx = 1:nTomo
     tomo = D{1,2}{idx,1};
     [tomoPath,tomoName,ext] = fileparts(tomo);
@@ -64,7 +62,6 @@ for idx = 1:nTomo
         continue;
     end
     
-
     
     modelout =   [modelDir '/' tomoName '.omd'];
     contour = unique(tTomo(:, 23));
@@ -139,29 +136,32 @@ for idx = 1:nTomo
         % 0.2b
         try
        		dtcrop(docFilePath, t, targetFolder, boxSize, 'mw', mw);
+       		 % Average the middle region again
+        	tCrop = dread([targetFolder '/crop.tbl']);
+        	if size(tCrop, 1) > 15
+            	midIndex = floor(size(tCrop, 1)/2);
+            	tCrop = tCrop(midIndex - 3: midIndex + 4, :);
+        	end
+        	oa = daverage(targetFolder, 't', tCrop, 'fc', 1, 'mw', mw);
+        	dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/avgLowpass*boxSize)]), [targetFolder '/template.em']);
+        
+        	% Plotting save & close. dtplot seems to error if only 1 particles
+        	if size(tCrop, 1) > 1
+            	dtplot(tCrop, 'pf', 'oriented_positions');
+            	view(-230, 30); axis equal;
+            	print([targetFolder '/repick_' tomoName '_' num2str(contour(i))] , '-dpng');
+            	close all
+        	end
        	catch
-  			warning(['Skip: ' tomoName  '_' num2str(contour(i)) 'does not have any particles!'])
+  			warning(['Skip: ' tomoName  '_' num2str(contour(i)) 'does not have enough particles!'])
   			continue;
   		end
+  		
+  		
   		% If it is cropping out
   		filamentRepickList{end + 1, 1} = [tomoName  '_' num2str(contour(i))];
 
-        % Average the middle region again
-        tCrop = dread([targetFolder '/crop.tbl']);
-        if size(tCrop, 1) > 15
-            midIndex = floor(size(tCrop, 1)/2);
-            tCrop = tCrop(midIndex - 3: midIndex + 4, :);
-        end
-        oa = daverage(targetFolder, 't', tCrop, 'fc', 1, 'mw', mw);
-        dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/avgLowpass*boxSize)]), [targetFolder '/template.em']);
-        
-        % Plotting save & close. dtplot seems to error if only 1 particles
-        if length(tCrop) > 1
-            dtplot(tCrop, 'pf', 'oriented_positions');
-            view(-230, 30); axis equal;
-            print([targetFolder '/repick_' tomoName '_' num2str(contour(i))] , '-dpng');
-            close all
-        end
+
         
     end
     % Write the DynamoModel
