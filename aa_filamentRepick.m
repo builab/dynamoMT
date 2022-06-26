@@ -50,7 +50,7 @@ nTomo = length(D{1,2}); % get total number of tomograms
 
 tAll = dread(tableAlnFileName);
 
-filamentList = {};
+filamentRepickList = {};
 
 % Loop through tomograms
 for idx = 1:nTomo
