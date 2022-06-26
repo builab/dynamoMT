@@ -148,8 +148,8 @@ for idx = 1:nTomo
 
         % Average the middle region again
         tCrop = dread([targetFolder '/crop.tbl']);
-        midIndex = floor(size(tCrop, 1)/2);
         if size(tCrop, 1) > 15
+            midIndex = floor(size(tCrop, 1)/2);
             tCrop = tCrop(midIndex - 3: midIndex + 4, :);
         end
         oa = daverage(targetFolder, 't', tCrop, 'fc', 1, 'mw', mw);
@@ -160,8 +160,8 @@ for idx = 1:nTomo
             dtplot(tCrop, 'pf', 'oriented_positions');
             view(-230, 30); axis equal;
             print([targetFolder '/repick_' tomoName '_' num2str(contour(i))] , '-dpng');
+            close all
         end
-        close all
         
     end
     % Write the DynamoModel
