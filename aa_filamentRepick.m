@@ -167,6 +167,6 @@ for idx = 1:nTomo
 end
 
 % Write filament list out
-writecell(filamentListRepick, filamentRepickListFile);
+writecell(filamentRepickList, filamentRepickListFile);
 
 
