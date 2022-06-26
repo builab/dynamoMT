@@ -144,7 +144,7 @@ for idx = 1:nTomo
   			continue;
   		end
   		% If it is cropping out
-  		filamentRepickList{end + 1, 1} = [tomoName  '_' num2str(contour(i)];
+  		filamentRepickList{end + 1, 1} = [tomoName  '_' num2str(contour(i))];
 
         % Average the middle region again
         tCrop = dread([targetFolder '/crop.tbl']);
