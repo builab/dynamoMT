@@ -11,7 +11,7 @@ run /london/data0/software/dynamo/dynamo_activate.m
 % Change path to the correct directory
 prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 
-% Input
+%% Input
 boxSize = 96;
 pixelSize = 8.48;
 filamentRepickListFile = 'filamentRepickList.csv';
@@ -28,7 +28,7 @@ finalLowpass = 30; % Now implemented using in Angstrom
 alnLowpass = 40; % Now implemented using Angstrom
 zshift_limit = 5; % 4-nm limit
 
-
+%%
 filamentList = readcell(filamentRepickListFile, 'Delimiter', ',');
 noFilament = length(filamentList);
 

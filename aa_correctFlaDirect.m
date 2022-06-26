@@ -38,6 +38,7 @@ fileID = fopen(docFilePath); D = textscan(fileID,'%d %s'); fclose(fileID);
 tomoID = D{1,1}'; % get tomogram ID
 nTomo = length(D{1,2}); % get total number of tomograms
 
+%% Loop through all tomograms
 for idx = 1:nTomo
     tomo = D{1,2}{idx,1};
     [tomoPath,tomoName,ext] = fileparts(tomo);

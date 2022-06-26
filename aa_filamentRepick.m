@@ -168,7 +168,7 @@ for idx = 1:nTomo
     dwrite(m, modelout);
 end
 
-% Write filament list out
+%% Write filament list out
 writecell(filamentRepickList, filamentRepickListFile);
 
 

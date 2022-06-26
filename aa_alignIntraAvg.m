@@ -15,7 +15,7 @@ run /london/data0/software/dynamo/dynamo_activate.m
 % Change path to the correct directory
 prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 
-% Input
+%% Input
 pixelSize = 8.48;
 boxSize = 96;
 filamentListFile = 'filamentList.csv';
@@ -33,7 +33,7 @@ alnLowpass = 30; % Angstrom
 shiftLimit = [20 20 10]; % Limit Z in pixel half of periodicity
 
 
-
+%%
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
 noFilament = length(filamentList);
 template = dread(initRefFile);
@@ -42,7 +42,7 @@ alnLowpassPix = round(pixelSize/alnLowpass*boxSize);
 % Need to go into alnDir to read the intraAln project
 cd(alnDir)
 
-% Calculate the alignment of the filamentAverage to the initial reference
+%% Calculate the alignment of the filamentAverage to the initial reference
 % transform the corresponding table for all particles
 for idx = 1:noFilament
 	aPath = ddb([filamentList{idx} ':a']); % Read the path of the alignment project average
@@ -72,7 +72,7 @@ end
  
 cd ..
 
-% Generate updated reference
+%% Generate updated reference
 for idx = 1:noFilament
 	% Read the updated table
 	tFilament_ali = dread([particleDir '/' filamentList{idx} '/aligned.tbl']); 
@@ -88,6 +88,6 @@ for idx = 1:noFilament
 	end
 end
 
-% Calculate average
+%% Calculate average
 newTemplate = newTemplate/noFilament;
 dwrite(newTemplate, newRefFile);

@@ -12,7 +12,7 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 
 %%%%%%%%
 
-% Input
+%% Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 filamentListFile = sprintf('%sfilamentList.csv', prjPath);
 modelDir = sprintf('%smodels', prjPath);
@@ -29,7 +29,7 @@ filamentList = readcell(filamentListFile, 'Delimiter', ',');
 
 filamentListNew = {}
 
-% Crop & generate initial average
+%% Crop & generate initial average
 for idx = 1:length(filamentList)
   tableName = [modelDir '/' filamentList{idx} '.tbl'];
   targetFolder = [particleDir '/' filamentList{idx}];
@@ -69,7 +69,7 @@ for idx = 1:length(filamentList)
   filamentListNew{end + 1, 1} = filamentList{idx};
 end
 
-% 0.2b Writing new list
+%% 0.2b Writing new list
 if size(filamentListNew, 1) < size(filamentList, 1)
 	% Backup old filamentList & write new one
 	copyfile(filamentListFile, [filamentListFile '.bak']);

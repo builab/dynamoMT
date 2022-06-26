@@ -14,7 +14,7 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 
 %%%%%%%%
 
-% Input
+%% Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 filamentListFile = sprintf('%sfilamentList.csv', prjPath);
 alnDir = sprintf('%sintraAln', prjPath);
@@ -28,15 +28,15 @@ alnLowpass = 50; % In Angstrom to convert to Fourier Pixel, 50 if you only need 
 zshift_limit = 10; % ~8nm 
 
 
-% Generate an initial reference average for each filament
+%% Generate an initial reference average for each filament
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
 
 mkdir(alnDir);
 mkdir([alnDir '/avg']); %filter averages
 mkdir([alnDir '/preview']); % preview images
 
+%% Loop through filamentList
 cd(alnDir)
-
 for idx = 1:length(filamentList)
     tableName = [particleDir '/' filamentList{idx} '/crop.tbl'];
     tOri = dread(tableName);

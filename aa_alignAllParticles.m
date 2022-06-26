@@ -1,17 +1,17 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Script to align intra average of each doublet with a reference
 % and transform all the alignment to an updated table.
-% dynamoDMT v0.1
+% dynamoDMT v0.2b
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%% Before Running Script %%%%%%%%%%
-%%% Activate Dynamo
+%% Activate Dynamo
 run /london/data0/software/dynamo/dynamo_activate.m
 
 % Change path to the correct directory
 prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 
-% Input
+%% Input
 pixelSize = 8.48;
 boxSize = 96;
 filamentListFile = 'filamentList.csv';
@@ -30,6 +30,7 @@ alnLowpass = 40; % Now implemented using Angstrom
 zshift_limit = 10; % 8nm shift limit
 
 
+%%
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
 noFilament = length(filamentList);
 

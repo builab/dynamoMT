@@ -19,7 +19,7 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 
 %%%%%%%%
 
-% Input
+%% Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 modelDir = sprintf('%smodels', prjPath);
 c001Dir = sprintf('%scatalogs/c001', prjPath);
@@ -38,7 +38,7 @@ nTomo = length(D{1,2}); % get total number of tomograms
 
 filamentList = {};
 
-% Loop through tomograms
+%% Loop through tomograms
 for idx = 1:nTomo
     tomo = D{1,2}{idx,1};
     [tomoPath,tomoName,ext] = fileparts(tomo);
@@ -95,5 +95,5 @@ for idx = 1:nTomo
 
 end
 
-% Write out list file
+%% Write out list file
 writecell(filamentList, filamentListFile);

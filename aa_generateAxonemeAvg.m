@@ -11,7 +11,7 @@ run /london/data0/software/dynamo/dynamo_activate.m
 % Change path to the correct directory
 prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/doublet/';
 
-% Input
+%% Input
 pixelSize = 8.48;
 boxSize = 96;
 filamentListFile = 'filamentList.csv';
@@ -22,6 +22,8 @@ mw = 12; % Number of parallel workers to run
 gpu = [0:5]; % Alignment using gpu
 avgLowpass = 30; % Angstrom
 
+%%
+
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
 noFilament = length(filamentList);
 avgLowpassPix = round(pixelSize/avgLowpass*boxSize);
@@ -29,7 +31,7 @@ avgLowpassPix = round(pixelSize/avgLowpass*boxSize);
 prevTomoName ='';
 avg = zeros(boxSize, boxSize, boxSize);
 
-% Generate axoneme average
+%% Loop & generate axoneme average
 for idx = 1:noFilament
 	% Read the updated table
  	% Check the same tomo

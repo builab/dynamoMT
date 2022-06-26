@@ -12,7 +12,7 @@ run /london/data0/software/dynamo/dynamo_activate.m
 % Change path to the correct directory
 prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 
-% Input
+%% Input
 pixelSize = 8.48;
 boxSize = 96;
 filamentRepickListFile = 'filamentRepickList.csv';
@@ -21,7 +21,6 @@ alnDir = sprintf('%sintraAln_repick', prjPath);
 previewDir =[particleDir '/preview']; % created from previously
 mw = 12; % Number of parallel workers to run
 gpu = [0:5]; % Alignment using gpu
-
 initRefFile = 'reference_all.em'; % Use the best reference that you have. If not, the updated ref from previous step
 coneFlip = 0; % Search for polarity. 1 is yes. Recommended to pick with polarity and set to 0
 newRefFile = 'reference_repick.em';
@@ -29,7 +28,7 @@ alnLowpass = 40; % Angstrom
 avgLowpass = 30; % Angstrom
 zshift_limit = 6; % ~4nm shift limit in pixel for 8 nm repeat, 8nm shift for 16-nm repeat
 
-
+%%
 filamentList = readcell(filamentRepickListFile, 'Delimiter', ',');
 noFilament = length(filamentList);
 template = dread(initRefFile);
@@ -41,7 +40,7 @@ mkdir(previewDir)
 % Need to go into alnDir to read the intraAln project
 cd(alnDir)
 
-% Calculate the alignment of the filamentAverage to the initial reference
+%% Calculate the alignment of the filamentAverage to the initial reference
 % transform the corresponding table for all particles
 for idx = 1:noFilament
 	% v0.2b
@@ -75,7 +74,7 @@ for idx = 1:noFilament
 end
  
 
-% Generate updated reference
+%% Generate updated reference
 for idx = 1:noFilament
 	% Read the updated table
 	tFilament_ali = dread([particleDir '/' filamentList{idx} '/aligned.tbl']); 
@@ -91,6 +90,6 @@ for idx = 1:noFilament
 	end
 end
 
-% Calculate average
+%% Calculate average
 newTemplate = newTemplate/noFilament;
 dwrite(newTemplate, newRefFile);

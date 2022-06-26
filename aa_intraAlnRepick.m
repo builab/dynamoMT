@@ -14,7 +14,7 @@ prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
 
 %%%%%%%%
 
-% Input
+%% Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 filamentRepickListFile = sprintf('%sfilamentRepickList.csv', prjPath);
 alnDir = sprintf('%sintraAln_repick', prjPath);
@@ -29,13 +29,14 @@ zshift_limit = 8; % pixel equivalent to 60Angstrom is good
 useMask = 1; % Use mask if the filament is well aligned/centered, put to 0 if not needed
 refMask = sprintf('%smasks/mask_cp_tip_24.em', prjPath); % You can use mask if the filamentRepick is great already use for doublet
 
-% Generate an initial reference average for each filament
+%% Generate an initial reference average for each filament
 filamentList = readcell(filamentRepickListFile, 'Delimiter', ',');
 
 mkdir(alnDir);
 mkdir([alnDir '/avg']); %filter averages
 mkdir([alnDir '/preview']); % preview images
 
+%% Loop through filament List
 cd(alnDir)
 
 for idx = 1:length(filamentList)
