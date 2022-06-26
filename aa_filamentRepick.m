@@ -155,10 +155,12 @@ for idx = 1:nTomo
         oa = daverage(targetFolder, 't', tCrop, 'fc', 1, 'mw', mw);
         dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/avgLowpass*boxSize)]), [targetFolder '/template.em']);
         
-        % Plotting save & close
-        dtplot([targetFolder '/crop.tbl'], 'pf', 'oriented_positions');
-        view(-230, 30); axis equal;
-        print([targetFolder '/repick_' tomoName '_' num2str(contour(i))] , '-dpng');
+        % Plotting save & close. dtplot seems to error if only 1 particles
+        if length(tCrop) > 1
+            dtplot(tCrop, 'pf', 'oriented_positions');
+            view(-230, 30); axis equal;
+            print([targetFolder '/repick_' tomoName '_' num2str(contour(i))] , '-dpng');
+        end
         close all
         
     end
