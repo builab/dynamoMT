@@ -24,13 +24,15 @@ particleDir = sprintf('%sparticles', prjPath);
 previewDir =[alnDir '/preview']; % created from previously
 mw = 12; % Number of parallel workers to run
 gpu = [0:5]; % Alignment using gpu
-
 initRefFile = 'reference_all.em';
 coneFlip = 0; % Search for polarity. 1 is yes. Recommended to pick with polarity and set to 0
-newRefFile = 'reference_dPhi.em';
 avgLowpass = 30; % Angstrom
 alnLowpass = 30; % Angstrom
 shiftLimit = [20 20 10]; % Limit Z in pixel half of periodicity
+doUpdateRef = 1; % It is NOT important to update the ref if you already have a good ref, change to 0
+newRefFile = 'reference_dPhi.em';
+
+
 
 
 %%
@@ -78,16 +80,20 @@ for idx = 1:noFilament
 	tFilament_ali = dread([particleDir '/' filamentList{idx} '/aligned.tbl']); 
 	targetFolder = [particleDir '/' filamentList{idx}];
 	disp(targetFolder)
-	oa = daverage(targetFolder, 't', tFilament_ali, 'fc', 1, 'mw', mw);
-	dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/avgLowpass*boxSize)]), [targetFolder '/alignedTemplate.em']);
+	if doUpdateRef > 0
+		oa = daverage(targetFolder, 't', tFilament_ali, 'fc', 1, 'mw', mw);
+		dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/avgLowpass*boxSize)]), [targetFolder '/alignedTemplate.em']);
 
-	if idx == 1
-		newTemplate = oa.average;
-	else
-		newTemplate = newTemplate + oa.average;
+		if idx == 1
+			newTemplate = oa.average;
+		else
+			newTemplate = newTemplate + oa.average;
+		end
 	end
 end
 
 %% Calculate average
-newTemplate = newTemplate/noFilament;
-dwrite(newTemplate, newRefFile);
+if doUpdateRef > 0
+	newTemplate = newTemplate/noFilament;
+	dwrite(newTemplate, newRefFile);
+end
