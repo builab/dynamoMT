@@ -26,7 +26,6 @@ coneFlip = 0; % Search for polarity. 1 is yes. Recommended to pick with polarity
 alnLowpass = 40; % Angstrom
 avgLowpass = 30; % Angstrom
 zshift_limit = 6; % ~4nm shift limit in pixel for 8 nm repeat, 8nm shift for 16-nm repeat
-doUpdateRef = 1; % It is NOT important to update the ref if you already have a good ref, change to 0
 newRefFile = 'reference_repick.em';
 
 
@@ -34,6 +33,7 @@ newRefFile = 'reference_repick.em';
 filamentList = readcell(filamentRepickListFile, 'Delimiter', ',');
 noFilament = length(filamentList);
 template = dread(initRefFile);
+newTemplate = zeros(boxSize, boxSize, boxSize);
 
 
 alnLowpassPix = round(pixelSize/alnLowpass*boxSize);
@@ -63,6 +63,7 @@ for idx = 1:noFilament
 	
 	%dview(sal.aligned_particle);
 	% Write out preview
+	newTemplate = newTemplate + sal.aligned_particle;
 	filt_aligned_particle = dynamo_bandpass(sal.aligned_particle, [1 round(pixelSize/avgLowpass*boxSize)]);
 	img = sum(filt_aligned_particle(:,:,floor(boxSize/2) - 10: floor(boxSize/2) + 10), 3);
 	imwrite(mat2gray(img), [previewDir '/' filamentList{idx} '_aln.png'])
@@ -82,20 +83,8 @@ for idx = 1:noFilament
 	tFilament_ali = dread([particleDir '/' filamentList{idx} '/aligned.tbl']); 
 	targetFolder = [particleDir '/' filamentList{idx}];
 	disp(targetFolder)
-	if doUpdateRef > 0
-		oa = daverage(targetFolder, 't', tFilament_ali, 'fc', 1, 'mw', mw);
-		dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/avgLowpass*boxSize)]), [targetFolder '/alignedTemplate.em']);
-
-		if idx == 1
-			newTemplate = oa.average;
-		else
-			newTemplate = newTemplate + oa.average;
-		end
-	end
 end
 
 %% Calculate average
-if doUpdateRef > 0
-	newTemplate = newTemplate/noFilament;
-	dwrite(newTemplate, newRefFile);
-end
+newTemplate = newTemplate/noFilament;
+dwrite(newTemplate, newRefFile);

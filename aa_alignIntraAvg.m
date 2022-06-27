@@ -29,17 +29,14 @@ coneFlip = 0; % Search for polarity. 1 is yes. Recommended to pick with polarity
 avgLowpass = 30; % Angstrom
 alnLowpass = 30; % Angstrom
 shiftLimit = [20 20 10]; % Limit Z in pixel half of periodicity
-doUpdateRef = 1; % It is NOT important to update the ref if you already have a good ref, change to 0
 newRefFile = 'reference_dPhi.em';
-
-
-
 
 %%
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
 noFilament = length(filamentList);
 template = dread(initRefFile);
 alnLowpassPix = round(pixelSize/alnLowpass*boxSize);
+newTemplate = zeros(boxSize, boxSize, boxSize);
 
 % Need to go into alnDir to read the intraAln project
 cd(alnDir)
@@ -61,6 +58,7 @@ for idx = 1:noFilament
 	writematrix([sal.p_shifts sal.p_eulers], [particleDir '/' filamentList{idx} '/xform.tbl'], 'Delimiter', 'tab', 'FileType', 'text');
 	
 	% Write out preview
+	newTemplate = newTemplate + sal.aligned_particle;
 	filt_aligned_particle = dynamo_bandpass(sal.aligned_particle, [1 round(pixelSize/avgLowpass*boxSize)]);
 	img = sum(filt_aligned_particle(:,:,floor(boxSize/2) - 10: floor(boxSize/2) + 10), 3);
 	imwrite(mat2gray(img), [previewDir '/' filamentList{idx} '_aln.png'])
@@ -79,21 +77,8 @@ for idx = 1:noFilament
 	% Read the updated table
 	tFilament_ali = dread([particleDir '/' filamentList{idx} '/aligned.tbl']); 
 	targetFolder = [particleDir '/' filamentList{idx}];
-	disp(targetFolder)
-	if doUpdateRef > 0
-		oa = daverage(targetFolder, 't', tFilament_ali, 'fc', 1, 'mw', mw);
-		dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/avgLowpass*boxSize)]), [targetFolder '/alignedTemplate.em']);
-
-		if idx == 1
-			newTemplate = oa.average;
-		else
-			newTemplate = newTemplate + oa.average;
-		end
-	end
 end
 
 %% Calculate average
-if doUpdateRef > 0
-	newTemplate = newTemplate/noFilament;
-	dwrite(newTemplate, newRefFile);
-end
+newTemplate = newTemplate/noFilament;
+dwrite(newTemplate, newRefFile);
