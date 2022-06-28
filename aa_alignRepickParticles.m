@@ -26,7 +26,7 @@ pAlnAll = 'pAlnRepickParticles';
 refMask = 'masks/mask_cp_tip_24.em';
 finalLowpass = 30; % Now implemented using in Angstrom
 alnLowpass = 40; % Now implemented using Angstrom
-zshift_limit = 5; % 4-nm limit
+zshift_limit = 5; % Should be half the periodicity, 4-nm for tip CP, 8-nm for doublet
 
 %%
 filamentList = readcell(filamentRepickListFile, 'Delimiter', ',');
