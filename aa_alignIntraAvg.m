@@ -68,6 +68,9 @@ for idx = 1:noFilament
 	tFilament_ali = dynamo_table_rigid(tFilament, sal.Tp);
 	% Write table
 	dwrite(tFilament_ali, [particleDir '/' filamentList{idx} '/aligned.tbl'])
+	% Write aligned intraAvg
+	dwrite(sal.aligned_particle, [alnDir '/avg/' filamentList{idx} '_aln.em'])
+
 end
  
 cd ..
