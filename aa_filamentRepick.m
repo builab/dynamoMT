@@ -72,6 +72,9 @@ for idx = 1:nTomo
     for i = 1:length(contour)        
         tContour = tTomo(tTomo(:, 23) == contour(i), :);
         
+        phi = median(tContour(:, 9)); % Same as AA  
+
+        
         % v0.2b Important: this step invert the Y axis, doing for each contour might help to check for polarity
         if doExclude > 0
             tContourEx = dpktbl.exclusionPerVolume(tContour, dTh/pixelSize);
@@ -122,10 +125,9 @@ for idx = 1:nTomo
         t(:,23) = contour(i); % Additing contour number (filament)
         
         if doInitialAngle > 0
-            phi = median(tContour(:, 9)); % Same as AA  
             if abs(subunits_dphi) > 0     % Twist
             	midIndex = floor(size(t, 1)/2);
-            	t(:, 9 = t(:, 9) - t(midIndex, 9) + phi; 
+            	t(:, 9) = t(:, 9) - t(midIndex, 9) + phi; 
             else
            		t(:, 9) = phi; % This works will in case of doublet, in case of tip/base cp, make the middle value to this and then same shift
            	end
