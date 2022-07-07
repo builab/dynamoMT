@@ -123,7 +123,7 @@ for idx = 1:nTomo
         
         if doInitialAngle > 0
             phi = median(tContour(:, 9)); % Same as AA  
-            if subunits_dPhi > 0     % Twist
+            if abs(subunits_dphi) > 0     % Twist
             	midIndex = floor(size(t, 1)/2);
             	t(:, 9 = t(:, 9) - t(midIndex, 9) + phi; 
             else
