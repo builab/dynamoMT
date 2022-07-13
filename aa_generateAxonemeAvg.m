@@ -35,6 +35,7 @@ avg = zeros(boxSize, boxSize, boxSize);
 for idx = 1:noFilament
 	% Read the updated table
  	% Check the same tomo
+	tFilament_ali = dread([particleDir '/' filamentList{idx} '/aligned.tbl']); 
 	targetFolder = [particleDir '/' filamentList{idx}];
 	oa = daverage(targetFolder, 't', tFilament_ali, 'fc', 1, 'mw', mw);
 	dwrite(dynamo_bandpass(oa.average, [1 avgLowpassPix]), [targetFolder '/alignedTemplate.em']);
