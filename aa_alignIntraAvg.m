@@ -75,12 +75,6 @@ end
  
 cd ..
 
-%% Generate updated reference
-for idx = 1:noFilament
-	% Read the updated table
-	tFilament_ali = dread([particleDir '/' filamentList{idx} '/aligned.tbl']); 
-	targetFolder = [particleDir '/' filamentList{idx}];
-end
 
 %% Calculate average
 newTemplate = newTemplate/noFilament;
