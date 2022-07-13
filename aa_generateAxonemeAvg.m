@@ -36,6 +36,9 @@ for idx = 1:noFilament
 	% Read the updated table
  	% Check the same tomo
 	targetFolder = [particleDir '/' filamentList{idx}];
+	oa = daverage(targetFolder, 't', tFilament_ali, 'fc', 1, 'mw', mw);
+	dwrite(dynamo_bandpass(oa.average, [1 avgLowpassPix]), [targetFolder '/alignedTemplate.em']);
+
 	tomoName = regexprep(filamentList{idx}, '_\d+$', '');
 	if strcmp(tomoName, prevTomoName)
 		avg = avg + dread([targetFolder '/alignedTemplate.em']);
