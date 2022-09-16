@@ -24,12 +24,12 @@ particleDir = sprintf('%sparticles', prjPath);
 previewDir =[alnDir '/preview']; % created from previously
 mw = 12; % Number of parallel workers to run
 gpu = [0:5]; % Alignment using gpu
-initRefFile = 'reference_all.em';
+initRefFile = 'reference.em';
 coneFlip = 0; % Search for polarity. 1 is yes. Recommended to pick with polarity and set to 0
 avgLowpass = 30; % Angstrom
 alnLowpass = 30; % Angstrom
 shiftLimit = [20 20 10]; % Limit Z in pixel half of periodicity
-newRefFile = 'reference_dPhi.em';
+newRefFile = 'reference_intraAln.em';
 
 %%
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
