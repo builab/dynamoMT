@@ -27,7 +27,7 @@ minPartNo = 4; % Minimum particles number per Filament 4 is reasonable
 % Read the list of filament to work with
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
 
-filamentListNew = {}
+filamentListNew = {};
 
 %% Crop & generate initial average
 for idx = 1:length(filamentList)
