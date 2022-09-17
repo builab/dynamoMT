@@ -61,7 +61,7 @@ for idx = 1:length(filamentList)
   	warning(['Skip: Contour ' filamentList{idx} 'does not have enough particles!'])
   	continue;
   end
-  if size(t, 1) < minPartNo
+  if size(tImport, 1) < minPartNo
     disp(['Skip ' tomoName ' Contour ' num2str(contour(i)) ' with less than ' num2str(minPartNo) ' particles'])
     continue
   end
