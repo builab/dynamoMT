@@ -14,8 +14,10 @@ model2point -Contour $1 ${basename}.txt
 
 if [ $2 -eq 0 ]
 then
+  echo "sort -k1,1n -k 3n ${basename}.txt > ${basename}_fix.txt"
   sort -k1,1n -k 3n ${basename}.txt > ${basename}_fix.txt
 else
+  echo "sort -k1,1n -k 3nr ${basename}.txt > ${basename}_fix.txt"
   sort -k1,1n -k 3nr ${basename}.txt > ${basename}_fix.txt
 fi
 
