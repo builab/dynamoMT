@@ -73,17 +73,13 @@ for idx = 1:noFilament
 	% Read last transformation & applied to table
 	tFilament_ali = dynamo_table_rigid(tFilament, sal.Tp);
 	% Write table
-	dwrite(tFilament_ali, [particleDir '/' filamentList{idx} '/aligned.tbl'])
-end
- 
+	dwrite(tFilament_ali, [particleDir '/' filamentList{idx} '/aligned.tbl']);
+	% Write aligned intraAvg
+	dwrite(sal.aligned_particle, [alnDir '/avg/' filamentList{idx} '_aln.em']);
 
-%% Generate updated reference
-for idx = 1:noFilament
-	% Read the updated table
-	tFilament_ali = dread([particleDir '/' filamentList{idx} '/aligned.tbl']); 
-	targetFolder = [particleDir '/' filamentList{idx}];
-	disp(targetFolder)
 end
+
+cd ..
 
 %% Calculate average
 newTemplate = newTemplate/noFilament;

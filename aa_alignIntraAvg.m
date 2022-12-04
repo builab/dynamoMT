@@ -61,15 +61,15 @@ for idx = 1:noFilament
 	newTemplate = newTemplate + sal.aligned_particle;
 	filt_aligned_particle = dynamo_bandpass(sal.aligned_particle, [1 round(pixelSize/avgLowpass*boxSize)]);
 	img = sum(filt_aligned_particle(:,:,floor(boxSize/2) - 10: floor(boxSize/2) + 10), 3);
-	imwrite(mat2gray(img), [previewDir '/' filamentList{idx} '_aln.png'])
+	imwrite(mat2gray(img), [previewDir '/' filamentList{idx} '_aln.png']);
 	% Read last table from alignment
 	tFilament = dread(tPath);
 	% Read last transformation & applied to table
 	tFilament_ali = dynamo_table_rigid(tFilament, sal.Tp);
 	% Write table
-	dwrite(tFilament_ali, [particleDir '/' filamentList{idx} '/aligned.tbl'])
+	dwrite(tFilament_ali, [particleDir '/' filamentList{idx} '/aligned.tbl']);
 	% Write aligned intraAvg
-	dwrite(sal.aligned_particle, [alnDir '/avg/' filamentList{idx} '_aln.em'])
+	dwrite(sal.aligned_particle, [alnDir '/avg/' filamentList{idx} '_aln.em']);
 
 end
  

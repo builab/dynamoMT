@@ -9,6 +9,7 @@
 % NOTE: v0.2b add different contour (Done)
 % NOTE: v0.2b eliminate duplicate less than dTh (Done)
 % NOTE: v0.2b find nearest neighbour for angle
+% 0.2b Now use col 23 as filament number
 % merged_particles.tbl intentionally switch the polarity of particles
 % Seems to work better running on merged_particles.tbl instead of merged_particles_aln.tbl
 % Implement a nearest neighbour for angle assignnment, still doesn't work yet due to Dynamo careless angle interpolation.
@@ -61,20 +62,16 @@ for idx = 1:nTomo
     if isempty(tTomo) == 1
         continue;
     end
-    
-    
+      
     modelout =   [modelDir '/' tomoName '.omd'];
     contour = unique(tTomo(:, 23));
     
-    % 0.2b Now use col 23 as filament number
     m = {}; % Cell array contains all filament
     
     for i = 1:length(contour)        
         tContour = tTomo(tTomo(:, 23) == contour(i), :);
-        
         phi = median(tContour(:, 9)); % Same as AA  
-
-        
+    
         % v0.2b Important: this step invert the Y axis, doing for each contour might help to check for polarity
         if doExclude > 0
             tContourEx = dpktbl.exclusionPerVolume(tContour, dTh/pixelSize);
@@ -90,8 +87,6 @@ for idx = 1:nTomo
             tContour = tContour(cc > x - 3*y, :);
             display(['Contour ' num2str(contour(i)) ': Exclude ' num2str(sum(cc <= x - 3*y)) ' particles']);
         end
-        
-        
         
         if isempty(tContour) == 1
             continue;
@@ -160,14 +155,9 @@ for idx = 1:nTomo
        	catch
   			warning(['Skip: ' tomoName  '_' num2str(contour(i)) 'does not have enough particles!'])
   			continue;
-  		end
-  		
-  		
+  		end	
   		% If it is cropping out
-  		filamentRepickList{end + 1, 1} = [tomoName  '_' num2str(contour(i))];
-
-
-        
+  		filamentRepickList{end + 1, 1} = [tomoName  '_' num2str(contour(i))];   
     end
     % Write the DynamoModel
     dwrite(m, modelout);
