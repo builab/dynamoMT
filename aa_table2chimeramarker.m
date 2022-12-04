@@ -14,22 +14,19 @@ prjPath = '/london/data0/20221128_TetraCU428Membrane_26k_TS/singlet/';
 
 %% Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
-filamentListFile = sprintf('%sfilamentList.csv', prjPath);
 modelDir = sprintf('%smodels', prjPath);
+outCmm = 'singlet.cmm';
+radius = 3;
+tableAlnFileName = 'merged_particles_align.tbl'; % merge particles after particle alignment for robust 
 
-narot = [174.73 -163 -126 -65 -18 -30.6 42 97 120];
 
 % Read the list of filament to work with
-filamentList = readcell(filamentListFile, 'Delimiter', ',');
+tAll = dread(tableAlnFileName);
 
-%% Crop & generate initial average
-for idx = 1:length(filamentList)
-  tableName = [modelDir '/' filamentList{idx} '.tbl'];
-  % Back up
-  tableBackup = [modelDir '/' filamentList{idx} '_orig.tbl'];
-  copyfile(tableName, tableBackup);
-  disp(['Reading ' filamentList{idx}]);
-  tImport = dread(tableName);
-  tImport(:, 9) = narot(idx);
-  dwrite(tImport, tableName); 
-end
+% Reset the origin
+tAll_adjusted = tAll;
+
+tAll_adjusted(24:26, :) = tAll(24:26, :) + floor(tAll(4:6, :));
+tAll_adjusted(4:6, :) = tAll(4:6, :) - floor(tAll(4:6, :));
+
+dynamo_table2chimeramarker([modelDir '/' outCmm], tAll_adjusted, radius);
