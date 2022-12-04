@@ -27,7 +27,6 @@ alnLowpass = 40; % Angstrom
 avgLowpass = 30; % Angstrom
 zshift_limit = 6; % ~4nm shift limit in pixel for 8 nm repeat, 8nm shift for 16-nm repeat
 newRefFile = 'reference_repick.em';
-skipIntraAln = 1; % use this option for doublet microtubule, perhaps not for base-CP & tip-CP until careful test
 
 
 %%
@@ -47,15 +46,12 @@ cd(alnDir)
 % transform the corresponding table for all particles
 for idx = 1:noFilament
 	% v0.2b
-	if skipIntraAln > 1
-		aPath = ([particleDir '/' filamentList{idx} '/average.em']); % Read the path of the alignment project average
-		tPath = ([particleDir '/' filamentList{idx} '/crop.tbl']); 
-	else
-		aPath = ddb([filamentList{idx} ':a']); % Read the path of the alignment project average
-		tPath = ddb([filamentList{idx} ':rt']);
-	end
+	%aPath = ([particleDir '/' filamentList{idx} '/template.em']); % Read the path of the alignment project average
+	%tPath = ([particleDir '/' filamentList{idx} '/crop.tbl']); 
+	aPath = ddb([filamentList{idx} ':a']); % Read the path of the alignment project average
+	tPath = ddb([filamentList{idx} ':rt']);
 	filamentAvg = dread(aPath);
-    disp(filamentList{idx})
+    	disp(filamentList{idx})
 	if coneFlip > 0
   		sal = dalign(dynamo_bandpass(filamentAvg,[1 alnLowpassPix]), dynamo_bandpass(template,[1 alnLowpassPix]),'cr',10,'cs',5,'ir',360,'is',10,'dim', boxSize, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
 	else
