@@ -136,10 +136,10 @@ for idx = 1:nTomo
         % 0.2b
         try
        		dtcrop(docFilePath, t, targetFolder, boxSize, 'mw', mw);
-       		 % Average the middle region again
         	tCrop = dread([targetFolder '/crop.tbl']);
         	oa_all = daverage(targetFolder, 't', tCrop, 'fc', 1, 'mw', mw);
         	dwrite(dynamo_bandpass(oa_all.average, [1 round(pixelSize/avgLowpass*boxSize)]), [targetFolder '/average.em']);
+        	% Average the middle region again
         	if size(tCrop, 1) > 15
             	midIndex = floor(size(tCrop, 1)/2);
             	tCrop = tCrop(midIndex - 3: midIndex + 4, :);
