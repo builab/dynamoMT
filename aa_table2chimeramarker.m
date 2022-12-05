@@ -16,12 +16,12 @@ prjPath = '/london/data0/20221128_TetraCU428Membrane_26k_TS/doublet_16nm/';
 %% Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 modelDir = sprintf('%smodels', prjPath);
-tableAlnFileName = 'particles_segment/all.tbl'; % merge particles after particle alignment for robust 
-shiftVector = [-6 0 0]; % Shift vector in pixel, measure from the map just like relion (-6 for Atubule, 10 for B-tubule)
+tableAlnFileName = 'merged_particles_segment.tbl'; % merge particles after particle alignment for robust 
+shiftVector = [10 0 0]; % Shift vector in pixel, measure from the map just like relion (-6 for Atubule, 10 for B-tubule)
 
-outCmm = 'doublet_Atub.cmm';
-outImod = 'doublet_Atub.txt';
-outTbl = 'doublet_Atub.tbl';
+outCmm = 'doublet_Btub.cmm';
+outImod = 'doublet_Btub.txt';
+outTbl = 'doublet_Btub.tbl';
 radius = 6;
 
 
