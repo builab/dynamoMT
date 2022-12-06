@@ -17,11 +17,11 @@ prjPath = '/london/data0/20221128_TetraCU428Membrane_26k_TS/doublet_16nm/';
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 modelDir = sprintf('%smodels', prjPath);
 tableAlnFileName = 'merged_particles_segment.tbl'; % merge particles after particle alignment for robust 
-shiftVector = [10 0 0]; % Shift vector in pixel, measure from the map just like relion (-6 for Atubule, 10 for B-tubule)
+shiftVector = [0 0 0]; % Shift vector in pixel, measure from the map just like relion (-6 for Atubule, 10 for B-tubule)
 
-outCmm = 'doublet_Btub.cmm';
-outImod = 'doublet_Btub.txt';
-outTbl = 'doublet_Btub.tbl';
+outCmm = 'doublet_center.cmm';
+outImod = 'doublet_center.txt';
+outTbl = 'doublet_center.tbl';
 radius = 6;
 
 
@@ -38,7 +38,7 @@ tOri_adjusted = tOri_shift;
 tOri_adjusted(:, 24:26) = tOri_shift(:, 24:26) + round(tOri_shift(:, 4:6));
 tOri_adjusted(:, 4:6) = tOri_shift(:, 4:6) - round(tOri_shift(:, 4:6));
 
-dwrite(tOri_shift, [modelDir '/' outTbl]);
+dwrite(tOri_adjusted, [modelDir '/' outTbl]);
 dynamo_table2chimeramarker([modelDir '/' outCmm], tOri_adjusted, radius);
 
 dlmwrite([modelDir '/' outImod], tOri_adjusted(:, 23:26), 'delimiter', ' ');
