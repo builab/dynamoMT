@@ -28,9 +28,9 @@ pixelSize = 0.848; % nm
 
 %%%%%%%%% Do not change anything under here %%%%%%%%%%
 numberOfCentralPairs = length(CentralPair);
-drawGraphs(numberOfCentralPairs, inputPath, CentralPair);
+drawGraphs(numberOfCentralPairs, inputPath, CentralPair, pixelSize);
 
-function drawGraphs(numberOfCentralPairs, inputPath, CentralPair)
+function drawGraphs(numberOfCentralPairs, inputPath, CentralPair, pixelSize)
     clc;
     outputPath = pwd;
     mkdir output;
