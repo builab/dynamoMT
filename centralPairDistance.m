@@ -20,6 +20,7 @@
 
 inputPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/cp_transition_analysis/particles/';
 CentralPair = ["CU428m_TS022" "CU428_TS013" "CU428_TS019" "CU428_TS218" "CU428_TS216" "CU428_TS229" ];
+pixelSize = 0.848; % nm
 
 %  "CU428_TS216" "CU428_TS229"
 
@@ -129,7 +130,7 @@ function drawGraphs(numberOfCentralPairs, inputPath, CentralPair)
     end
 
     for index = 1:length(midpointI)
-        distanceM{index,1} = (distanceM{index,1} - double(midpointI(index)))*.848;
+        distanceM{index,1} = (distanceM{index,1} - double(midpointI(index)))*.pixelSize;
     end
     
     distanceM2 = {};
@@ -165,7 +166,7 @@ function drawGraphs(numberOfCentralPairs, inputPath, CentralPair)
            end
         end
         meanM = [meanM; mean(cur)];
-        standardD = [standardD; std(cur, "omitnan")*0.848];
+        standardD = [standardD; std(cur, "omitnan")*pixelSize];
 %         test = [test; summation/n];
     end
     
@@ -185,7 +186,7 @@ function drawGraphs(numberOfCentralPairs, inputPath, CentralPair)
     
 %   Enumerate starting from first point till last point and change the
 %   index based on 1 pixel : 0.848nm
-    meanM = [(startValue:0.848:endValue)' meanM*0.848];
+    meanM = [(startValue:pixelSize:endValue)' meanM*pixelSize];
     
     
     %Plot original
