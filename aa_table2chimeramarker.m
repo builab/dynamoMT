@@ -43,6 +43,7 @@ nTomo = length(D{1,2}); % get total number of tomograms
 
 for idx = 1:nTomo
     tomo = D{1,2}{idx,1};
+    tomono = D{1,1}(idx);
     [tomoPath,tomoName,ext] = fileparts(tomo);
     tomoName = strrep(tomoName, recSuffix, ''); % Remove the rec part of the name
     tTomo = tOri_adjusted(tOri_adjusted(:,20) == tomono, :);
