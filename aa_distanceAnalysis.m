@@ -23,9 +23,9 @@
 run /london/data0/software/dynamo/dynamo_activate.m
 
 %%% Input
-prjPath = '/london/data0/20221128_TetraCU428Membrane_26k_TS/cp_transition_analysis/';
+prjPath = '/london/data0/20221128_TetraCU428Membrane_26k_TS/singlet/';
 inputPath = sprintf('%sparticles_repick/', prjPath);
-outputPrefix = 'CP'; % CP or singlet. Do it strictly
+outputPrefix = 'singlet'; % CP or singlet. Do it strictly
 
 % Selected tomograms for plotting
 tomograms = ["CU428lowmag_07", "CU428lowmag_11", "CU428lowmag_14", "CU428lowmag_22", "CU428lowmag_29"];
@@ -36,7 +36,7 @@ else
 	microtubuleList = [1:9]; %for A-tubule
 end
 pixelSize = 10.11; % Angstrom
-outlierDist = 500; % Angstrom
+outlierDist = 600; % Angstrom
 
 % Not yet used
 distThresAngst = 323; % In Angstrom
@@ -55,9 +55,36 @@ for i = 1:numberOfTomo
     
     %Parse through data and plot original cp in xyz space     
     for microtubuleId = microtubuleList(:, end - 1)
+    	% Important: project the short microtubule to long microtubule to avoid problem
+    	% Perhaps, the better one is compare Y of the tip point
         dVectors = [];    
         tbl1 = dread([inputPath sprintf('%s', tomograms(i)) '_' num2str(microtubuleId) '/crop.tbl']);
         m1 = tbl1(:,4:6) + tbl1(:,24:26);
+        tbl2 = dread([inputPath sprintf('%s', tomograms(i)) '_' num2str(microtubuleId+1) '/crop.tbl']);
+        m2 = tbl2(:,4:6) + tbl2(:,24:26);
+ 
+ 		% Check the orientation (base is up or down)
+ 		isBaseUp = 0;
+ 		if m1(1, 2) > m1(end, 2)
+ 			isBaseUp = 1;
+ 		end
+ 		if isBaseUp > 0
+ 			% Microtubule 2 is longer
+ 			if m2(end, 2) < m1(end, 2)
+ 				mtemp = m1;
+ 				m1 = m2;
+ 				m2 = mtemp;
+ 			end
+ 		else
+ 			% Microtubule 2 is longer
+ 			if m2(end, 2) > m1(end, 2)
+ 				mtemp = m1;
+ 				m1 = m2;
+ 				m2 = mtemp;
+ 			end
+ 		end	
+ 				
+        
         CS = cat(1,0,cumsum(sqrt(sum(diff(m1,[],1).^2,2))));
         dd = interp1(CS, m1, unique([CS(:)' linspace(0,CS(end),100)]),'pchip');
 
@@ -67,8 +94,6 @@ for i = 1:numberOfTomo
         plot3(dd(:,1),dd(:,2),dd(:,3),'.r-');
         axis image, view(3), legend({'Original','Interp. Spline'});
 
-        tbl2 = dread([inputPath sprintf('%s', tomograms(i)) '_' num2str(microtubuleId+1) '/crop.tbl']);
-        m2 = tbl2(:,4:6) + tbl2(:,24:26);
         CS2 = cat(1,0,cumsum(sqrt(sum(diff(m2,[],1).^2,2))));
         dd = interp1(CS2, m2, unique([CS2(:)' linspace(0,CS2(end),100)]),'pchip');
 
