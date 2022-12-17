@@ -52,7 +52,7 @@ for idx = 1:nTomo
     end
 	dwrite(tTomo, [modelDir '/' outName '_' tomoName '.tbl']);
 	dynamo_table2chimeramarker([modelDir '/' outName '_' tomoName '.cmm'], tTomo, radius);
-	dlmwrite([modelDir '/' outName '_' tomoName '.txt'], tOri_adjusted(:, 23:26), 'delimiter', ' ');
+	dlmwrite([modelDir '/' outName '_' tomoName '.txt'], tTomo(:, 23:26), 'delimiter', ' ');
 end
 
 % You can do 'point2model singlet.txt singlet.mod'
