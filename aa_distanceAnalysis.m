@@ -30,7 +30,7 @@ outputPrefix = 'CP'; % CP or singlet. Do it strictly
 % Selected tomograms for plotting
 tomograms = ["CU428lowmag_07", "CU428lowmag_11", "CU428lowmag_14", "CU428lowmag_22", "CU428lowmag_29"];
 % hard code here
-if outputPrefix == 'CP'
+if strcmp(outputPrefix, 'CP') == 1
 	microtubuleList = [1 2]; % For CP
 else 
 	microtubuleList = [1:9]; %for A-tubule
@@ -52,10 +52,10 @@ distanceM = {};
 distanceIndex = 1;
     
 for i = 1:numberOfTomo
-    dVectors = [];
     
     %Parse through data and plot original cp in xyz space     
-    for microtubuleId = microtubuleList    
+    for microtubuleId = microtubuleList(:, end - 1)
+        dVectors = [];    
         tbl1 = dread([inputPath sprintf('%s', tomograms(i)) '_' num2str(microtubuleId) '/crop.tbl']);
         m1 = tbl1(:,4:6) + tbl1(:,24:26);
         CS = cat(1,0,cumsum(sqrt(sum(diff(m1,[],1).^2,2))));
