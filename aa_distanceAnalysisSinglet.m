@@ -23,23 +23,27 @@
 run /london/data0/software/dynamo/dynamo_activate.m
 
 %%% Input
-prjPath = '/london/data0/20221128_TetraCU428Membrane_26k_TS/cp_transition_analysis/';
+prjPath = '/london/data0/20221128_TetraCU428Membrane_26k_TS/singlet/';
 inputPath = sprintf('%sparticles_repick/', prjPath);
-outputPrefix = 'CP'; % CP or singlet. Do it strictly
+outputPrefix = 'singlet'; % CP or singlet. Do it strictly
 
 % Selected tomograms for plotting
+%tomograms = ["CU428lowmag_11", "CU428lowmag_14", "CU428lowmag_22", "CU428lowmag_29"];
 tomograms = ["CU428lowmag_07", "CU428lowmag_11", "CU428lowmag_14", "CU428lowmag_22", "CU428lowmag_29"];
+
 % hard code here
 if strcmp(outputPrefix, 'CP') == 1
-	microtubuleList = [1 2]; % For CP
+	microtubuleList = [1]; % For CP
 else 
 	microtubuleList = [1:9]; %for A-tubule
 end
 pixelSize = 10.11; % Angstrom
 outlierDist = 1000; % Angstrom for CP 500 is safe
+fitGroup = 5;
+plotTomo = 1; % Turn to 0 if no need
 
-% Not yet used
-distThresAngst = 323; % In Angstrom
+% Limit to which is a parallel to eliminate noise
+distThresAngst = 320; % In Angstrom
 
 addpath(genpath(prjPath));
 
@@ -54,14 +58,23 @@ distanceIndex = 1;
 for i = 1:numberOfTomo 
     %Parse through data and plot original cp in xyz space  
     disp(tomograms(i))   
-    for microtubuleId = microtubuleList(:, 1:end-1)
+    % For A-tubule, need also 9 to 1
+    
+    for microtubuleId = microtubuleList
     	disp(['Microtubule ' num2str(microtubuleId)])
     	% Important: project the short microtubule to long microtubule to avoid problem
     	% Perhaps, the better one is compare Y of the tip point
         dVectors = [];    
         tbl1 = dread([inputPath sprintf('%s', tomograms(i)) '_' num2str(microtubuleId) '/crop.tbl']);
         m1 = tbl1(:,4:6) + tbl1(:,24:26);
-        tbl2 = dread([inputPath sprintf('%s', tomograms(i)) '_' num2str(microtubuleId+1) '/crop.tbl']);
+        
+        % For singlet, also 9 to 1
+        if microtubuleId == 9
+        	tbl2 = dread([inputPath sprintf('%s', tomograms(i)) '_' num2str(1) '/crop.tbl']);
+        else
+        	tbl2 = dread([inputPath sprintf('%s', tomograms(i)) '_' num2str(microtubuleId+1) '/crop.tbl']);
+        end
+
         m2 = tbl2(:,4:6) + tbl2(:,24:26);
  
  		% Check the orientation (base is up or down)
@@ -70,15 +83,15 @@ for i = 1:numberOfTomo
  			isBaseUp = 1;
  		end
  		if isBaseUp > 0
- 			% Microtubule 2 is longer
- 			if m2(end, 2) < m1(end, 2)
+ 			% Microtubule 2 is shorter
+ 			if m2(end, 2) > m1(end, 2)
  				mtemp = m1;
  				m1 = m2;
  				m2 = mtemp;
  			end
  		else
- 			% Microtubule 2 is longer
- 			if m2(end, 2) > m1(end, 2)
+ 			% Microtubule 2 is shorter
+ 			if m2(end, 2) < m1(end, 2)
  				mtemp = m1;
  				m1 = m2;
  				m2 = mtemp;
@@ -89,18 +102,21 @@ for i = 1:numberOfTomo
         dd = interp1(CS, m1, unique([CS(:)' linspace(0,CS(end),100)]),'pchip');
 
         %Plot c1, c2, and distances between particles
-        %figure('Name', tomograms(i)), hold on
-        %plot3(m1(:,1),m1(:,2),m1(:,3),'.b-');
-        %plot3(dd(:,1),dd(:,2),dd(:,3),'.r-');
-        %axis image, view(3), legend({'Original','Interp. Spline'});
+
 
         CS2 = cat(1,0,cumsum(sqrt(sum(diff(m2,[],1).^2,2))));
         dd = interp1(CS2, m2, unique([CS2(:)' linspace(0,CS2(end),100)]),'pchip');
-
-        %hold on
-        %plot3(m2(:,1),m2(:,2),m2(:,3),'.b-');
-        %plot3(dd(:,1),dd(:,2),dd(:,3),'.r-');
-        %axis image, view(3), legend({'Original','Interp. Spline'});
+        
+        if plotTomo > 0
+        	figure('Name', tomograms(i)), hold on
+        	plot3(m1(:,1),m1(:,2),m1(:,3),'.b-');
+        	plot3(dd(:,1),dd(:,2),dd(:,3),'.r-');
+        	axis image, view(3), legend({'Original','Interp. Spline'});
+        	hold on
+        	plot3(m2(:,1),m2(:,2),m2(:,3),'.b-');
+        	plot3(dd(:,1),dd(:,2),dd(:,3),'.r-');
+        	axis image, view(3), legend({'Original','Interp. Spline'});
+        end
         
         %Find the distance between each point
         curvexy = m2;
@@ -110,14 +126,16 @@ for i = 1:numberOfTomo
         for idx = 1:length(xy)
             pt1 = m1(idx,:);
             pt2 = xy(idx,:);
-            %plot3([pt1(1) pt2(1)],[pt1(2) pt2(2)],[pt1(3) pt2(3)]);
+            if plotTomo > 0
+            	plot3([pt1(1) pt2(1)],[pt1(2) pt2(2)],[pt1(3) pt2(3)]);
+            end
             dVectors = [dVectors; pt2 - pt1];
         end
         
         %   Central pair rotational twist measurements
         mRot = [];
-        for i = 1:length(dVectors)-1
-            mRot = [mRot; vrrotvec(dVectors(i+1,:),dVectors(i,:))];
+        for k = 1:length(dVectors)-1
+            mRot = [mRot; vrrotvec(dVectors(k+1,:),dVectors(k,:))];
         end
         
         hold off
@@ -133,42 +151,38 @@ for i = 1:numberOfTomo
         distanceM{distanceIndex,5} = median_arr;
         
         % TODO This part of the code might be make a lot simpler with a distance threshold
-		% Find the linear slope of 10 points and find the slope with the most
+		% Find the linear slope of 5 points (fitGroup) and find the slope with the most
 		% negative position
+		% For A-tubule, 5 points is better
         T = table(x,distance);
         [p,~,mu] = polyfit(T.x, median_arr, 5);
         distanceM{distanceIndex, 4} = polyval(p,x,[],mu);
-        distanceIndex = distanceIndex + 1;
         m=Inf;
         ss=[];
         index=1;
         % HUY: The end is very prone to error so, should exclude the end here
-        for j=10:1:length(distance)-10
-           p=polyfit(T.x(j-9:j,:), T.distance(j-9:j,:), 1);
+        for j=fitGroup:1:length(distance)-fitGroup
+           p=polyfit(T.x(j-fitGroup+1:j,:), T.distance(j-fitGroup+1:j,:), 1);
            ss=[ss;p];
            if (m>p(1))
-               index=idivide((2*j-9),int16(2))+1;
+               index=idivide((2*j-fitGroup+1),int16(2))+1;
                m=p(1);
            end
         end
-        mIndexes = [mIndexes;index];  
+        if distanceM{distanceIndex, 2}(1) < distThresAngst/pixelSize
+        	index = 1;
+        end
+        mIndexes = [mIndexes;index];
         
-        %Find the first 5 and last 5 points; average; then find midpoint
-         s=mean(distance(1:10,:));
-         temp=tail(T,10);
-         E=mean(temp.distance);
-         fMean= (s + E)/2;
-         midpoint = 0;
-         
-         % HUY: The end is very prone to error so, should exclude the end here
-         for k=10:1:length(distance)-10
-             if (fMean<distance(k))
-                 midpoint=k;
-             end
-         end
-         midpointI= [midpointI;midpoint];
+        %For simplicity midpoint = mIndexes
+        midpointI = [midpointI; index];
+        distanceIndex = distanceIndex + 1;
+
     end
 end
+
+% Manual part to filter data
+%ind = find(midpointI > 13)
         
 %   Central pair distance measurements
 for index = 1:length(midpointI)
@@ -280,7 +294,7 @@ print(sprintf('%s/%sDistanceGraph', prjPath, outputPrefix),'-depsc2');
 %     hold off;
     
 final = [meanM(:,1) meanM(:,2) meanM(:,2)+standardD(:,1) meanM(:,2)-standardD(:,1) standardD(:,1)];
-csvPath = sprintf('%s/MeanCPDistance.csv', prjPath);
+csvPath = sprintf('%s/MeanSingletDistance.csv', prjPath);
 csvwrite(csvPath, final);
     
 fprintf('Complete! Data was saved as [x,y, y+std, y-std, std] to %s\n', csvPath);
