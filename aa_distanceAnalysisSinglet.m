@@ -24,7 +24,8 @@ run /london/data0/software/dynamo/dynamo_activate.m
 
 %%% Input
 prjPath = '/london/data0/20221128_TetraCU428Membrane_26k_TS/singlet/';
-inputPath = sprintf('%sparticles_repick/', prjPath);
+% Adjust the input to particles or particles_repick (ideally particles_repick)
+inputPath = sprintf('%sparticles/', prjPath);
 outputPrefix = 'singlet'; % CP or singlet. Do it strictly
 
 % Selected tomograms for plotting
@@ -40,7 +41,7 @@ end
 pixelSize = 10.11; % Angstrom
 outlierDist = 1000; % Angstrom for CP 500 is safe
 fitGroup = 5;
-plotTomo = 1; % Turn to 0 if no need
+plotTomo = 0; % Turn to 0 if no need
 
 % Limit to which is a parallel to eliminate noise
 distThresAngst = 320; % In Angstrom
@@ -59,7 +60,6 @@ for i = 1:numberOfTomo
     %Parse through data and plot original cp in xyz space  
     disp(tomograms(i))   
     % For A-tubule, need also 9 to 1
-    
     for microtubuleId = microtubuleList
     	disp(['Microtubule ' num2str(microtubuleId)])
     	% Important: project the short microtubule to long microtubule to avoid problem
@@ -245,11 +245,21 @@ meanM = [(startValue:pixelSize/10:endValue)' meanM*pixelSize/10];
         
 %Plot original
 figure('Name', 'Original');
+set(gca, 'DefaultLineLineWidth', 2)
+set(gca, 'LineWidth', 2)
+
 hold on;
 for i = 1:size(distanceM,1)
     plot(distanceM{i,1}, distanceM{i,2});
 end
 hold off;
+ylim([10 80])
+xlim([0 150])
+% Hard code
+set(gcf, 'PaperPositionMode', 'auto');
+hold off;
+print(sprintf('%s/%sOriginalDistanceGraph', prjPath, outputPrefix),'-depsc2');
+
     
 %Plot overall mean with standard d and generate eps file
 gcf = figure('Name', 'Mean curve with std D');
@@ -264,8 +274,8 @@ plotMidPoint = plot(meanM(midpointI,1), meanM(midpointI, 2));
 %set(gca,'XTick', -30:5:40);
 %set(gca,'XTickLabel',-30:5:40);
 set(gca, 'LineWidth', 2)
-ylim([10 50])
-xlim([-50 175])
+ylim([10 80])
+xlim([0 150])
 
 % Hard code
 set(gcf, 'PaperPositionMode', 'auto');
@@ -283,7 +293,7 @@ print(sprintf('%s/%sDistanceGraph', prjPath, outputPrefix),'-depsc2');
 %hold on;
 %shadedErrorBar(meanM(:,1), medfilt1(meanM(:,2)), standardD(:,1), 'lineProps', '-b', 'transparent', 1)
 %ylimit([15 50])
-%xlim([-50 175])
+%xlim([-25 150])
 %hold off;
     
 %     %Plot overall mean with standard error
