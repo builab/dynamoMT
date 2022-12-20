@@ -105,7 +105,7 @@ for i = 1:numberOfTomo
 
 
         CS2 = cat(1,0,cumsum(sqrt(sum(diff(m2,[],1).^2,2))));
-        dd = interp1(CS2, m2, unique([CS2(:)' linspace(0,CS2(end),100)]),'pchip');
+        dd2 = interp1(CS2, m2, unique([CS2(:)' linspace(0,CS2(end),100)]),'pchip');
         
         if plotTomo > 0
         	figure('Name', tomograms(i)), hold on
@@ -114,7 +114,7 @@ for i = 1:numberOfTomo
         	axis image, view(3), legend({'Original','Interp. Spline'});
         	hold on
         	plot3(m2(:,1),m2(:,2),m2(:,3),'.b-');
-        	plot3(dd(:,1),dd(:,2),dd(:,3),'.r-');
+        	plot3(dd2(:,1),dd2(:,2),dd2(:,3),'.r-');
         	axis image, view(3), legend({'Original','Interp. Spline'});
         end
         

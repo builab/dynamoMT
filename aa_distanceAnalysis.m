@@ -26,6 +26,8 @@ run /london/data0/software/dynamo/dynamo_activate.m
 prjPath = '/london/data0/20221128_TetraCU428Membrane_26k_TS/cp_transition_analysis/';
 inputPath = sprintf('%sparticles_repick/', prjPath);
 outputPrefix = 'CP'; % CP or singlet. Do it strictly
+plotTomo = 1; % Turn to 0 if no need
+
 
 % Selected tomograms for plotting
 tomograms = ["CU428lowmag_07", "CU428lowmag_11", "CU428lowmag_14", "CU428lowmag_22", "CU428lowmag_29"];
@@ -88,19 +90,19 @@ for i = 1:numberOfTomo
         CS = cat(1,0,cumsum(sqrt(sum(diff(m1,[],1).^2,2))));
         dd = interp1(CS, m1, unique([CS(:)' linspace(0,CS(end),100)]),'pchip');
 
-        %Plot c1, c2, and distances between particles
-        %figure('Name', tomograms(i)), hold on
-        %plot3(m1(:,1),m1(:,2),m1(:,3),'.b-');
-        %plot3(dd(:,1),dd(:,2),dd(:,3),'.r-');
-        %axis image, view(3), legend({'Original','Interp. Spline'});
-
         CS2 = cat(1,0,cumsum(sqrt(sum(diff(m2,[],1).^2,2))));
-        dd = interp1(CS2, m2, unique([CS2(:)' linspace(0,CS2(end),100)]),'pchip');
+        dd2 = interp1(CS2, m2, unique([CS2(:)' linspace(0,CS2(end),100)]),'pchip');
 
-        %hold on
-        %plot3(m2(:,1),m2(:,2),m2(:,3),'.b-');
-        %plot3(dd(:,1),dd(:,2),dd(:,3),'.r-');
-        %axis image, view(3), legend({'Original','Interp. Spline'});
+        if plotTomo > 0
+        	figure('Name', tomograms(i)), hold on
+        	plot3(m1(:,1),m1(:,2),m1(:,3),'.b-');
+        	plot3(dd(:,1),dd(:,2),dd(:,3),'.r-');
+        	axis image, view(3), legend({'Original','Interp. Spline'});
+        	hold on
+        	plot3(m2(:,1),m2(:,2),m2(:,3),'.b-');
+        	plot3(dd2(:,1),dd2(:,2),dd2(:,3),'.r-');
+        	axis image, view(3), legend({'Original','Interp. Spline'});
+        end
         
         %Find the distance between each point
         curvexy = m2;
@@ -110,7 +112,9 @@ for i = 1:numberOfTomo
         for idx = 1:length(xy)
             pt1 = m1(idx,:);
             pt2 = xy(idx,:);
-            %plot3([pt1(1) pt2(1)],[pt1(2) pt2(2)],[pt1(3) pt2(3)]);
+            if plotTomo > 0
+            	plot3([pt1(1) pt2(1)],[pt1(2) pt2(2)],[pt1(3) pt2(3)]);
+            end
             dVectors = [dVectors; pt2 - pt1];
         end
         
