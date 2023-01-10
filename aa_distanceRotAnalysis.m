@@ -176,7 +176,7 @@ for i = 1:numberOfTomo
     end
 end
        
-# Eliminate mRot Outlier > 5 degree
+% Eliminate mRot Outlier > 5 degree
 mRotCorr = mRotAll(find(mRotAll < 3)); 
 figure,
 histfit(mRotCorr, '25', 'kernel');
