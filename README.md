@@ -1,4 +1,6 @@
-# dynamoDMT v0.2b
+# dynamoMT v0.2b
+
+Using DynamoMT for averaging microtubule. Totally experimental, nothing works :D
 
 Filament analysis using Dynamo
 
