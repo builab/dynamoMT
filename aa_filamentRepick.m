@@ -110,6 +110,13 @@ for idx = 1:nTomo
         m{i}.linkCatalogue(c001Dir, 'i', idx);
         m{i}.saveInCatalogue();
         t = m{i}.grepTable();
+        
+        % MT %
+        % Rotate with the right xform
+        
+        % Shift with the right shift
+        
+        % Save pf
 
         %v0.2b addition
         if isempty(t) == 1
