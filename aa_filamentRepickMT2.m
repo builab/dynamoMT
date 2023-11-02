@@ -64,7 +64,7 @@ for idx = 1:nTomo
     [tomoPath,tomoName,ext] = fileparts(tomo);
     tomono = D{1,1}(idx);
     % Modify specific to name
-    tomoName = strrep(tomoName, '_bin4_rec', ''); % Remove the rec part of the name
+    tomoName = strrep(tomoName, '_rec', ''); % Remove the rec part of the name
     tTomo = tAll(tAll(:,20) == tomono, :);
     if isempty(tTomo) == 1
         continue;
