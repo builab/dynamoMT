@@ -56,7 +56,9 @@ filamentRepickList = {};
 
 % Use this shifts & rots matrix to transform to different PF
 shifts = [-18 -12 -2*pf_shift; -22 -8 -1*pf_shift; -23 -2 0; -22 5 pf_shift]
-rots = [0 0 47; 0 0 -23; 0 0 0; 0 0 19]
+rots = [0 0 0; 0 0 0; 0 0 0; 0 0 0]
+
+#rots = [0 0 47; 0 0 -23; 0 0 0; 0 0 19]
 
 %% Loop through tomograms
 for idx = 1:nTomo
