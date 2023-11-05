@@ -1,18 +1,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Script to apply alignment parameters to repick filament with torsion model
-% Should have same parameters as imodModel2Filament
+%
 % dynamoDMT v0.2b
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Using GUI https://wiki.dynamo.biozentrum.unibas.ch/w/index.php/Filament_model
-% Now also printing output
-% NOTE: v0.2b add CC filter using median(cc) - 3*mad(cc) 
-% NOTE: v0.2b add different contour (Done)
-% NOTE: v0.2b eliminate duplicate less than dTh (Done)
-% NOTE: v0.2b find nearest neighbour for angle
-% 0.2b Now use col 23 as filament number
-% merged_particles.tbl intentionally switch the polarity of particles
-% Seems to work better running on merged_particles.tbl instead of merged_particles_aln.tbl
-% Implement a nearest neighbour for angle assignnment, still doesn't work yet due to Dynamo careless angle interpolation.
+% Perhaps using dynamo_subboxing_table is a bit more elegant, then incorporate the rotation
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
@@ -30,10 +22,8 @@ c001Dir = sprintf('%scatalogs/c001', prjPath);
 pixelSize = 8.48; % Angstrom per pixel
 subunits_dphi = 0;  %  0
 subunits_dz = 168/pixelSize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
-pf_shift = 9.26/pixelSize; % Angstrom
-%pf_rot = 27.69; % Measure with our reference positive end point to lower Z
-%radius = 24; % In pixel
-boxSize = 128;
+boxSize = 96;
+subbox_size = 40;
 mw = 12;
 noPF = 1; % Number of PF
 filamentRepickListFile = sprintf('%sfilamentRepickList.csv', prjPath);
@@ -55,13 +45,12 @@ tAll = dread(tableAlnFileName);
 filamentRepickList = {};
 
 % Use this shifts & rots matrix to transform to different PF
-shifts = [-18 -12 -2*pf_shift; -22 -8 -1*pf_shift; -23 -2 0; -22 5 pf_shift]
-rots = [0 0 0; 0 0 0; 0 0 0; 0 0 0]
-
-#rots = [0 0 47; 0 0 -23; 0 0 0; 0 0 19]
+subbox_orig_update = [66.6646   61.9225   45.3213;    70.7201   56.8933   46.4122;    72.5084   50.5166   47.4991;   71.8149   43.8995   48.6700];
+subbox_p_rots_update = [   0         0   45.9380; 0         0   24.0000; 0         0    0.0625; 0         0  -22.5940];
 
 %% Loop through tomograms
-for idx = 1:nTomo
+%for idx = 1:nTomo
+for idx = 1:2
     tomo = D{1,2}{idx,1};
     [tomoPath,tomoName,ext] = fileparts(tomo);
     tomono = D{1,1}(idx);
@@ -130,16 +119,16 @@ for idx = 1:nTomo
         t(:,23) = contour(i); % Additing contour number (filament)
         
         t_xform = load([origParticleDir '/' tomoName '_' num2str(contour(i)) '/xform.tbl']);
-        txform(1, 5) = 0;
+        t_xform(1, 5) = 0; % Why ? Perhaps avoid it in the 2nd round
         t_ali = dynamo_table_rigid(t, t_xform(1,4:6));
         
         % Construct 13 pf table
         % 23 = filament number
         % 31 = subboxing = PF number        
-        for pf = 1:size(shifts, 1)
+        for pf = 1:size(subbox_orig_update, 1)
             Tp{pf}.type = 'shiftrot';
-            Tp{pf}.shifts = shifts(pf, :);
-            Tp{pf}.eulers = rots(pf, :);
+            Tp{pf}.shifts = subbox_orig_update(pf, :) - boxSize/2;
+            Tp{pf}.eulers = subbox_p_rots_update(pf, :);
             t_ali_pf{pf} = dynamo_table_rigid(t_ali, Tp{pf});
             t_ali_pf{pf}(:, 31) = pf;
         end
@@ -149,11 +138,14 @@ for idx = 1:nTomo
         % 0.2b
         try
            for pf = 1:size(shifts, 1)
-            dwrite(t, [modelDir '/' tomoName '_' num2str(contour(i)) '_pf' num2str(pf) '.tbl']);
+            dwrite(t_ali_pf{pf}, [modelDir '/' tomoName '_' num2str(contour(i)) '_pf' num2str(pf) '.tbl']);
            	targetFolder = [particleDir '/'  tomoName '_' num2str(contour(i)) '_pf' num2str(pf)];
-           	dtcrop(docFilePath, t_all_pf{pf}, targetFolder, boxSize/2, 'mw', mw);
+           	%dtcrop(docFilePath, t_ali_pf{pf}, targetFolder, boxSize/2, 'mw', mw);
+           	dtcrop(docFilePath, t_ali_pf{pf}, targetFolder, boxSize/2);
            	tCrop = dread([targetFolder '/crop.tbl']);
-           	oa_all = daverage(targetFolder, 't', tCrop, 'fc', 1, 'mw', mw);
+           	%oa_all = daverage(targetFolder, 't', tCrop, 'fc', 1, 'mw', mw);
+           	oa_all = daverage(targetFolder, 't', tCrop, 'fc', 1);
+
            	dwrite(dynamo_bandpass(oa_all.average, [1 round(pixelSize/avgLowpass*boxSize)]), [targetFolder '/average.em']);
            	dynamo_table2chimeramarker([targetFolder '/crop.cmm'], [targetFolder '/crop.tbl'], 2);
            end
