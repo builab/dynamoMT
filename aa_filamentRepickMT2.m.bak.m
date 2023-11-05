@@ -1,6 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Script to apply alignment parameters to repick filament with torsion model
-% This script is very clunky. Cannot use it after individual particle alignment
 %
 % dynamoDMT v0.2b
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -22,13 +21,13 @@ particleDir = sprintf('%sparticles_repick', prjPath);
 c001Dir = sprintf('%scatalogs/c001', prjPath);
 pixelSize = 8.48; % Angstrom per pixel
 subunits_dphi = 0;  %  0
-subunits_dz = 84/pixelSize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
+subunits_dz = 168/pixelSize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
 boxSize = 96;
 subbox_size = 40;
 mw = 12;
 noPF = 1; % Number of PF
 filamentRepickListFile = sprintf('%sfilamentRepickList.csv', prjPath);
-tableAlnFileName = 'merged_particles.tbl'; % merge particles before particle alignment for robust but must be merged_particles_align to use doInitialAngle
+tableAlnFileName = 'merged_particles_align.tbl'; % merge particles before particle alignment for robust but must be merged_particles_align to use doInitialAngle
 avgLowpass = 25; % Angstrom
 dTh = 30; % Distance Threshold in Angstrom
 doExclude = 1; % Exclude particles too close
@@ -48,16 +47,10 @@ filamentRepickList = {};
 % Use this shifts & rots matrix to transform to different PF
 subbox_orig_update = [66.6646   61.9225   45.3213;    70.7201   56.8933   46.4122;    72.5084   50.5166   47.4991;   71.8149   43.8995   48.6700];
 subbox_p_rots_update = [   0         0   45.9380; 0         0   24.0000; 0         0    0.0625; 0         0  -22.5940];
-%subbox_orig_update = [72.5084   50.5166   47.4991];
-%subbox_p_rots_update = [ 0    0    0.0];
-
-for pf = 1:size(subbox_orig_update, 1)
-	average{pf} = zeros(subbox_size, subbox_size, subbox_size);
-end
 
 %% Loop through tomograms
 %for idx = 1:nTomo
-for idx = 1:nTomo
+for idx = 1:2
     tomo = D{1,2}{idx,1};
     [tomoPath,tomoName,ext] = fileparts(tomo);
     tomono = D{1,1}(idx);
@@ -102,7 +95,9 @@ for idx = 1:nTomo
        
         m{i} = dmodels.filamentWithTorsion();
         m{i}.subunits_dphi = subunits_dphi;
-        m{i}.subunits_dz = subunits_dz;        
+        m{i}.subunits_dz = subunits_dz;
+        %m{i}.radius = radius;
+        
         m{i}.name = [tomoName '_' num2str(contour(i))];
         % Import coordinate
         m{i}.points = points;
@@ -121,7 +116,6 @@ for idx = 1:nTomo
         	continue;
         end
 
-		t(:,20) = tomono;
         t(:,23) = contour(i); % Additing contour number (filament)
         
         t_xform = load([origParticleDir '/' tomoName '_' num2str(contour(i)) '/xform.tbl']);
@@ -141,23 +135,21 @@ for idx = 1:nTomo
             t_ali_pf{pf}(:, 4:6) =  t_ali_pf{pf}(:, 4:6) - round(t_ali_pf{pf}(:, 4:6));
         end
         
-        % Debug
-        %dtcrop(docFilePath, t_ali, [particleDir '/' tomoName '_' num2str(contour(i))], boxSize);
-        %oa_all = daverage([particleDir '/' tomoName '_' num2str(contour(i))], 't', dread([particleDir '/' tomoName '_' num2str(contour(i)) '/crop.tbl']), 'fc', 0);
-        %dwrite(oa_all.average, [particleDir '/' tomoName '_' num2str(contour(i)) '/average_ali.em']);
+       
         % Cropping subtomogram out
         % 0.2b
         try
            for pf = 1:size(subbox_orig_update, 1)
-            	dwrite(t_ali_pf{pf}, [modelDir '/' tomoName '_' num2str(contour(i)) '_pf' num2str(pf) '.tbl']);
-           		targetFolder = [particleDir '/'  tomoName '_' num2str(contour(i)) '_pf' num2str(pf)];
-           		dtcrop(docFilePath, t_ali_pf{pf}, targetFolder, subbox_size);
-           		tCrop = dread([targetFolder '/crop.tbl']);
-           		%oa_all = daverage(targetFolder, 't', tCrop, 'fc', 0, 'mw', mw);
-           		oa_all = daverage(targetFolder, 't', tCrop, 'fc', 0);
-				average{pf} = average{pf} + oa_all.average;
-           		dwrite(oa_all.average, [targetFolder '/average.em']);
-           		dynamo_table2chimeramarker([targetFolder '/crop.cmm'], [targetFolder '/crop.tbl'], 2);
+            dwrite(t_ali_pf{pf}, [modelDir '/' tomoName '_' num2str(contour(i)) '_pf' num2str(pf) '.tbl']);
+           	targetFolder = [particleDir '/'  tomoName '_' num2str(contour(i)) '_pf' num2str(pf)];
+           	%dtcrop(docFilePath, t_ali_pf{pf}, targetFolder, subbox_size, 'mw', mw);
+           	dtcrop(docFilePath, t_ali_pf{pf}, targetFolder, subbox_size);
+           	tCrop = dread([targetFolder '/crop.tbl']);
+           	%oa_all = daverage(targetFolder, 't', tCrop, 'fc', 1, 'mw', mw);
+           	oa_all = daverage(targetFolder, 't', tCrop, 'fc', 0);
+
+           	dwrite(dynamo_bandpass(oa_all.average, [1 round(pixelSize/avgLowpass*subbox_size)]), [targetFolder '/average.em']);
+           	dynamo_table2chimeramarker([targetFolder '/crop.cmm'], [targetFolder '/crop.tbl'], 2);
            end
            
         catch
@@ -173,9 +165,5 @@ end
 
 %% Write filament list out
 writecell(filamentRepickList, filamentRepickListFile);
-
-for pf = 1:size(subbox_orig_update, 1)
-	dwrite(average{pf}, [particleDir '/pf' num2str(pf) '.em'])
-end
 
 
