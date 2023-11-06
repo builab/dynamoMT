@@ -6,6 +6,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Using GUI https://wiki.dynamo.biozentrum.unibas.ch/w/index.php/Filament_model
 % TODO Perhaps using dynamo_subboxing_table is a bit more elegant, then incorporate the rotation
+% TODO Use filamentList instead of tomo
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
