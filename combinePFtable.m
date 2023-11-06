@@ -26,8 +26,8 @@ noFilament = length(filamentList);
 
 for pf = 1:noPF
 	% Combine all the particles in one pf  into one table
-	starFileName = ['merged_particles_pf' num2str(pf) '.star']
-	tableFileName = ['merged_particles_pf' num2str(pf) '.tbl']
+	starFileName = ['merged_particles_pf' num2str(pf) '.star'];
+	tableFileName = ['merged_particles_pf' num2str(pf) '.tbl'];
 	targetFolder = {};
 	tableName ={};
 
@@ -41,11 +41,11 @@ for pf = 1:noPF
 	plfClean = dpkdata.containers.ParticleListFile.mergeDataFolders(targetFolder,'tables',tableName);
 
 	% create and write the .star file
-	plfClean.writeFile(starFileName)
+	plfClean.writeFile(starFileName);
 
 	% create merged table
 	tMergedClean = plfClean.metadata.table.getClassicalTable();
 	dwrite(tMergedClean,tableFileName)
-	print(['Writing ' tableFileName])
+	disp(['Writing ' tableFileName])
 end
 
