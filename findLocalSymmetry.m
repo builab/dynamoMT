@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Script to find local symmetry
+% Script to find local symmetry for subunit subboxing from a roughly finding oneS
 % Work quite well
 % Open the ref file, determine roughly coordinate of the subunit in Imod and put in subbox_orig
 % Pick one as ref_subbox (preferrable without rotation)
