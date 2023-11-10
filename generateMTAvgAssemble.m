@@ -18,7 +18,7 @@ mw = 12; % Number of parallel workers to run
 pfAvgFile = {'pfa1_avg.em', 'pfa2_avg.em', 'pfa3_avg.em', 'pfa4_avg.em', 'pfb1_avg.em', 'pfb2_avg.em', 'pfb3_avg.em', 'pfb4_avg.em'};
 refMask = 'masks/mask_pf.em';
 finalLowpass = 30; % Now implemented using in Angstrom
-zshift_limit = 2; % 8nm shift limit
+shiftLimit = 2; % 8nm shift limit
 
 % For a (1 = yes, 0 = no)
 assembleMTa = [1 1 1 1; 1 0 0 0; 1 1 0 0; 1 1 1 0];
