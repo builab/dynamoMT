@@ -25,10 +25,11 @@ modelDir = sprintf('%smodels', prjPath);
 c001Dir = sprintf('%scatalogs/c001', prjPath);
 recSuffix = '_rec'; % The suffix path without .mrc
 pixelSize = 8.48; % Angstrom per pixel
-periodicity = 82.8; % Using 84.5 of doublet, 82.8 for CP tip, 86 for CP base
-subunits_dphi = 0;  % For the tip CP 0.72, base CP 0.5, doublet 0
-subunits_dz = periodicity/pixelSize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
-filamentListFile = sprintf('%sfilamentList.csv', prjPath);
+periodicity = 83.4; % Using 84.5 of doublet, 82.8 for CP tip, 86 for CP base
+subunits_dphi = 27.69;  % For the tip CP 0.72, base CP 0.5, doublet 0
+%subunits_dz = periodicity/pixelSize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
+subunits_dz = (periodicity+9.72)/pixelSize;
+filamentListFile = sprintf('%sfilamentListTwist.csv', prjPath);
 minPartNo = 4; % Minimum particles number per Filament
 
 % loop through all tomograms

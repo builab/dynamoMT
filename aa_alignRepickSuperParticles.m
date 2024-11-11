@@ -1,37 +1,36 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Script to align intra average of each doublet with a reference
+% Script to align repick particles
 % and transform all the alignment to an updated table.
 % dynamoDMT v0.2b
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%% Before Running Script %%%%%%%%%%
-%% Activate Dynamo
+%%% Activate Dynamo
 run /storage/software/Dynamo/dynamo_activate.m
 
 % Change path to the correct directory
 prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
 
 %% Input
-pixelSize = 8.48;
 boxSize = 80;
-filamentListFile = 'filamentList.csv';
-alnDir = sprintf('%sintraAln', prjPath);
-particleDir = sprintf('%sparticles', prjPath);
-mw = 12; % Number of parallel workers to run
+pixelSize = 8.48;
+filamentRepickListFile = 'filamentRepickList13PFshort.csv';
+%particleDir = sprintf('%ssuperParticles_repick', prjPath);
+particleDir = sprintf('%sparticles_repick', prjPath);
+mw = 10; % Number of parallel workers to run
 gpu = [0:1]; % Alignment using gpu
-template_name = 'ref_MT13PF_SPEF1.em'; % If you have a better reference, use it instead
-tableFileName = 'merged_particles.tbl'; % merged particles table all
-tableOutFileName = 'merged_particles_align.tbl'; % merged particles table all
-starFileName = 'merged_particles.star'; % star file name for merged particles
-pAlnAll = 'pAlnAllParticles';
+template_name = 'ref_MT13PF_SPEF1_new.em';
+tableFileName = 'merged_particles_repick_13PF_short2.tbl'; % merged particles table all
+starFileName = 'merged_particles_repick_13PF_short2.star'; % star file name for merged particles
+tableOutFileName = 'merged_particles_repick_13PF_short2_align.tbl'; % merged particles table all
+pAlnAll = 'pAlnRepickParticles13PFshort2';
 refMask = 'mask_MT13PF.em';
 finalLowpass = 25; % Now implemented using in Angstrom
-alnLowpass = 30; % Now implemented using Angstrom
-zshift_limit = 6; % 8nm shift limit
-
+alnLowpass = 25; % Now implemented using Angstrom
+zshift_limit = 5; % Should be half the periodicity, 4-nm for tip CP, 8-nm for doublet
 
 %%
-filamentList = readcell(filamentListFile, 'Delimiter', ',');
+filamentList = readcell(filamentRepickListFile, 'Delimiter', ',');
 noFilament = length(filamentList);
 
 
@@ -69,8 +68,8 @@ dvput(pAlnAll,'file_mask',refMask)
 
 % set alignment parameters
 dvput(pAlnAll,'ite', [2 2]);
-dvput(pAlnAll,'dim', [boxSize boxSize]); % Integer division of box size
-dvput(pAlnAll,'low', [round(boxSize*pixelSize/alnLowpass) round(boxSize*pixelSize/alnLowpass)]); % Low pass filter
+dvput(pAlnAll,'dim', [boxSize boxSize]);
+dvput(pAlnAll,'low', [round(pixelSize/alnLowpass*boxSize) round(pixelSize/alnLowpass*boxSize)]);
 dvput(pAlnAll,'cr', [15 6]);
 dvput(pAlnAll,'cs', [5 2]);
 dvput(pAlnAll,'ir', [15 6]);
@@ -90,6 +89,6 @@ dvrun(pAlnAll,'check',true,'unfold',true);
 
 aPath = ddb([pAlnAll ':a']);
 a = dread(aPath);
-tPath = ddb([pAlnAll ':t:ite=last']); % This is correct but might not be prone to more error!!!
+tPath = ddb([pAlnAll ':t:ite=last']); % This makes convertion to Relion better
 dwrite(dread(tPath), tableOutFileName);
-dwrite(dynamo_bandpass(a,[1 round(boxSize*pixelSize/finalLowpass)])*(-1),['result_alnAllParticles_filt' num2str(finalLowpass) '_INVERTED_all.em']);
+dwrite(dynamo_bandpass(a,[1 round(pixelSize/finalLowpass*boxSize)])*(-1),['result_alnRepickParticles13PFshort_filt' num2str(finalLowpass) '_INVERTED_all.em']);

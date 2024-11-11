@@ -7,10 +7,10 @@
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
-run /london/data0/software/dynamo/dynamo_activate.m
+run /storage/software/Dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
+prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
 
 %%%%%%%%
 
@@ -19,13 +19,13 @@ docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 filamentListFile = sprintf('%sfilamentList.csv', prjPath);
 alnDir = sprintf('%sintraAln', prjPath);
 particleDir = sprintf('%sparticles', prjPath);
-boxSize = 96; % Original extracted subvolume size
+boxSize = 80; % Original extracted subvolume size
 mw = 12; % Number of parallel workers to run
-gpu = [0:5]; % Alignment using gpu for titann setting
+gpu = [0:1]; % Alignment using gpu for titann setting
 pixelSize = 8.48; % Angstrom per pixel
 avgLowpass = 30; % In Angstrom to convert to Fourier Pixel
-alnLowpass = 50; % In Angstrom to convert to Fourier Pixel, 50 if you only need to align the filament well, 35-40Angstrom for clear tubulin MT
-zshift_limit = 10; % ~8nm 
+alnLowpass = 30; % In Angstrom to convert to Fourier Pixel, 50 if you only need to align the filament well, 35-40Angstrom for clear tubulin MT
+zshift_limit = 5; % ~8nm 
 
 
 %% Generate an initial reference average for each filament
@@ -49,7 +49,7 @@ for idx = 1:length(filamentList)
 
     % set alignment parameters for 2 rounds
     dvput(prj_intra,'ite', [3]); % no iterations 3 is reasonable
-    dvput(prj_intra,'dim', [boxSize/2]); % Use 1/2 box size for quicker but full size for good res
+    dvput(prj_intra,'dim', [boxSize]); % Use 1/2 box size for quicker but full size for good res
     dvput(prj_intra,'low', [round(pixelSize/alnLowpass*boxSize)]); % lowpass filter
     dvput(prj_intra,'cr', [15]); % cone range
     dvput(prj_intra,'cs', [5]); % cone search step

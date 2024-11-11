@@ -14,9 +14,9 @@ prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
 
 %% Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
-filamentListFile = sprintf('%sfilamentList.csv', prjPath);
+filamentListFile = sprintf('%sfilamentListFix.csv', prjPath);
 modelDir = sprintf('%smodels', prjPath);
-particleDir = sprintf('%sparticles', prjPath);
+particleDir = sprintf('%sparticles_twist', prjPath);
 pixelSize = 8.48; % Use to calculate lowpass
 boxSize = 80; % Extracted subvolume size
 mw = 12; % Number of parallel workers to run
@@ -45,9 +45,12 @@ for idx = 1:length(filamentList)
   	% Error might be generated here, using tCrop instead of tImport will be a lot safer
   	tCrop = dread([targetFolder '/crop.tbl']);
   	if size(tCrop, 1) > 15
-    	midIndex = floor(size(tCrop, 1)/2);
-      	tCrop = tCrop(midIndex - 3: midIndex + 4, :);
+    		midIndex = floor(size(tCrop, 1)/2);
+      		tCrop = tCrop(midIndex - 3: midIndex + 4, :);
   	end 
+
+	 % Extra line to reset rotation angle for initial reference
+ 	tCrop(:, 9) = tCrop(:, 9)*0;
  
   	oa = daverage(targetFolder, 't', tCrop, 'fc', 1, 'mw', mw);
   	dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/lowpass*boxSize)]), [targetFolder '/template.em']);

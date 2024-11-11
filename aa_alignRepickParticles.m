@@ -6,27 +6,27 @@
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
-run /london/data0/software/dynamo/dynamo_activate.m
+run /storage/software/Dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
+prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
 
 %% Input
-boxSize = 96;
+boxSize = 80;
 pixelSize = 8.48;
-filamentRepickListFile = 'filamentRepickList.csv';
+filamentRepickListFile = 'filamentRepickList14PF.csv';
 particleDir = sprintf('%sparticles_repick', prjPath);
-mw = 12; % Number of parallel workers to run
-gpu = [0:5]; % Alignment using gpu
-template_name = 'reference_all.em';
-tableFileName = 'merged_particles_repick.tbl'; % merged particles table all
-starFileName = 'merged_particles_repick.star'; % star file name for merged particles
-tableOutFileName = 'merged_particles_repick_align.tbl'; % merged particles table all
-pAlnAll = 'pAlnRepickParticles';
-refMask = 'masks/mask_cp_tip_24.em';
-finalLowpass = 30; % Now implemented using in Angstrom
-alnLowpass = 40; % Now implemented using Angstrom
-zshift_limit = 5; % Should be half the periodicity, 4-nm for tip CP, 8-nm for doublet
+mw = 6; % Number of parallel workers to run
+gpu = [0:1]; % Alignment using gpu
+template_name = 'ref_MT14PF_SPEF1_new.em';
+tableFileName = 'merged_particles_repick_14PF.tbl'; % merged particles table all
+starFileName = 'merged_particles_repick_14PF.star'; % star file name for merged particles
+tableOutFileName = 'merged_particles_repick_14PF_align.tbl'; % merged particles table all
+pAlnAll = 'pAlnRepickParticles14PF';
+refMask = 'mask_MT14PF.em';
+finalLowpass = 25; % Now implemented using in Angstrom
+alnLowpass = 25; % Now implemented using Angstrom
+zshift_limit = 6; % Should be half the periodicity, 4-nm for tip CP, 8-nm for doublet
 
 %%
 filamentList = readcell(filamentRepickListFile, 'Delimiter', ',');
@@ -42,7 +42,7 @@ tableName ={};
 
 for idx = 1:noFilament
 	targetFolder{idx} = [particleDir '/' filamentList{idx}];
-	tableName{idx} = [particleDir '/' filamentList{idx} '/aligned.tbl'];
+	tableName{idx} = [particleDir '/' filamentList{idx} '/aligned_manual.tbl'];
 end
 
 
@@ -90,4 +90,4 @@ aPath = ddb([pAlnAll ':a']);
 a = dread(aPath);
 tPath = ddb([pAlnAll ':t:ite=last']); % This makes convertion to Relion better
 dwrite(dread(tPath), tableOutFileName);
-dwrite(dynamo_bandpass(a,[1 round(pixelSize/finalLowpass*boxSize)])*(-1),['result_alnRepickParticles_filt' num2str(finalLowpass) '_INVERTED_all.em']);
+dwrite(dynamo_bandpass(a,[1 round(pixelSize/finalLowpass*boxSize)])*(-1),['result_alnRepickParticles14PF_filt' num2str(finalLowpass) '_INVERTED_all.em']);

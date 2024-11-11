@@ -12,22 +12,22 @@
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
-run /STORAGE/kabui/software/Dynamo/dynamo_activate.m
+run /storage/software/Dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/STORAGE/kabui/human/mt/';
+prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
 %%%%%%%%
 
 %% Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 modelDir = sprintf('%smodels', prjPath);
 c001Dir = sprintf('%scatalogs/c001', prjPath);
-recSuffix = '_dose-filt_bin4_rec'; % The suffix path without .mrc
-pixelSize = 4.892; % Angstrom per pixel
-periodicity = 82; % 82 for MT
+recSuffix = '_rec'; % The suffix path without .mrc
+pixelSize = 8.48; % Angstrom per pixel
+periodicity = 82; % 82Angstrom for MT
 subunits_dphi = -27.69;  %  0
 subunits_dz = 8.72/pixelSize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
-radius = 24; % In pixel
+radius = 14; % In pixel
 filamentListFile = sprintf('%sfilamentRepickList.csv', prjPath);
 minPartNo = 10; % Minimum particles number per Filament
 
@@ -36,6 +36,8 @@ fileID = fopen(docFilePath); D = textscan(fileID,'%d %s'); fclose(fileID);
 tomoID = D{1,1}'; % get tomogram ID
 nTomo = length(D{1,2}); % get total number of tomograms
 
+filamentList = {};
+
 
 %% Loop through tomograms
 for idx = 1:nTomo
@@ -43,7 +45,7 @@ for idx = 1:nTomo
     [tomoPath,tomoName,ext] = fileparts(tomo);
     % Modify specific to name
     tomoName = strrep(tomoName, recSuffix, ''); % Remove the rec part of the name from IMOD
-    imodModel = [ 'particles_repick/' tomoName '.txt'];
+    imodModel = [ 'models/' tomoName '.txt'];
     modelout = strrep(imodModel, '.txt', '.omd');
     
     allpoints = load(imodModel);

@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%
 % Set up the project
-% dynamoDMT v0.1
+% dynamoMT v0.1
 %%%%%%%%%%%%%%%%%%%%
 % Import tomogram & create catalog using the GUI
 % For asymetric wedge, you might want to check it using this guide
@@ -18,20 +18,20 @@
 %%%% 
 
 %%% Activate Dynamo
-run /london/data0/software/dynamo/dynamo_activate.m
+run /storage/software/Dynamo/dynamo_activate.m
 
 %%%%%%% Variables subject to change %%%%%%%%
 
-modDir = '/london/data0/20220404_TetraCU428_Tip_TS/ts/';
-prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
-modFileDelimiter = 'CU428*/tip_CP.mod';
-stringToBeRemoved = '/tip_CP.mod';
+modDir = '/storage2/Thibault/20240905_SPEF1MTs/';
+prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
+modFileDelimiter = 'SPEF1*/singlet.mod';
+stringToBeRemoved = '/singlet.mod';
 recSuffix = '_rec';
 apixel = '8.48';
 
 %%%%%%%%% Do not change anything under here %%%%%%%%%%
 
-pathToModelScript = fullfile(sprintf('%sdynamoDMT', prjPath), 'createModTxt.sh');
+pathToModelScript = fullfile(sprintf('%sdynamoMT', prjPath), 'createModTxt.sh');
 cmdStr = [pathToModelScript ' ' modDir ' ' modFileDelimiter ' ' prjPath];
 system(cmdStr);
 modelfile = sprintf('%smodfiles.txt', prjPath);
@@ -53,7 +53,7 @@ vllFilePath = sprintf('%scatalogs/tomograms.vll', prjPath);
 
 % $./vllAndDocScript.sh modDir modelDestination modelfile stringTobeRemoved docFilePath vllFilePath 
 
-pathToModelScript = fullfile(sprintf('%sdynamoDMT', prjPath), 'vllAndDocScript.sh');
+pathToModelScript = fullfile(sprintf('%sdynamoMT', prjPath), 'vllAndDocScript.sh');
 
 % v0.2b change
 cmdStr = [pathToModelScript ' ' modDir ' ' listOfTomograms ' ' modelfile ' ' stringToBeRemoved ' ' docFilePath ' ' vllFilePath ' ' recSuffix '.mrc ' apixel];
@@ -66,7 +66,7 @@ dcm('c', catPath, 'fromvll', vllFilePath, 'delete_old', 1)
 % Imod coordinate should be in text file, clicking along the filament (no direction needed)
 % model2point -Contour imodModel.mod imodModel.txt
 
-pathToModelScript = fullfile(sprintf('%sdynamoDMT', prjPath), 'model2pointscript.sh');
+pathToModelScript = fullfile(sprintf('%sdynamoMT', prjPath), 'model2pointscript.sh');
 
 cmdStr = [pathToModelScript ' ' modDir ' ' modelDir ' ' modelfile ' ' stringToBeRemoved];
 system(cmdStr);
