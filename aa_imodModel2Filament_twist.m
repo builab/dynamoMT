@@ -1,25 +1,22 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Script to convert IMOD model to filament torsion model
-% dynamoMT v0.2b
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Script to convert IMOD model to filament torsion model covering the missing wedge
+% dynamoMT v0.1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Using GUI https://wiki.dynamo.biozentrum.unibas.ch/w/index.php/Filament_model
 % Imod coordinate should be in text file, clicking along the filament (no direction needed)
 % model2point -Contour imodModel.mod imodModel.txt
-% NOTE: If the filament twist (microtubule/CP), we need to define subunits_dphi to describe the torsion.
-% however, it might be related to the polarity of the filament (- or + sign).
-% NOTE: filament number to Column 23
+% Rationale: Generate particles with "8nm + rise" and rotate 360/13 according to 13PF
 
 
-%%%%%%%% Before Running Script %%%%%%%%%%
+%%%%%%%% Before Running Script %%%%%%%%%%%%%%%
 %%% Activate Dynamo
 run /storage/software/Dynamo/dynamo_activate.m
 
 % Change path to the correct directory
 prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
 
-%%%%%%%%
+%%%%%%% Variables subject to change %%%%%%%%%%%
 
-%% Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 modelDir = sprintf('%smodels', prjPath);
 c001Dir = sprintf('%scatalogs/c001', prjPath);
@@ -27,10 +24,12 @@ recSuffix = '_rec'; % The suffix path without .mrc
 pixelSize = 8.48; % Angstrom per pixel
 periodicity = 83.4; % Using 84.5 of doublet, 82.8 for CP tip, 86 for CP base
 subunits_dphi = 27.69;  % For the tip CP 0.72, base CP 0.5, doublet 0
-%subunits_dz = periodicity/pixelSize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
-subunits_dz = (periodicity+9.72)/pixelSize;
+hrise = 9.72; % Angstrom
+subunits_dz = (periodicity+hrise)/pixelSize;
 filamentListFile = sprintf('%sfilamentListTwist.csv', prjPath);
 minPartNo = 4; % Minimum particles number per Filament
+
+%%%%%%% Do not change anything under here %%%%%
 
 % loop through all tomograms
 fileID = fopen(docFilePath); D = textscan(fileID,'%d %s'); fclose(fileID);

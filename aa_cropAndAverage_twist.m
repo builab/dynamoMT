@@ -1,7 +1,7 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Script to generate initial average
-% dynamoDMT v0.2b
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Script to generate initial average (tiny bit different from normal)
+% dynamoMT v0.1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
@@ -10,11 +10,10 @@ run /storage/software/Dynamo/dynamo_activate.m
 % Change path to the correct directory
 prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
 
-%%%%%%%%
 
-%% Input
+%%%%%%% Variables subject to change %%%%%%%%%%%
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
-filamentListFile = sprintf('%sfilamentListFix.csv', prjPath);
+filamentListFile = sprintf('%sfilamentList.csv', prjPath);
 modelDir = sprintf('%smodels', prjPath);
 particleDir = sprintf('%sparticles_twist', prjPath);
 pixelSize = 8.48; % Use to calculate lowpass
@@ -24,12 +23,11 @@ lowpass = 60; % In Angstrom Filter the initial average to 60
 minPartNo = 4; % Minimum particles number per Filament 4 is reasonable
 
 
-% Read the list of filament to work with
+%%%%%%% Do not change anything under here %%%%%
+
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
 
-filamentListNew = {};
-
-%% Crop & generate initial average
+%% Crop & generate initial average%%%%%%%%%%%%%
 for idx = 1:length(filamentList)
   tableName = [modelDir '/' filamentList{idx} '.tbl'];
   targetFolder = [particleDir '/' filamentList{idx}];
@@ -41,17 +39,19 @@ for idx = 1:length(filamentList)
   try
   	dtcrop(docFilePath, tImport, targetFolder, boxSize, 'mw', mw);
   
-  	% Generate average from ~10 middle particles for template generation
+  	% Generate average from ~7 middle particles for template generation
   	% Error might be generated here, using tCrop instead of tImport will be a lot safer
   	tCrop = dread([targetFolder '/crop.tbl']);
   	if size(tCrop, 1) > 15
     		midIndex = floor(size(tCrop, 1)/2);
-      		tCrop = tCrop(midIndex - 3: midIndex + 4, :);
+      		tCrop = tCrop(midIndex - 3: midIndex + 3, :);
   	end 
 
-	 % Extra line to reset rotation angle for initial reference
+	% Extra line to reset rotation angle for initial reference
+	% This is specific to this twist to avoid bad initial model
  	tCrop(:, 9) = tCrop(:, 9)*0;
  
+	% generate average 
   	oa = daverage(targetFolder, 't', tCrop, 'fc', 1, 'mw', mw);
   	dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/lowpass*boxSize)]), [targetFolder '/template.em']);
   	if size(tCrop, 1) > 1 % dtplot error with one particle
@@ -72,9 +72,3 @@ for idx = 1:length(filamentList)
   filamentListNew{end + 1, 1} = filamentList{idx};
 end
 
-%% 0.2b Writing new list
-if size(filamentListNew, 1) < size(filamentList, 1)
-	% Backup old filamentList & write new one
-	copyfile(filamentListFile, [filamentListFile '.bak']);
-	writecell(filamentListNew, filamentListFile);
-end

@@ -1,21 +1,20 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Script to sort MT into 13 or 14 PF
-% Also check for polarity
-% dynamoDMT v0.2b
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Script to sort MT into 13 or 14 PF with a polarity check
+% dynamoMT v0.1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Polarity check & compare to different PF (12,13,14,15). Currently only 13, 14
+% The new list will contain 3 columns (Filament, polarity, number_of_PFs)
 
-%% TODO
-% Incoporate the subunit initial rot angle (tdrot)
-% TODO Incorporate random rotation for microtubule alignment?
+%%%%%%%% Before Running Script %%%%%%%%%%%%%%%
 
-%%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
 run /storage/software/Dynamo/dynamo_activate.m
 
 % Change path to the correct directory
 prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
 
-%% Input
+
+%%%%%%% Variables subject to change %%%%%%%%%%%
 pixelSize = 8.48;
 boxSize = 80;
 filamentListFile = 'filamentList.csv';
@@ -30,11 +29,12 @@ coneFlip = 1; % Search for polarity. 1 is yes. Recommended to pick with polarity
 avgLowpass = 25; % Angstrom
 alnLowpass = 25; % Angstrom
 shiftLimit = [10 10 5]; % Limit Z in pixel half of periodicity
-newRefFile = 'reference_intraAln.em';
+newRefFile = 'sortPF.em';
 filamentPFListFile = sprintf('%sfilamentPFList.csv', prjPath);
 
 
-%%
+%%%%%%% Do not change anything under here %%%%%
+
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
 noFilament = length(filamentList);
 alnLowpassPix = round(pixelSize/alnLowpass*boxSize);
@@ -106,7 +106,6 @@ end
  
 cd ..
 
-
 %% Calculate average
 %newTemplate = newTemplate/noFilament;
 %dwrite(newTemplate, newRefFile);
@@ -114,7 +113,9 @@ writecell(filamentPFList, filamentPFListFile);
 
 % Write separate list files for different PFs
 numPF = cell2mat(filamentPFList(:, 3));
-for i = refPFs
-	subFilamentList = filamentPFList(numPF == i, :);
-	writecell(subFilamentList, strrep(filamentPFListFile, '.csv', [num2str(i) 'PF.csv']));
+for refIdx = 1:length(refPFs)
+	subFilamentList = filamentPFList(numPF == refPFs(refIdx), :);
+	writecell(subFilamentList, strrep(filamentPFListFile, '.csv', [num2str(refPFs(refIdx)) 'PF.csv']));
+	newTemplate{refIdx} = newTemplate{refIdx}/length(subFilamentList);
+	dwrite(newTemplate{refIdx}, strrep(newRefFile, '.em', [num2str(refPFs(refIdx)) 'PF_class.em']))
 end

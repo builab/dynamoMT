@@ -1,20 +1,19 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Script to align subtomogram within the same filament
-% dynamoDMT v0.2b
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% If you have good dPhi & shift, you can limit a bit stricter
-% The proj must be a direct folder
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Script to align subtomogram within the same filament using twist
+% dynamoMT v0.1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%% Before Running Script %%%%%%%%%%
+
+%%%%%%%% Before Running Script %%%%%%%%%%%%%%%
 %%% Activate Dynamo
 run /storage/software/Dynamo/dynamo_activate.m
 
 % Change path to the correct directory
 prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
 
-%%%%%%%%
 
-%% Input
+%%%%%%% Variables subject to change %%%%%%%%%%%
+
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 filamentListFile = sprintf('%sfilamentListFix.csv', prjPath);
 alnDir = sprintf('%sintraAln_twist', prjPath);
@@ -27,6 +26,7 @@ avgLowpass = 30; % In Angstrom to convert to Fourier Pixel
 alnLowpass = 30; % In Angstrom to convert to Fourier Pixel, 50 if you only need to align the filament well, 35-40Angstrom for clear tubulin MT
 zshift_limit = 6; % ~8nm 
 
+%%%%%%% Do not change anything under here %%%%%
 
 %% Generate an initial reference average for each filament
 filamentList = readcell(filamentListFile, 'Delimiter', ',');

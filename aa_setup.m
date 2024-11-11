@@ -1,13 +1,12 @@
-%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set up the project
-% dynamoMT v0.1
-%%%%%%%%%%%%%%%%%%%%
+% dynamoMT v0.1 (identical to dynamDMT)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Import tomogram & create catalog using the GUI
-% For asymetric wedge, you might want to check it using this guide
-% https://wiki.dynamo.biozentrum.unibas.ch/w/index.php/Indicating_the_missing_wedge
-% 
+% required IMOD
 
-%%%%%% Instructions %%%%%%
+
+%%%%%% Instructions %%%%%%%%%%%%%%%%%%%%%%%%%%
 % Step 1: Change the following paths to the right directories.
 %%%% modDir contains the files with the tomograms and path references the root directory for analysis
 % Step 2: Indicate the delimiter that references all mod files of interest.
@@ -17,10 +16,10 @@
 % Step 4: Change the pixel size
 %%%% 
 
-%%% Activate Dynamo
+%%%%%% Activate Dynamo %%%%%%%%%%%%%%%%%%%%%%%%
 run /storage/software/Dynamo/dynamo_activate.m
 
-%%%%%%% Variables subject to change %%%%%%%%
+%%%%%%% Variables subject to change %%%%%%%%%%%
 
 modDir = '/storage2/Thibault/20240905_SPEF1MTs/';
 prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
@@ -29,7 +28,7 @@ stringToBeRemoved = '/singlet.mod';
 recSuffix = '_rec';
 apixel = '8.48';
 
-%%%%%%%%% Do not change anything under here %%%%%%%%%%
+%%%%%%% Do not change anything under here %%%%%
 
 pathToModelScript = fullfile(sprintf('%sdynamoMT', prjPath), 'createModTxt.sh');
 cmdStr = [pathToModelScript ' ' modDir ' ' modFileDelimiter ' ' prjPath];
@@ -55,7 +54,6 @@ vllFilePath = sprintf('%scatalogs/tomograms.vll', prjPath);
 
 pathToModelScript = fullfile(sprintf('%sdynamoMT', prjPath), 'vllAndDocScript.sh');
 
-% v0.2b change
 cmdStr = [pathToModelScript ' ' modDir ' ' listOfTomograms ' ' modelfile ' ' stringToBeRemoved ' ' docFilePath ' ' vllFilePath ' ' recSuffix '.mrc ' apixel];
 system(cmdStr);
 
