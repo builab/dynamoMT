@@ -1,48 +1,46 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Script to apply alignment parameters to repick filament with torsion model
 % Should have same parameters as imodModel2Filament
-% dynamoDMT v0.2b
+% Very different from DMT because polarity flipping is used
+% dynamoMT v0.1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Using GUI https://wiki.dynamo.biozentrum.unibas.ch/w/index.php/Filament_model
-% Now also printing output
-% NOTE: v0.2b add CC filter using median(cc) - 3*mad(cc) 
-% NOTE: v0.2b add different contour (Done)
-% NOTE: v0.2b eliminate duplicate less than dTh (Done)
-% NOTE: v0.2b find nearest neighbour for angle
-% 0.2b Now use col 23 as filament number
-% merged_particles.tbl intentionally switch the polarity of particles
-% Seems to work better running on merged_particles.tbl instead of merged_particles_aln.tbl
-% Implement a nearest neighbour for angle assignnment, still doesn't work yet due to Dynamo careless angle interpolation.
+
+% The parameter subunit_dz and dphi should be measured from the map from
+% aa_alignAllParticles13PF.m or 14PF.m
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %% Activate Dynamo
-run /london/data0/software/dynamo/dynamo_activate.m
+run /storage/software/Dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/london/data0/20220404_TetraCU428_Tip_TS/ts/tip_CP_dPhi/';
+prjPath = '/storage/builab/20240905_SPEF1MTs/MTavg/';
 
 
-%% Input
+%%%%%%% Variables subject to change %%%%%%%%%%%
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 modelDir = sprintf('%smodels_repick', prjPath);
-origParticleDir = sprintf('%sparticles', prjPath);
+origParticleDir = sprintf('%sparticles_twist', prjPath);
 particleDir = sprintf('%sparticles_repick', prjPath);
 c001Dir = sprintf('%scatalogs/c001', prjPath);
 pixelSize = 8.48; % Angstrom per pixel
-periodicity = 82.8; % 82.8 for tipCP, xx for baseCP, 169 doublet
-boxSize = 96;
+periodicity = 84; % Measured from yor average
+boxSize = 80;
 mw = 12;
-subunits_dphi = 0.72;  % For the tip CP 0.72, baseCP 0.5, doublet 0
+subunits_dphi = 0.1;  % For the tip CP 0.72, baseCP 0.5, doublet 0
 subunits_dz = periodicity/pixelSize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
-filamentRepickListFile = sprintf('%sfilamentRepickList.csv', prjPath);
-tableAlnFileName = 'merged_particles_align.tbl'; % merge particles before particle alignment for robust but must be merged_particles_align to use doInitialAngle
-avgLowpass = 40; % Angstrom
+filamentRepickListFile = sprintf('%sfilamentRepickList13PF.csv', prjPath);
+filamentListFile = sprintf('%sfilamentPFList13PF.csv', prjPath);
+tableAlnFileName = 'merged_particles_twist_13PF_align.tbl'; % merge particles before particle alignment for robust but must be merged_particles_align to use doInitialAngle
+avgLowpass = 30; % Angstrom
 dTh = 30; % Distance Threshold in Angstrom
 doExclude = 1; % Exclude particles too close
 doOutlier = 1; % Exclude outlier using CC using MAD
 doInitialAngle = 0; % Only turn on for axoneme case now, absolutely not for microtubule
 
+%%%%%%% Do not change anything under here %%%%%
+
 %% loop through all tomograms
+filamentList = readcell(filamentListFile, 'Delimiter', ',');
 fileID = fopen(docFilePath); D = textscan(fileID,'%d %s'); fclose(fileID);
 tomoID = D{1,1}'; % get tomogram ID
 nTomo = length(D{1,2}); % get total number of tomograms
@@ -69,15 +67,26 @@ for idx = 1:nTomo
     m = {}; % Cell array contains all filament
     
     for i = 1:length(contour)        
+        % Name of filament
+        filamentName = [tomoName '_' num2str(contour(i))];
+        % Look up for polarity
+        filIdx = find(strcmp(filamentList(:, 1), filamentName));
+        polarity = filamentList{filIdx, 2};
+
         tContour = tTomo(tTomo(:, 23) == contour(i), :);
         phi = median(tContour(:, 9)); % Same as AA  
     
         % v0.2b Important: this step invert the Y axis, doing for each contour might help to check for polarity
         if doExclude > 0
             tContourEx = dpktbl.exclusionPerVolume(tContour, dTh/pixelSize);
-            % Make sure to sort as before by particles number for not inverting angle
+            % Make sure to sort by particles number for not inverting angle
             tContour = sortrows(tContourEx, 1);
-            display(['Exclude ' num2str(length(tContour) - length(tContourEx)) ' particles due to proximity']);
+            disp(['Exclude ' num2str(length(tContour) - length(tContourEx)) ' particles due to proximity']);
+        end
+
+        if polarity > 0
+            tContour = flipud(tContour);
+            disp([filamentName ' - flip polarity']);
         end
        
         if doOutlier > 0
@@ -85,16 +94,16 @@ for idx = 1:nTomo
             x = median(cc);
             y = mad(cc);
             tContour = tContour(cc > x - 3*y, :);
-            display(['Contour ' num2str(contour(i)) ': Exclude ' num2str(sum(cc <= x - 3*y)) ' particles']);
+            disp(['Contour ' num2str(contour(i)) ': Exclude ' num2str(sum(cc <= x - 3*y)) ' particles']);
         end
         
         if isempty(tContour) == 1
             continue;
         end
+
         points = tContour(:, 24:26) + tContour(:, 4:6);
         
-        % v0.2b Check for polarity in the original crop file
-       
+      
         m{i} = dmodels.filamentWithTorsion();
         m{i}.subunits_dphi = subunits_dphi;
         m{i}.subunits_dz = subunits_dz;

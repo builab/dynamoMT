@@ -21,8 +21,8 @@ run /storage/software/Dynamo/dynamo_activate.m
 
 %%%%%%% Variables subject to change %%%%%%%%%%%
 
-modDir = '/storage2/Thibault/20240905_SPEF1MTs/';
-prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
+modDir = '/storage/builab/20240905_SPEF1MTs/';
+prjPath = '/storage/builab/20240905_SPEF1MTs/MTavg/';
 modFileDelimiter = 'SPEF1*/singlet.mod';
 stringToBeRemoved = '/singlet.mod';
 recSuffix = '_rec';

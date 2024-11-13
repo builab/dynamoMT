@@ -1,36 +1,40 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Script to align repick average of each doublet with a reference
 % and transform all the alignment to an updated table.
-% dynamoDMT v0.2b
+% dynamoMT v0.1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% This might be changed to accommodate the intraAlnRepick
-%
+
+% There should be the option to use the middle region only
+% Does mid region alignment better?
+
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
 run /storage/software/Dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
+prjPath = '/storage/builab/20240905_SPEF1MTs/MTavg/';
 
-%% Input
+%%%%%%% Variables subject to change %%%%%%%%%%%
 pixelSize = 8.48;
 boxSize = 80;
-filamentRepickListFile = 'filamentRepickList.csv';
+filamentRepickListFile = 'filamentRepickList13PF.csv';
 particleDir = sprintf('%sparticles_repick', prjPath);
-alnDir = sprintf('%sintraAln_repick', prjPath);
+alnDir = sprintf('%sintraAlnSuper_repick', prjPath);
 previewDir =[particleDir '/preview']; % created from previously
 mw = 10; % Number of parallel workers to run
-gpu = [0:1]; % Alignment using gpu
-initRefFile = 'ref_MT13PF_SPEF1.em'; % Use the best reference that you have. If not, the updated ref from previous step
-coneFlip = 1; % Search for polarity. 1 is yes. Recommended to pick with polarity and set to 0
+gpu = [0]; % Alignment using gpu
+initRefFile = 'hSPEF1_13PFMT_25A.em'; % Use the best reference that you have. If not, the updated ref from previous step
+coneFlip = 0; % Keep 0 since we correct for polarity already
 alnLowpass = 20; % Angstrom
 avgLowpass = 20; % Angstrom
 zshift_limit = 6; % ~4nm shift limit in pixel for 8 nm repeat, 8nm shift for 16-nm repeat
-newRefFile = 'reference_repick.em';
-skipIntraAln = 1; % use this option for doublet microtubule, perhaps not for base-CP & tip-CP until careful test
+newRefFile = 'repick_avg_13PF.em';
+skipIntraAln = 0; % use this option for doublet microtubule, perhaps not for base-CP & tip-CP until careful test
+useMidRegionOnly = 1; % use mid region only to amplify the signal
 
 
-%%
+%%%%%%% Do not change anything under here %%%%%
+
 filamentList = readcell(filamentRepickListFile, 'Delimiter', ',');
 noFilament = length(filamentList);
 template = dread(initRefFile);
@@ -39,7 +43,7 @@ newTemplate = zeros(boxSize, boxSize, boxSize);
 
 alnLowpassPix = round(pixelSize/alnLowpass*boxSize);
 mkdir(previewDir)
-%v0.2b
+
 % Need to go into alnDir to read the intraAln project
 cd(alnDir)
 
@@ -48,26 +52,21 @@ cd(alnDir)
 for idx = 1:noFilament
 	% v0.2b
 	if skipIntraAln > 0
-		% For the doublet, read the average seems to be great, for MT with low signal, seem like template.em, the middle section have better signal)
 		%aPath = ([particleDir '/' filamentList{idx} '/average.em']); % Read the path of the alignment project average
 		aPath = ([particleDir '/' filamentList{idx} '/template.em']); % Read the path of the alignment project average
 		tPath = ([particleDir '/' filamentList{idx} '/crop.tbl']); 
-	else
-		aPath = ddb([filamentList{idx} ':a']); % Read the path of the alignment project average
-		tPath = ddb([filamentList{idx} ':rt']);
+    else
+        if useMidRegionOnly > 0
+            filamentAvg = dread([alnDir '/avg/' filamentList{idx} '_mid.em']);
+        else
+            filamentAvg = dread(ddb([filamentList{idx} ':a'])); % Read the path of the alignment project average
+        end
+        tPath = ddb([filamentList{idx} ':rt']);
 	end
-	filamentAvg = dread(aPath);
     disp(filamentList{idx})
-	if coneFlip > 0
-  		sal = dalign(dynamo_bandpass(filamentAvg,[1 alnLowpassPix]), dynamo_bandpass(template,[1 alnLowpassPix]),'cr',10,'cs',5,'ir',360,'is',5,'dim', boxSize, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2, 'cone_flip', 1); % cone_flip
-	else
-		% For repick with initial angle, restrict ir search
-		%sal = dalign(dynamo_bandpass(filamentAvg,[1 alnLowpassPix]), dynamo_bandpass(template,[1 alnLowpassPix]),'cr',10,'cs',5,'ir',360,'is',10,'dim', boxSize, 'limm',1,'lim',[5,5,zshift_limit],'rf',5,'rff',2); % cone_flip
-  		% For normal repick without set initial angle
-		sal = dalign(dynamo_bandpass(filamentAvg,[1 alnLowpassPix]), dynamo_bandpass(template,[1 alnLowpassPix]),'cr',10,'cs',5,'ir',360,'is',5,'dim',boxSize, 'limm',1,'lim',[5, 5, zshift_limit],'rf',5,'rff',2); % no cone_flip
-	end
+
+	sal = dalign(dynamo_bandpass(filamentAvg,[1 alnLowpassPix]), dynamo_bandpass(template,[1 alnLowpassPix]),'cr',10,'cs',5,'ir',360,'is',5,'dim',boxSize, 'limm',1,'lim',[5, 5, zshift_limit],'rf',5,'rff',2, 'cone_flip', coneFlip); % no cone_flip
 	
-	%dview(sal.aligned_particle);
 
 	% Write out matrix for transformation
 	writematrix([sal.p_shifts sal.p_eulers], [particleDir '/' filamentList{idx} '/xform.tbl'], 'Delimiter', 'tab', 'FileType', 'text');

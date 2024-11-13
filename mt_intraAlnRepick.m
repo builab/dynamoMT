@@ -1,33 +1,37 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Script to align repicked subtomogram within the same filament
-% dynamoDMT v0.2b
+% dynamoMT v0.1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % If you have good dPhi & shift, you can limit a bit stricter
 % The proj must be a direct folder
+% New: generate the middle segment to improve the 8-nm preservation
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
 run /storage/software/Dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
+prjPath = '/storage/builab/20240905_SPEF1MTs/MTavg/';
 
 %%%%%%%%
 
 %% Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
-filamentRepickListFile = sprintf('%sfilamentRepickList13PFshort.csv', prjPath);
+filamentRepickListFile = sprintf('%sfilamentRepickList13PF.csv', prjPath);
 alnDir = sprintf('%sintraAlnSuper_repick', prjPath);
 particleDir = sprintf('%ssuperParticles_repick', prjPath);
 boxSize = 80; % Original extracted subvolume size
 mw = 10; % Number of parallel workers to run
-gpu = [0:1]; % Alignment using gpu for titann setting
+gpu = [0]; % Alignment using gpu for titann setting
 pixelSize = 8.48; % Angstrom per pixel
 avgLowpass = 30; % In Angstrom to convert to Fourier Pixel
 alnLowpass = 30; % In Angstrom to convert to Fourier Pixel, better higher than 40 Angstrom for tubulin
-zshift_limit = 5; % pixel equivalent to 60Angstrom is good 
+zshift_limit = 4; % Restrict due to good pick 
 useMask = 1; % Use mask if the filament is well aligned/centered, put to 0 if not needed
 refMask = sprintf('%smask_MTcylinder.em', prjPath); % You can use mask if the filamentRepick is great already use for doublet
+midSize = 10; % Number of particles on left & right size of the middle for averaging the middle part
+
+%%%%%%% Do not change anything under here %%%%%
 
 %% Generate an initial reference average for each filament
 filamentList = readcell(filamentRepickListFile, 'Delimiter', ',');
@@ -50,7 +54,7 @@ for idx = 1:length(filamentList)
     dcp.new(prj_intra,'d',prjPaticlesDir,'t',tableName, 'template', template, 'masks','default','show',0);
 
     % set alignment parameters for 2 rounds
-    dvput(prj_intra,'ite', [3]); % no iterations 3 is reasonable
+    dvput(prj_intra,'ite', [2]); % no iterations 2 is reasonable
     dvput(prj_intra,'dim', [boxSize]); % Use 1/2 box size for quicker but full size for good res
     dvput(prj_intra,'low', [round(pixelSize/alnLowpass*boxSize)]); % lowpass filter
     dvput(prj_intra,'cr', [9]); % cone range
@@ -82,7 +86,14 @@ for idx = 1:length(filamentList)
     filamentAvg = dread(aPath);
     filamentAvg = dynamo_bandpass(filamentAvg,[1 round(pixelSize/avgLowpass*boxSize)]);
     dwrite(filamentAvg, ['avg/' filamentList{idx} '.em']);
-    
+
+    % Generate average of only middle 20 particles
+    tPath = dread(ddb([filamentList{idx} ':t']));
+    noPart = length(tPath);
+    tMid = tPath(floor(noPart/2) - midSize: floor(noPart/2) + midSize, :);
+    oa = daverage([particleDir '/' filamentList{idx}], 't', tMid, 'fc', 1, 'mw', mw);
+  	dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/avgLowpass*boxSize)]), ['avg/' filamentList{idx} '_mid.em']);
+
     % Preview
     img = sum(filamentAvg(:,:,floor(boxSize/2) - 10: floor(boxSize/2) + 10), 3);
     imwrite(mat2gray(img), ['preview/' filamentList{idx} '.png'])

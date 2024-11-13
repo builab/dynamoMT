@@ -12,21 +12,25 @@
 run /storage/software/Dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
+prjPath = '/storage/builab/20240905_SPEF1MTs/MTavg/';
 
-%% Input
+
+%%%%%%% Variables subject to change %%%%%%%%%%%
+
 pixelSize = 8.48;
 boxSize = 80;
-filamentListFileManualRot= 'filamentRepickListManualRot.csv';
-alnDir = sprintf('%sintraAln_repick', prjPath);
+filamentListFileManualRot= 'filamentRepickList13PFManualRot.csv';
+alnDir = sprintf('%sintraAlnSuper_repick', prjPath);
 particleDir = sprintf('%sparticles_repick', prjPath);
 previewDir =[alnDir '/preview']; % created from previously
 mw = 2; % Number of parallel workers to run
-gpu = [0:1]; % Alignment using gpu
 avgLowpass = 25; % Angstrom
-skipIntraAln = 1; % In repick, you can opt to use intraRepickAln or not
+skipIntraAln = 0; % In repick, you can opt to use intraRepickAln or not
+useMidRegionOnly = 1; % Use only the middle section to preserve features
 
-%%
+
+%%%%%%% Do not change anything under here %%%%%
+
 filamentList = readcell(filamentListFileManualRot, 'Delimiter', ',');
 noFilament = length(filamentList);
 
@@ -37,16 +41,17 @@ cd(alnDir)
 % transform the corresponding table for all particles
 for idx = 1:noFilament
 	if skipIntraAln > 0
-		% For the doublet, read the average seems to be great, for MT with low signal, seem like template.em, the middle section have better signal)
-		%aPath = ([particleDir '/' filamentList{idx} '/average.em']); % Read the path of the alignment project average
 		aPath = ([particleDir '/' filamentList{idx} '/template.em']); % Read the path of the alignment project average
-		tPath = ([particleDir '/' filamentList{idx} '/crop.tbl']);
-	else
-		aPath = ddb([filamentList{idx,1} ':a']); % Read the path of the alignment project average
-		tPath = ddb([filamentList{idx,1} ':rt']);
+		tPath = ([particleDir '/' filamentList{idx} '/crop.tbl']); 
+    	else
+        	if useMidRegionOnly > 0
+            		filamentAvg = dread([alnDir '/avg/' filamentList{idx} '_mid.em']);
+        	else
+            		filamentAvg = dread(ddb([filamentList{idx} ':a'])); % Read the path of the alignment project average
+        	end
+        	tPath = ddb([filamentList{idx} ':rt']);
 	end
-	filamentAvg = dread(aPath);
-	boxSize = length(filamentAvg);
+    	disp(filamentList{idx})
 
 	t_xform = load([particleDir '/' filamentList{idx,1} '/xform.tbl']);
 	t_xform(1, 6) = t_xform(1, 6) + filamentList{idx,2};
@@ -61,7 +66,6 @@ for idx = 1:noFilament
 	% OverWrite the old table
 	dwrite(tFilament_ali, [particleDir '/' filamentList{idx,1} '/aligned.tbl']);
 	% Write aligned intraAvg
-	%avg = daverage([particleDir '/' filamentList{idx,1}], 't', tFilament_ali, 'fc', 1, 'mw', mw);
 	average = dpkgeom.rotation.smoothShiftRot(filamentAvg, Tp.shifts, Tp.eulers);
 	dwrite(dynamo_bandpass(average, [1 round(pixelSize/avgLowpass*boxSize)]), [alnDir '/avg/' filamentList{idx,1} '_manual_aln.em']);
 

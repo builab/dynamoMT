@@ -9,21 +9,21 @@
 run /storage/software/Dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
+prjPath = '/storage/builab/20240905_SPEF1MTs/MTavg/';
 
 %%%%%%%%
 
-%% Input
+%%%%%%% Variables subject to change %%%%%%%%%%%
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
-filamentListFile = sprintf('%sfilamentRepickList.csv', prjPath);
+filamentListFile = sprintf('%sfilamentRepickList13PF.csv', prjPath);
 particleDir = sprintf('%sparticles_repick', prjPath);
 superParticleDir = sprintf('%ssuperParticles_repick', prjPath);
 pixelSize = 8.48; % Use to calculate lowpass
-mw = 12; % Number of parallel workers to run
+mw = 10; % Number of parallel workers to run
 avgPart = 3; % Particle to average from the left/right side of the particles
 
 
-% Read the list of filament to work with
+%%%%%%% Do not change anything under here %%%%%
 filamentList = readcell(filamentListFile, 'Delimiter', ',');
 
 mkdir(superParticleDir)
@@ -38,7 +38,7 @@ for idx = 1:length(filamentList)
 
   tImport = dread(tableName);
   template = dread([particleDir '/' filamentList{idx} '/template.em']);
-  noPart = length(tImport);
+  noPart = max(tImport(:, 1)); % Highest particles number is a lot more robust
   
   mkdir([superParticleDir '/' filamentList{idx}]);
   
@@ -58,7 +58,7 @@ for idx = 1:length(filamentList)
 	else
 		endPart = i + 3;
 	end
-	superPart = zeros(size(dread([particleDir '/' filamentList{idx} '/particle_000001.em'])));
+	superPart = zeros(size(template));
 	for j = startPart:endPart
 		partFile = [particleDir '/' filamentList{idx} '/particle_' sprintf('%0.6d', j) '.em'];
 	   	if isfile(partFile)

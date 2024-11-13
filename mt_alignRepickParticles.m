@@ -9,24 +9,25 @@
 run /storage/software/Dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
+prjPath = '/storage/builab/20240905_SPEF1MTs/MTavg/';
 
 %% Input
 boxSize = 80;
 pixelSize = 8.48;
-filamentRepickListFile = 'filamentRepickList14PF.csv';
+filamentRepickListFile = 'filamentRepickList13PF.csv';
 particleDir = sprintf('%sparticles_repick', prjPath);
 mw = 6; % Number of parallel workers to run
-gpu = [0:1]; % Alignment using gpu
-template_name = 'ref_MT14PF_SPEF1_new.em';
-tableFileName = 'merged_particles_repick_14PF.tbl'; % merged particles table all
-starFileName = 'merged_particles_repick_14PF.star'; % star file name for merged particles
-tableOutFileName = 'merged_particles_repick_14PF_align.tbl'; % merged particles table all
-pAlnAll = 'pAlnRepickParticles14PF';
-refMask = 'mask_MT14PF.em';
+gpu = [0]; % Alignment using gpu
+template_name = 'hSPEF1_13PFMT_25A.em';
+tableFileName = 'merged_particles_repick_13PF.tbl'; % merged particles table all
+starFileName = 'merged_particles_repick_13PF.star'; % star file name for merged particles
+tableOutFileName = 'merged_particles_repick_13PF_align.tbl'; % merged particles table all
+pAlnAll = 'pAlnRepickParticles13PF';
+refMask = 'mask_MT13PF.em';
 finalLowpass = 25; % Now implemented using in Angstrom
 alnLowpass = 25; % Now implemented using Angstrom
-zshift_limit = 6; % Should be half the periodicity, 4-nm for tip CP, 8-nm for doublet
+zshift_limit = 5; % Should be half the periodicity, 4-nm for tip CP, 8-nm for doublet
+newRefFile = 'average_allRepickParticles.em';
 
 %%
 filamentList = readcell(filamentRepickListFile, 'Delimiter', ',');
@@ -66,7 +67,7 @@ dvput(pAlnAll,'data',starFileName)
 dvput(pAlnAll,'file_mask',refMask)
 
 % set alignment parameters
-dvput(pAlnAll,'ite', [2 2]);
+dvput(pAlnAll,'ite', [2 1]);
 dvput(pAlnAll,'dim', [boxSize boxSize]);
 dvput(pAlnAll,'low', [round(pixelSize/alnLowpass*boxSize) round(pixelSize/alnLowpass*boxSize)]);
 dvput(pAlnAll,'cr', [15 6]);
@@ -90,4 +91,4 @@ aPath = ddb([pAlnAll ':a']);
 a = dread(aPath);
 tPath = ddb([pAlnAll ':t:ite=last']); % This makes convertion to Relion better
 dwrite(dread(tPath), tableOutFileName);
-dwrite(dynamo_bandpass(a,[1 round(pixelSize/finalLowpass*boxSize)])*(-1),['result_alnRepickParticles14PF_filt' num2str(finalLowpass) '_INVERTED_all.em']);
+dwrite(dynamo_bandpass(a,[1 round(pixelSize/finalLowpass*boxSize)]),newRefFile);
