@@ -27,7 +27,7 @@ refMask = 'mask_MT13PF.em';
 finalLowpass = 25; % Now implemented using in Angstrom
 alnLowpass = 25; % Now implemented using Angstrom
 zshift_limit = 5; % Should be half the periodicity, 4-nm for tip CP, 8-nm for doublet
-newRefFile = 'average_allRepickParticles.em';
+newRefFile = 'average_allRepickParticles_13PF.em';
 
 %%
 filamentList = readcell(filamentRepickListFile, 'Delimiter', ',');
