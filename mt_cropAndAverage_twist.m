@@ -62,11 +62,11 @@ for idx = 1:length(filamentList)
   	end
   catch
   	warning(['Skip: Contour ' filamentList{idx} 'does not have enough particles!'])
-  	continue;
+  	%continue;
   end
   if size(tImport, 1) < minPartNo
     disp(['Skip ' tomoName ' Contour ' num2str(contour(i)) ' with less than ' num2str(minPartNo) ' particles'])
-    continue
+    continue;
   end
   % If cropping working well and more than minimum particles
   filamentListNew{end + 1, 1} = filamentList{idx};
