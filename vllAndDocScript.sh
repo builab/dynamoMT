@@ -1,7 +1,7 @@
 #!/bin/bash
 # Updated by Mike Strauss 2022/06/08
 # vllAndDocScript.sh modDir listOfTomograms modfiles.txt [stringToBeRemoved] docFile vllFilePath recSuffix apixel;
-# # vllAndDocScript.sh reconstruction catalogs/ modfiles.txt 8.48Apx_MT.mod tomograms.doc tomograms.vll '_rec.mrc  8.48;
+# vllAndDocScriptWarp.sh tomograms/ catalogs/list_of_tomograms modfiles.txt _8.48Apx_MT.mod tomograms.doc tomograms.vll _rec.mrc 8.48
 
 
 
