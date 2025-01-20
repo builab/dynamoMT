@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Script to align all particles with a reference
-% for 14PF MT
+% for 15PF MT
 % dynamoDMT v0.1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -14,21 +14,21 @@ prjPath = '/storage/builab/Thibault/20240905_SPEF1_MT_TS/MTavg/';
 %%%%%%% Variables subject to change %%%%%%%%%%%
 pixelSize = 8.48;
 boxSize = 80;
-filamentListFile = 'filamentPFList14PF.csv';
+filamentListFile = 'filamentPFList15PF.csv';
 alnDir = sprintf('%sintraAln_twist', prjPath);
 particleDir = sprintf('%sparticles_twist', prjPath);
 mw = 12; % Number of parallel workers to run
 gpu = [0]; % Alignment using gpu
-template_name = 'sortPF14_class.em'; % If you have a better reference, use it instead
-tableFileName = 'merged_particles_twist_14PF.tbl'; % merged particles table all
-tableOutFileName = 'merged_particles_twist_14PF_align.tbl'; % merged particles table all
-starFileName = 'merged_particles_twist_14PF.star'; % star file name for merged particles
-pAlnAll = 'pAlnAllParticlesTwist14PF';
+template_name = 'sortPF15_class.em'; % If you have a better reference, use it instead
+tableFileName = 'merged_particles_twist_15PF.tbl'; % merged particles table all
+tableOutFileName = 'merged_particles_twist_15PF_align.tbl'; % merged particles table all
+starFileName = 'merged_particles_twist_15PF.star'; % star file name for merged particles
+pAlnAll = 'pAlnAllParticlesTwist15PF';
 refMask = 'mask_MT14PF.em';
 finalLowpass = 25; % Now implemented using in Angstrom
 alnLowpass = 30; % Now implemented using Angstrom
 zshift_limit = 6; % 8nm shift limit
-outputFile = 'average_twist_14PF.em';
+outputFile = 'average_twist_15PF.em';
 
 
 %%%%%%% Do not change anything under here %%%%%

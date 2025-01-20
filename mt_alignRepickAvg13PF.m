@@ -18,18 +18,18 @@ prjPath = '/storage/builab/Thibault/20240905_SPEF1_MT_TS/MTavg/';
 %%%%%%% Variables subject to change %%%%%%%%%%%
 pixelSize = 8.48;
 boxSize = 80;
-filamentRepickListFile = 'filamentRepickList14PF.csv';
+filamentRepickListFile = 'filamentRepickList13PF.csv';
 particleDir = sprintf('%sparticles_repick', prjPath);
 alnDir = sprintf('%sintraAlnSuper_repick', prjPath);
 previewDir =[particleDir '/preview']; % created from previously
 mw = 10; % Number of parallel workers to run
 gpu = [0]; % Alignment using gpu
-initRefFile = 'ref_hSPEF1_14PFMT_25A.em'; % Use the simulated ref with SPEF1 density
+initRefFile = 'templates/hSPEF1x2_13PFMT_25A.em'; % Use the simulated ref with SPEF1 density
 coneFlip = 0; % Keep 0 since we correct for polarity already
 alnLowpass = 20; % Angstrom
 avgLowpass = 20; % Angstrom
 zshift_limit = 6; % ~4nm shift limit in pixel for 8 nm repeat, 8nm shift for 16-nm repeat
-newRefFile = 'average_repick_14PF.em';
+newRefFile = 'average_repick_13PF.em';
 skipIntraAln = 0; % use this option for doublet microtubule, perhaps not for base-CP & tip-CP until careful test
 useMidRegionOnly = 1; % use mid region only to amplify the signal
 

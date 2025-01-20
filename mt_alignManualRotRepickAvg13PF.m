@@ -16,18 +16,18 @@ prjPath = '/storage/builab/Thibault/20240905_SPEF1_MT_TS/MTavg/';
 %% Input
 pixelSize = 8.48;
 boxSize = 80;
-filamentListFile = 'filamentRepickList14PFManualRot.csv';
+filamentListFile = 'filamentRepickList13PFManualRot.csv';
 alnDir = sprintf('%sintraAlnSuper_repick', prjPath);
 particleDir = sprintf('%sparticles_repick', prjPath);
 previewDir =[alnDir '/preview']; % created from previously
 mw = 10; % Number of parallel workers to run
 gpu = [0]; % Alignment using gpu
-initRefFile = 'templates/hSPEF1x2_14PFMT_25A.em';
+initRefFile = 'templates/hSPEF1x2_13PFMT_25A.em';
 coneFlip = 0; % Definitely 0 coneflip
 avgLowpass = 25; % Angstrom
 alnLowpass = 25; % Angstrom
 shiftLimit = [10 10 6]; % Limit Z in pixel half of periodicity
-newRefFile = 'average_repick_14PF_manualaln.em'; % Average of the manually rot ones only
+newRefFile = 'average_repick_13PF_manualaln.em'; % Average of the manually rot ones only
 
 %%
 filamentList = readcell(filamentListFile, 'Delimiter', ',');

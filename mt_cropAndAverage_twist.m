@@ -2,18 +2,19 @@
 % Script to generate initial average (tiny bit different from normal)
 % dynamoMT v0.1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TODO if crop no particles, then have to modify the list
 
 %%%%%%%% Before Running Script %%%%%%%%%%
 %%% Activate Dynamo
 run /storage/software/Dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
+prjPath = '/storage/builab/Thibault/20240905_SPEF1_MT_TS/MTavg/';
 
 
 %%%%%%% Variables subject to change %%%%%%%%%%%
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
-filamentListFile = sprintf('%sfilamentList.csv', prjPath);
+filamentListFile = sprintf('%sfilamentListTwist.csv', prjPath);
 modelDir = sprintf('%smodels', prjPath);
 particleDir = sprintf('%sparticles_twist', prjPath);
 pixelSize = 8.48; % Use to calculate lowpass

@@ -18,7 +18,7 @@ prjPath = '/storage/builab/Thibault/20240905_SPEF1_MT_TS/MTavg/';
 
 pixelSize = 8.48;
 boxSize = 80;
-filamentListFileManualRot= 'filamentRepickList14PFManualRot.csv';
+filamentListFileManualRot= 'filamentRepickList13PFManualRot.csv';
 alnDir = sprintf('%sintraAlnSuper_repick', prjPath);
 particleDir = sprintf('%sparticles_repick', prjPath);
 previewDir =[alnDir '/preview']; % created from previously

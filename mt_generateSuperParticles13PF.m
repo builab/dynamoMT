@@ -15,7 +15,7 @@ prjPath = '/storage/builab/Thibault/20240905_SPEF1_MT_TS/MTavg/';
 
 %%%%%%% Variables subject to change %%%%%%%%%%%
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
-filamentListFile = sprintf('%sfilamentRepickList15PF.csv', prjPath);
+filamentListFile = sprintf('%sfilamentRepickList13PF.csv', prjPath);
 particleDir = sprintf('%sparticles_repick', prjPath);
 superParticleDir = sprintf('%ssuperParticles_repick', prjPath);
 pixelSize = 8.48; % Use to calculate lowpass

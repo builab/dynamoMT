@@ -2,7 +2,8 @@
 % Script to sort MT into 13 or 14 PF with a polarity check
 % dynamoMT v0.1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Polarity check & compare to different PF (12,13,14,15). Currently only 13, 14
+% Polarity check & compare to different PF (12,13,14,15). 
+% Perhaps, can check 12 & 15 manually later to see if 16 or 11 is there
 % The new list will contain 3 columns (Filament, polarity, number_of_PFs)
 
 %%%%%%%% Before Running Script %%%%%%%%%%%%%%%
@@ -11,24 +12,24 @@
 run /storage/software/Dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
+prjPath = '/storage/builab/Thibault/20240905_SPEF1_MT_TS/MTavg/';
 
 
 %%%%%%% Variables subject to change %%%%%%%%%%%
 pixelSize = 8.48;
 boxSize = 80;
-filamentListFile = 'filamentList.csv';
+filamentListFile = 'filamentListTwist.csv';
 alnDir = sprintf('%sintraAln_twist', prjPath);
 particleDir = sprintf('%sparticles_twist', prjPath);
-previewDir =[alnDir '/preview']; % created from previously
+previewDir =[alnDir '/preview']; % created previously
 mw = 12; % Number of parallel workers to run
-gpu = [0:1]; % Alignment using gpu
-initRefFiles = {'ref_MT13PF_SPEF1_new.em', 'ref_MT14PF_SPEF1_new.em'};
-refPFs = [13 14];
-coneFlip = 1; % Search for polarity. 1 is yes. Recommended to pick with polarity and set to 0
+gpu = [0]; % Alignment using gpu
+initRefFiles = {'templates/12PF_8.48Apx.em', 'templates/13PF_8.48Apx.em', 'templates/14PF_8.48Apx.em', 'templates/15PF_8.48Apx.em'};
+refPFs = [12 13 14 15];
+coneFlip = 1; % Search for polarity. 1 is yes.
 avgLowpass = 25; % Angstrom
 alnLowpass = 25; % Angstrom
-shiftLimit = [10 10 5]; % Limit Z in pixel half of periodicity
+shiftLimit = [10 10 5]; % Limit XYZ in pixel. Z should be half of periodicity
 newRefFile = 'sortPF.em';
 filamentPFListFile = sprintf('%sfilamentPFList.csv', prjPath);
 
@@ -59,12 +60,12 @@ for idx = 1:noFilament
 	aPath = ddb([filamentList{idx} ':a']); % Read the path of the alignment project average
 	tPath = ddb([filamentList{idx} ':rt']);
 	filamentAvg = dread(aPath);
-  	
+  	disp(['Align ' filamentList{idx}]);
   	sal = {};
   	maxCC = 0;
   	maxPF = 0;
   	for refIdx = 1:length(template)
-  		sal{refIdx} = dalign(dynamo_bandpass(filamentAvg,[1 alnLowpassPix]), dynamo_bandpass(template{refIdx},[1 alnLowpassPix]),'cr',10,'cs',5,'ir',360,'is',10,'dim',boxSize, 'limm',1,'lim',shiftLimit,'rf',5,'rff',2, 'cone_flip', coneFlip); % cone_flip
+  		sal{refIdx} = dalign(dynamo_bandpass(filamentAvg,[1 alnLowpassPix]), dynamo_bandpass(template{refIdx},[1 alnLowpassPix]),'cr',10,'cs',5,'ir',360,'is',10,'dim',boxSize, 'limm',1,'lim',shiftLimit,'rf',2,'rff',2, 'cone_flip', coneFlip); % cone_flip
 		if sal{refIdx}.ccmax(end) > maxCC
 			maxCC = sal{refIdx}.ccmax(end);
 			maxPF = refIdx;
@@ -78,7 +79,7 @@ for idx = 1:noFilament
 	newTemplate{maxPF} = newTemplate{maxPF} + sal{maxPF}.aligned_particle;
 	filt_aligned_particle = dynamo_bandpass(sal{maxPF}.aligned_particle, [1 round(pixelSize/avgLowpass*boxSize)]);
 	img = sum(filt_aligned_particle(:,:,floor(boxSize/2) - 10: floor(boxSize/2) + 10), 3);
-	imwrite(mat2gray(img), [previewDir '/' filamentList{idx} '_aln.png']);
+	imwrite(mat2gray(img), [previewDir '/' filamentList{idx} '_aln_' num2str(refPFs(maxPF)) 'PF.png']);
 	% Read last table from alignment
 	tFilament = dread(tPath);
 	% Read last transformation & applied to table
@@ -86,7 +87,7 @@ for idx = 1:noFilament
 	% Write table
 	dwrite(tFilament_ali, [particleDir '/' filamentList{idx} '/aligned.tbl']);
 	% Write aligned intraAvg
-	dwrite(sal{maxPF}.aligned_particle, [alnDir '/avg/' filamentList{idx} '_aln.em']);
+	dwrite(sal{maxPF}.aligned_particle, [alnDir '/avg/' filamentList{idx} '_aln_' num2str(refPFs(maxPF)) 'PF.em']);
 	
 	% Read polarity here
 	if abs(sal{maxPF}.p_eulers(2)) > 90
@@ -97,7 +98,7 @@ for idx = 1:noFilament
 		filamentPFList{idx, 2} = 0;
 	end
 	
-	disp([num2str(idx) ' ' num2str(maxPF)]);
+	disp([filamentList{idx} ' Polarity ' num2str(filamentPFList{idx, 2}) ' ' num2str(refPFs(maxPF)) ' PFs']);
 	% Write PF list
 	filamentPFList{idx, 1} = filamentList{idx};
 	filamentPFList{idx, 3} = refPFs(maxPF);
@@ -107,15 +108,17 @@ end
 cd ..
 
 %% Calculate average
-%newTemplate = newTemplate/noFilament;
-%dwrite(newTemplate, newRefFile);
 writecell(filamentPFList, filamentPFListFile);
 
 % Write separate list files for different PFs
 numPF = cell2mat(filamentPFList(:, 3));
 for refIdx = 1:length(refPFs)
 	subFilamentList = filamentPFList(numPF == refPFs(refIdx), :);
-	writecell(subFilamentList, strrep(filamentPFListFile, '.csv', [num2str(refPFs(refIdx)) 'PF.csv']));
-	newTemplate{refIdx} = newTemplate{refIdx}/length(subFilamentList);
-	dwrite(newTemplate{refIdx}, strrep(newRefFile, '.em', [num2str(refPFs(refIdx)) 'PF_class.em']))
+	if isempty(subFilamentList)
+		disp(['No filament with ' num2str(refPFs(refIdx)) ' protofilaments']);
+	else
+		writecell(subFilamentList, strrep(filamentPFListFile, '.csv', [num2str(refPFs(refIdx)) 'PF.csv']));
+		newTemplate{refIdx} = newTemplate{refIdx}/length(subFilamentList);
+		dwrite(newTemplate{refIdx}, strrep(newRefFile, '.em', [num2str(refPFs(refIdx)) '_class.em']))
+	end
 end

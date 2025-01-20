@@ -13,14 +13,14 @@
 run /storage/software/Dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/storage2/Thibault/20240905_SPEF1MTs/MTavg/';
+prjPath = '/storage/builab/Thibault/20240905_SPEF1_MT_TS/MTavg/';
 
 %%%%%%% Variables subject to change %%%%%%%%%%%
 
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
 modelDir = sprintf('%smodels', prjPath);
 c001Dir = sprintf('%scatalogs/c001', prjPath);
-recSuffix = '_rec'; % The suffix path without .mrc
+recSuffix = '_8.48Apx'; % The suffix path without .mrc
 pixelSize = 8.48; % Angstrom per pixel
 periodicity = 83.4; % Using 84.5 of doublet, 82.8 for CP tip, 86 for CP base
 subunits_dphi = 27.69;  % For the tip CP 0.72, base CP 0.5, doublet 0

@@ -34,6 +34,7 @@ filamentRepickListFile = sprintf('%sfilamentRepickList14PF.csv', prjPath);
 filamentListFile = sprintf('%sfilamentPFList14PF.csv', prjPath);
 tableAlnFileName = 'merged_particles_twist_14PF_align.tbl'; % merge particles before particle alignment for robust but must be merged_particles_align to use doInitialAngle
 avgLowpass = 30; % Angstrom
+tomoSuffix = '_8.48Apx';
 dTh = 30; % Distance Threshold in Angstrom
 doExclude = 1; % Exclude particles too close
 doOutlier = 1; % Exclude outlier using CC using MAD
@@ -57,7 +58,7 @@ for idx = 1:nTomo
     [tomoPath,tomoName,ext] = fileparts(tomo);
     tomono = D{1,1}(idx);
     % Modify specific to name
-    tomoName = strrep(tomoName, '_rec', ''); % Remove the rec part of the name
+    tomoName = strrep(tomoName, tomoSuffix, ''); % Remove the suffix part of the name
     tTomo = tAll(tAll(:,20) == tomono, :);
     if isempty(tTomo) == 1
         continue;

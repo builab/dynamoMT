@@ -6,7 +6,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % The parameter subunit_dz and dphi should be measured from the map from
-% aa_alignAllParticles13PF.m or 14PF.m
+% aa_alignAllParticles13PF.m or 13PF.m
 % For 14 PF, the rise is 84.4, supertwist dphi is .42 degree
 % For 13 PF, the rise is 84, supertwist dphi is 0.1
 
@@ -28,12 +28,13 @@ pixelSize = 8.48; % Angstrom per pixel
 periodicity = 84.4; % Measured from yor average
 boxSize = 80;
 mw = 12;
-subunits_dphi = 0.42;  % For the tip CP 0.72, baseCP 0.5, doublet 0
+subunits_dphi = 0.0;  % For the tip CP 0.72, baseCP 0.5, doublet 0
 subunits_dz = periodicity/pixelSize; % in pixel repeating unit dz = 8.4 nm = 168 Angstrom/pixelSize
-filamentRepickListFile = sprintf('%sfilamentRepickList14PF.csv', prjPath);
-filamentListFile = sprintf('%sfilamentPFList14PF.csv', prjPath);
-tableAlnFileName = 'merged_particles_twist_14PF_align.tbl'; % merge particles before particle alignment for robust but must be merged_particles_align to use doInitialAngle
+filamentRepickListFile = sprintf('%sfilamentRepickList13PF.csv', prjPath);
+filamentListFile = sprintf('%sfilamentPFList13PF.csv', prjPath);
+tableAlnFileName = 'merged_particles_twist_13PF_align.tbl'; % merge particles before particle alignment for robust but must be merged_particles_align to use doInitialAngle
 avgLowpass = 30; % Angstrom
+tomoSuffix = '_8.48Apx';
 dTh = 30; % Distance Threshold in Angstrom
 doExclude = 1; % Exclude particles too close
 doOutlier = 1; % Exclude outlier using CC using MAD
@@ -57,7 +58,7 @@ for idx = 1:nTomo
     [tomoPath,tomoName,ext] = fileparts(tomo);
     tomono = D{1,1}(idx);
     % Modify specific to name
-    tomoName = strrep(tomoName, '_rec', ''); % Remove the rec part of the name
+    tomoName = strrep(tomoName, tomoSuffix, ''); % Remove the suffix part of the name
     tTomo = tAll(tAll(:,20) == tomono, :);
     if isempty(tTomo) == 1
         continue;

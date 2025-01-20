@@ -11,13 +11,13 @@
 run /storage/software/Dynamo/dynamo_activate.m
 
 % Change path to the correct directory
-prjPath = '/storage/builab/20240905_SPEF1MTs/MTavg/';
+prjPath = '/storage/builab/Thibault/20240905_SPEF1_MT_TS/MTavg/';
 
 %%%%%%%%
 
 %% Input
 docFilePath = sprintf('%scatalogs/tomograms.doc', prjPath);
-filamentRepickListFile = sprintf('%sfilamentRepickList13PF.csv', prjPath);
+filamentRepickListFile = sprintf('%sfilamentRepickList15PF.csv', prjPath);
 alnDir = sprintf('%sintraAlnSuper_repick', prjPath);
 particleDir = sprintf('%ssuperParticles_repick', prjPath);
 boxSize = 80; % Original extracted subvolume size
@@ -61,7 +61,7 @@ for idx = 1:length(filamentList)
     dvput(prj_intra,'cs', [3]); % cone search step
     dvput(prj_intra,'ir', [9]); % inplane rotation
     dvput(prj_intra,'is', [3]); % inplane search step
-    dvput(prj_intra,'rf', [5]); % refinement
+    dvput(prj_intra,'rf', [2]); % refinement
     dvput(prj_intra,'rff', [2]); % refinement factor
     dvput(prj_intra,'lim', [zshift_limit]); % shift limit
     dvput(prj_intra,'limm',[1]); % limit mode
@@ -89,10 +89,16 @@ for idx = 1:length(filamentList)
 
     % Generate average of only middle 20 particles
     tPath = dread(ddb([filamentList{idx} ':t']));
-    noPart = length(tPath);
-    tMid = tPath(floor(noPart/2) - midSize: floor(noPart/2) + midSize, :);
+    noPart = size(tPath, 1);
+
+    if noPart < midSize*2 + 2
+	    tMid = tPath;
+    else
+	    tMid = tPath(floor(noPart/2) - midSize: floor(noPart/2) + midSize, :);
+    end
+
     oa = daverage([particleDir '/' filamentList{idx}], 't', tMid, 'fc', 1, 'mw', mw);
-  	dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/avgLowpass*boxSize)]), ['avg/' filamentList{idx} '_mid.em']);
+    dwrite(dynamo_bandpass(oa.average, [1 round(pixelSize/avgLowpass*boxSize)]), ['avg/' filamentList{idx} '_mid.em']);
 
     % Preview
     img = sum(filamentAvg(:,:,floor(boxSize/2) - 10: floor(boxSize/2) + 10), 3);
