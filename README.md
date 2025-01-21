@@ -1,8 +1,8 @@
-# dynamoDMT v0.2b
+# dynamoMT 0.1
 
-Filament analysis using Dynamo
+Singlet Microtubule Analysis using Dynamo, adapted to Warp workflow in Bui lab (in setup)
 
-- aa_setup.m (CPU)
+- mt_setup_warp.m (CPU)
 
 - aa_correctFlaDirect.m (CPU) * Important for axoneme not other
 
@@ -26,4 +26,3 @@ Filament analysis using Dynamo
 
 
 
-For doublet MTD, make sense to first align with 8-nm repeat, then repick with 16-nm repeat
