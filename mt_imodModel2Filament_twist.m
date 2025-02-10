@@ -55,6 +55,9 @@ for idx = 1:nTomo
     for i = 1:length(contour)
         filamentid = contour(i);
         points = allpoints(allpoints(:, 1) == filamentid, 2:4);
+        % The model should be sorted in Y (small to big)
+		points = sortrows(points, 2);
+		
         m{i} = dmodels.filamentWithTorsion();
         m{i}.subunits_dphi = subunits_dphi;
         m{i}.subunits_dz = subunits_dz;
@@ -72,7 +75,7 @@ for idx = 1:nTomo
         % Testing this block
         t = m{i}.grepTable();
         
-        % 0.2b addition
+        % Assign filamentID as column 23
         t(:,23) = contour(i);
         if (size(t, 1) < minPartNo)
         	disp(['Skip ' tomoName ' Contour ' num2str(contour(i)) ' with less than ' num2str(minPartNo) ' particles'])

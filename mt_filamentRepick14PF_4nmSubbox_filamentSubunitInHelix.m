@@ -5,6 +5,8 @@
 % dynamoMT v0.1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% WORK IN PRINCIPALE but not tested
+
 % The parameter subunit_dz and dphi should be measured from the map from
 % aa_alignAllParticles13PF.m or 14PF.m
 % For 14 PF, the rise is 84.4, supertwist dphi is .42 degree
@@ -26,11 +28,10 @@ particleDir = sprintf('%sparticles_subbox', prjPath);
 c001Dir = sprintf('%scatalogs/c001', prjPath);
 pixelSize = 8.48; % Angstrom per pixel
 periodicity = 84.4; % Measured from your average
-boxSize = 48;
+boxSize = 80;
 mw = 12;
 subunits_dphi = 25.7866;  % 14PF 
 subunits_dz = 9.1/pixelSize; % rise in 14PF microtubule
-mt_radius = 114.48/pixelSize; % pixel, 14PF microtubule radius 114.48 Angstrom
 filamentRepickListFile = sprintf('%sfilamentSubboxList14PF.csv', prjPath);
 filamentListFile = sprintf('%sfilamentRepickList14PF.csv', prjPath);
 tableAlnFileName = 'merged_particles_repick_14PF_align.tbl'; % merge particles before particle alignment for robust but must be merged_particles_align to use doInitialAngle
@@ -53,7 +54,8 @@ tAll = dread(tableAlnFileName);
 filamentRepickList = {};
 
 %% Loop through tomograms
-for idx = 1:nTomo
+%for idx = 1:nTomo
+for idx = 1:1
     tomo = D{1,2}{idx,1};
     [tomoPath,tomoName,ext] = fileparts(tomo);
     tomono = D{1,1}(idx);
@@ -105,26 +107,18 @@ for idx = 1:nTomo
             continue;
         end
 
-        points = tContour(:, 24:26) + tContour(:, 4:6);
-        
-      
-        m{i} = dmodels.filamentSubunitsInHelix();
-        m{i}.subunits_dphi = subunits_dphi;
-        m{i}.subunits_dz = subunits_dz;
-        m{i}.radius = mt_radius;
-        
-        m{i}.name = [tomoName '_' num2str(contour(i))];
-        % Import coordinate
-        m{i}.points = points;
-        % Create backbone
-        m{i}.backboneUpdate();
-        % Update crop point (can change dz)
-        m{i}.updateCrop();
-        % Link to catalog
-        m{i}.linkCatalogue(c001Dir, 'i', idx);
-        m{i}.saveInCatalogue();
-        t = m{i}.grepTable();
-        
+		Tp.type = 'shiftrot';
+		Tp.shifts = [0 0 subunits_dz];
+		Tp.eulers = [0 0 subunits_dphi];
+		
+		t = tContour;
+		for pf = 1:13
+			Tp.shifts = [0 0 subunits_dz]*pf;
+			Tp.eulers = [0 0 subunits_dphi]*pf;
+        	tRot = dynamo_table_rigid(tContour, Tp);
+			t = [t; tRot];
+		end         	
+                
         % Just in case
         if isempty(t) == 1
           	warning(['Skip: ' tomoName  '_' num2str(contour(i)) 'does not have any particles!']);
@@ -134,17 +128,8 @@ for idx = 1:nTomo
 		% Additing contour number (filamentID)
         t(:,23) = contour(i); 
         
-        if doInitialAngle > 0
-            if abs(subunits_dphi) > 0     % Twist
-            	midIndex = floor(size(t, 1)/2);
-            	t(:, 9) = t(:, 9) - t(midIndex, 9) + phi; 
-            else
-           		t(:, 9) = phi; % This works will in case of doublet, in case of tip/base cp, make the middle value to this and then same shift
-           	end
-        end
-        
         % Check point
-        dwrite(t, [modelDir '/' tomoName '_' num2str(contour(i)) '.tbl']);
+        dwrite(t, [modelDir '/' tomoName '_' num2str(contour(i)) '_rot.tbl']);
         targetFolder = [particleDir '/'  tomoName '_' num2str(contour(i))];
         
         % For testing

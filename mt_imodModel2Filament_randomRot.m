@@ -6,6 +6,7 @@
 % Imod coordinate should be in text file, clicking along the filament (no direction needed)
 % model2point -Contour imodModel.mod imodModel.txt
 % Rationale: Generate particles with "8nm + rise" and rotate 360/13 according to 13PF
+% NOT YET TESTED
 
 
 %%%%%%%% Before Running Script %%%%%%%%%%%%%%%
@@ -23,9 +24,8 @@ c001Dir = sprintf('%scatalogs/c001', prjPath);
 recSuffix = '_8.48Apx'; % The suffix path without .mrc
 pixelSize = 8.48; % Angstrom per pixel
 periodicity = 83.4; % Using 84.5 of doublet, 82.8 for CP tip, 86 for CP base
-subunits_dphi = 27.69;  % For the tip CP 0.72, base CP 0.5, doublet 0
-hrise = 9.72; % Angstrom
-subunits_dz = (periodicity+hrise)/pixelSize;
+subunits_dphi = 0;  % For the tip CP 0.72, base CP 0.5, doublet 0
+subunits_dz = periodicity/pixelSize;
 filamentListFile = sprintf('%sfilamentListTwist.csv', prjPath);
 minPartNo = 4; % Minimum particles number per Filament
 
@@ -69,17 +69,19 @@ for idx = 1:nTomo
         m{i}.linkCatalogue(c001Dir, 'i', idx);
         m{i}.saveInCatalogue();
         
-        % Testing this block
+        % Generate table & randomize rot angle/narot in column 9
         t = m{i}.grepTable();
+        t(:, 9) = -180 + 360 * rand(size(t, 1), 1);
         
-        % 0.2b addition
+        % Assign filamentID as column 23
         t(:,23) = contour(i);
         if (size(t, 1) < minPartNo)
         	disp(['Skip ' tomoName ' Contour ' num2str(contour(i)) ' with less than ' num2str(minPartNo) ' particles'])
         	continue
         end
-        % Add the good to the list
-        filamentList{end + 1, 1} = [tomoName '_' num2str(contour(i))];
+        
+        % Add the good filament to the list
+        filamentList{end + 1, 1} = [tomoName '_' num2str(contour(i))];        
 		dwrite(t, [modelDir '/' tomoName '_' num2str(contour(i)) '.tbl']);
         
         % Optional for visualization of table
