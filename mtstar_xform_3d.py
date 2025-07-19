@@ -12,8 +12,7 @@
 # exclude-newer = "2025-01-01T00:00:00Z"
 # ///
 
-# Orig recenter_3d.py script from Alister Burt
-# Modified by Huy Bui, McGill
+# Script from Alister Burt
 
 
 from pathlib import Path
@@ -73,6 +72,9 @@ def cli(
     # get particle rotation matrices (column vectors are particle x/y/z in tomogram)
     rotation_matrices = R.from_euler(angles=euler_angles, seq='ZYZ', degrees=True).inv().as_matrix()
     console.log("calculated rotation matrices from euler angles")
+    
+    # Get in MT rotation of 25.7866
+    rotation = R.from_euler(angles=[25.7866, 0, 0], seq='ZYZ', degrees=True).as_matrix()
 
     # recenter particles, we don't care about orientations so apply identity rotation
     new_xyz, _ = shift_then_rotate_particles(
